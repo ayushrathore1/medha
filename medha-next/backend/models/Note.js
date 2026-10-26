@@ -1,0 +1,83 @@
+const mongoose = require("mongoose");
+
+const NoteSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    content: {
+      type: String,
+      required: false,
+    },
+    subject: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subject",
+      required: false, // Made optional for new tag-based notes
+    },
+    subjectTag: {
+      type: String,
+      trim: true,
+      default: null, // New field for subject tags
+    },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    isPublic: {
+      type: Boolean,
+      default: false,
+    },
+    fileUrl: {
+      type: String,
+      default: null,
+    },
+    fileType: {
+      type: String,
+      default: null,
+    },
+    originalName: {
+      type: String,
+      default: null,
+    },
+    extractedText: {
+      type: String,
+      default: "",
+    },
+    flashcards: [
+      {
+        question: String,
+        answer: String,
+      },
+    ],
+    mcqs: [
+      {
+        question: String,
+        options: [String],
+        correctAnswer: String,
+        explanation: String,
+      },
+    ],
+    semester: {
+      type: String,
+      default: null, // "1st", "2nd", "3rd", "4th", etc.
+      trim: true,
+    },
+    noteType: {
+      type: String,
+      default: null, // "📄 PYQ Paper", "📝 Handwritten Notes", "💻 Typed Notes", "📊 Diagrams"
+      trim: true,
+    },
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("Note", NoteSchema);

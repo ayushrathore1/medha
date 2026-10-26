@@ -1,0 +1,247 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
+
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: "Poppins", "Manrope", sans-serif;
+  
+  /* MEDHA Landing Theme Palette */
+  --color-medha-cream: #F2EDE4;
+  --color-medha-navy: #1A1A2E;
+  --color-medha-green: #7DC67A;
+  --color-medha-purple: #8B5CF6;
+  --color-medha-card: #F9F6F1;
+  --color-medha-border: #E8E4DC;
+
+  /* shadcn/ui color tokens — mapped to Medha theme */
+  --color-background: #F2EDE4;
+  --color-foreground: #1A1A2E;
+
+  --color-card: #F9F6F1;
+  --color-card-foreground: #1A1A2E;
+
+  --color-popover: #F9F6F1;
+  --color-popover-foreground: #1A1A2E;
+
+  --color-primary: #7DC67A;
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary: #8B5CF6;
+  --color-secondary-foreground: #ffffff;
+
+  --color-muted: #E8E4DC;
+  --color-muted-foreground: #6B6B6B;
+
+  --color-accent: #8B5CF6;
+  --color-accent-foreground: #ffffff;
+
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+
+  --color-border: #E8E4DC;
+  --color-input: #E8E4DC;
+  --color-ring: #7DC67A;
+
+  --radius: 1rem;
+}
+
+:root {
+  --custom-font: var(--font-sans);
+  font-family: var(--custom-font);
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* Backgrounds */
+  --bg-primary: #F2EDE4;
+  --bg-secondary: #E8E4DC;   
+  --bg-tertiary: #F9F6F1;   
+  
+  /* Text */
+  --text-primary: #1A1A2E;
+  --text-secondary: #6B6B6B;
+  --text-tertiary: #9A9A9A;
+  
+  /* Actions */
+  --action-primary: #7DC67A;
+  --action-hover: #6ab367;
+  --accent-secondary: #8B5CF6;
+
+  /* Borders */
+  --border-default: #E8E4DC;
+  --border-glow: rgba(125, 198, 122, 0.4);
+  
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.02);
+  --shadow-glow: 0 0 30px rgba(125, 198, 122, 0.15);
+
+  /* Semantic Status Colors */
+  --color-success-bg: rgba(125, 198, 122, 0.15);
+  --color-success-text: #5AA157;
+  --color-warning-bg: rgba(251, 191, 36, 0.15);
+  --color-warning-text: #D97706;
+  --color-danger-bg: rgba(239, 68, 68, 0.1);
+  --color-danger-text: #DC2626;
+  
+  /* Gradients */
+  --gradient-start: #7DC67A;
+  --gradient-end: #8B5CF6;
+  --gradient-gold: linear-gradient(135deg, #7DC67A 0%, #8B5CF6 100%);
+
+  /* Glass Effect */
+  --glass-bg: rgba(249, 246, 241, 0.85);
+  --glass-border: rgba(232, 228, 220, 0.8);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  color-scheme: light;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Light theme overrides (kept for backward compatibility with toggle if any) */
+.light-theme {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Base Elements */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+}
+
+h1 { font-size: 2.5rem; line-height: 1.1; }
+h2 { font-size: 2rem; line-height: 1.25; }
+h3 { font-size: 1.5rem; line-height: 1.33; }
+
+a {
+  font-weight: 500;
+  color: var(--action-primary);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  filter: brightness(0.9);
+}
+
+/* Glass Panels */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-card);
+  border-radius: 16px;
+  transition: all 0.2s ease;
+}
+
+.glass-card:hover {
+  border-color: var(--border-glow);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+}
+
+/* Custom Scrollbar - Green */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.02);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(125, 198, 122, 0.5);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(125, 198, 122, 0.8);
+}
+
+/* Selection */
+::selection {
+  background: rgba(125, 198, 122, 0.3);
+  color: var(--text-primary);
+}
+
+/* Focus rings */
+:focus-visible {
+  outline: 2px solid var(--action-primary);
+  outline-offset: 2px;
+}
+
+/* Button Base Styling */
+button, .btn {
+  transition: all 0.2s ease;
+}
+
+button:hover:not(:disabled), .btn:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+
+/* Input Fields */
+input, textarea, select {
+  background: #ffffff;
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--action-primary);
+  box-shadow: 0 0 0 3px rgba(125, 198, 122, 0.15);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Shimmer Effect */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--action-primary) 0%,
+    var(--accent-secondary) 25%,
+    var(--action-primary) 50%,
+    var(--accent-secondary) 75%,
+    var(--action-primary) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Glow pulse animation */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(125, 198, 122, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(125, 198, 122, 0.4); }
+}
+
+.glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}

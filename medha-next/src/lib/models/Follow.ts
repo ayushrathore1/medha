@@ -1,0 +1,26 @@
+import mongoose, { Schema, Document, Model, Types } from "mongoose";
+
+export interface IFollow extends Document {
+  _id: Types.ObjectId;
+  follower: Types.ObjectId;
+  following: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const followSchema = new Schema<IFollow>(
+  {
+    follower: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    following: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  },
+  { timestamps: true }
+);
+
+followSchema.index({ follower: 1, following: 1 }, { unique: true });
+followSchema.index({ follower: 1 });
+followSchema.index({ following: 1 });
+
+const Follow: Model<IFollow> =
+  mongoose.models.Follow || mongoose.model<IFollow>("Follow", followSchema);
+
+export default Follow;

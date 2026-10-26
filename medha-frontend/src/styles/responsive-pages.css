@@ -1,0 +1,527 @@
+/* ─── Semester Subjects Page ─── */
+
+/* Collapsed subject cards grid: 3-col desktop → 2-col tablet → 1-col mobile */
+.subject-grid-row {
+  display: grid;
+  gap: 16px;
+}
+
+.subject-grid-row[data-cols="1"] {
+  grid-template-columns: 1fr;
+}
+.subject-grid-row[data-cols="2"] {
+  grid-template-columns: repeat(2, 1fr);
+}
+.subject-grid-row[data-cols="3"] {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 768px) {
+  .subject-grid-row[data-cols="3"],
+  .subject-grid-row[data-cols="2"] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .subject-grid-row[data-cols="3"],
+  .subject-grid-row[data-cols="2"] {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Expanded resource cards: 2×2 desktop → 1-col mobile */
+.resource-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  padding: 8px 28px 28px;
+}
+
+@media (max-width: 768px) {
+  .resource-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 4px 16px 20px;
+  }
+}
+
+/* Subject card header — responsive padding + font */
+.subject-card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 28px 24px;
+}
+
+.subject-card-header.expanded {
+  padding: 24px 28px;
+}
+
+@media (max-width: 480px) {
+  .subject-card-header {
+    padding: 20px 16px;
+    gap: 12px;
+  }
+  .subject-card-header.expanded {
+    padding: 18px 16px;
+  }
+}
+
+/* Subject icon — smaller on mobile */
+.subject-icon-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 480px) {
+  .subject-icon-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+  }
+}
+
+/* Subject title — responsive font */
+.subject-title {
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.3;
+  transition: font-size 0.3s, color 0.3s;
+}
+
+.subject-title.collapsed {
+  font-size: 18px;
+}
+
+.subject-title.expanded {
+  font-size: 22px;
+}
+
+@media (max-width: 480px) {
+  .subject-title.collapsed {
+    font-size: 15px;
+  }
+  .subject-title.expanded {
+    font-size: 17px;
+  }
+}
+
+/* ─── Dashboard ─── */
+
+.dashboard-sem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+@media (max-width: 480px) {
+  .dashboard-sem-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* Sem card responsive padding */
+.sem-card {
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .sem-card {
+    padding: 28px 20px !important;
+    border-radius: 20px !important;
+  }
+}
+
+/* ─── Suggest Page ─── */
+
+.suggest-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+@media (max-width: 480px) {
+  .suggest-container {
+    padding: 16px;
+    align-items: flex-start;
+    padding-top: 60px;
+  }
+}
+
+/* ─── Resource Card ─── */
+
+.resource-card {
+  background: white;
+  border: 1.5px solid var(--border-default);
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .resource-card {
+    padding: 16px;
+    border-radius: 14px;
+    gap: 12px;
+  }
+}
+
+/* Resource card header */
+.resource-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.resource-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 480px) {
+  .resource-card-title {
+    gap: 8px;
+  }
+  .resource-card-title span {
+    font-size: 13px !important;
+  }
+}
+
+/* Resource card icon */
+.resource-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .resource-icon-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
+}
+
+/* YT thumbnails — responsive height */
+.yt-thumb-row {
+  display: flex;
+  gap: 8px;
+}
+
+.yt-thumb {
+  flex: 1;
+  height: 80px;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  background: #1a1a2e;
+  display: block;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+@media (max-width: 480px) {
+  .yt-thumb {
+    height: 60px;
+    border-radius: 8px;
+  }
+}
+
+/* Empty state heights */
+.resource-empty {
+  height: 80px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .resource-empty {
+    height: 60px;
+    border-radius: 8px;
+  }
+}
+
+/* Shimmer skeleton */
+.shimmer-block {
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+/* PYQ year badges — wrap nicely on mobile */
+.pyq-years-wrap {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .pyq-years-wrap {
+    gap: 6px;
+  }
+}
+
+/* View All button — responsive */
+.view-all-btn {
+  padding: 6px 16px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s;
+  border: none;
+}
+
+@media (max-width: 480px) {
+  .view-all-btn {
+    padding: 5px 12px;
+    font-size: 10px;
+    border-radius: 8px;
+  }
+}
+
+/* Notes preview icons */
+.notes-preview-row {
+  display: flex;
+  gap: 10px;
+}
+
+.note-icon-wrapper {
+  width: 48px;
+  height: 60px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .note-icon-wrapper {
+    width: 40px;
+    height: 50px;
+    border-radius: 6px;
+  }
+  .notes-preview-row {
+    gap: 8px;
+  }
+}
+
+/* ─── Chapter Accordion (SubjectYouTube) ─── */
+
+/* Video item responsive */
+.video-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border: 1.5px solid var(--border-default);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  align-items: center;
+}
+
+.video-item-thumb {
+  width: 120px;
+  height: 68px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  background: #f0f0f0;
+}
+
+@media (max-width: 480px) {
+  .video-item {
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  .video-item-thumb {
+    width: 90px;
+    height: 52px;
+    border-radius: 6px;
+  }
+}
+
+/* Chapter accordion header responsive */
+.chapter-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+@media (max-width: 480px) {
+  .chapter-header {
+    gap: 10px;
+    padding: 14px 14px;
+  }
+}
+
+/* Chapter unit badge */
+.chapter-unit-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+}
+
+@media (max-width: 480px) {
+  .chapter-unit-badge {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+}
+
+/* Chapter expanded content padding */
+.chapter-content {
+  padding: 0 20px 18px;
+  border-top: 1px solid var(--border-default);
+}
+
+@media (max-width: 480px) {
+  .chapter-content {
+    padding: 0 14px 14px;
+  }
+}
+
+/* Topic tags responsive text */
+.topic-tag {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+@media (max-width: 480px) {
+  .topic-tag {
+    padding: 3px 8px;
+    font-size: 10px;
+    border-radius: 6px;
+  }
+}
+
+/* ─── Admin Dashboard Tabs ─── */
+
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+.admin-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .admin-tabs {
+    gap: 6px;
+  }
+  .admin-tabs button {
+    white-space: nowrap;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
+
+/* ─── Find All Lectures Button (SubjectYouTube) ─── */
+.find-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+@media (max-width: 480px) {
+  .find-all-btn {
+    padding: 9px 18px;
+    font-size: 12px;
+    border-radius: 10px;
+  }
+}
+
+/* ─── Subject Notes Page ─── */
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 640px) {
+  .notes-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* Note card responsive */
+.note-card {
+  background: var(--bg-tertiary);
+  border: 1.5px solid var(--border-default);
+  border-radius: 16px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+@media (max-width: 480px) {
+  .note-card {
+    padding: 14px;
+    border-radius: 14px;
+  }
+}

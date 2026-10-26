@@ -1,0 +1,162 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --font-display: 'Playfair Display', ui-serif, serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+  --shadow-luxe: 0 30px 80px -30px hsl(24 30% 20% / 0.25), 0 8px 24px -10px hsl(24 30% 20% / 0.08);
+}
+
+/* ─── Light Theme ─── */
+:root {
+  --background: hsl(30 25% 97%);
+  --foreground: hsl(24 14% 10%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(24 14% 10%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(24 14% 10%);
+  --primary: hsl(18 85% 56%);
+  --primary-foreground: hsl(30 25% 98%);
+  --secondary: hsl(30 20% 94%);
+  --secondary-foreground: hsl(24 14% 10%);
+  --muted: hsl(24 10% 45%);
+  --muted-foreground: hsl(24 10% 45%);
+  --accent: hsl(30 30% 92%);
+  --accent-foreground: hsl(24 14% 10%);
+  --destructive: hsl(0 70% 50%);
+  --destructive-foreground: hsl(30 25% 98%);
+  --border: hsl(24 14% 10% / 0.08);
+  --input: hsl(24 14% 10% / 0.12);
+  --ring: hsl(18 85% 56%);
+  --radius: 0.75rem;
+  --cream: hsl(30 35% 94%);
+  --ink: hsl(24 18% 8%);
+}
+
+/* ─── Dark Theme ─── */
+.dark {
+  --background: hsl(24 18% 8%);
+  --foreground: hsl(30 25% 92%);
+  --card: hsl(24 14% 12%);
+  --card-foreground: hsl(30 25% 92%);
+  --popover: hsl(24 14% 12%);
+  --popover-foreground: hsl(30 25% 92%);
+  --primary: hsl(18 70% 60%);
+  --primary-foreground: hsl(24 18% 8%);
+  --secondary: hsl(24 14% 15%);
+  --secondary-foreground: hsl(30 25% 92%);
+  --muted: hsl(24 10% 55%);
+  --muted-foreground: hsl(24 10% 55%);
+  --accent: hsl(24 14% 15%);
+  --accent-foreground: hsl(30 25% 92%);
+  --destructive: hsl(0 65% 55%);
+  --destructive-foreground: hsl(30 25% 98%);
+  --border: hsl(30 25% 92% / 0.1);
+  --input: hsl(30 25% 92% / 0.15);
+  --ring: hsl(18 70% 60%);
+  --radius: 0.75rem;
+  --cream: hsl(24 14% 12%);
+  --ink: hsl(24 18% 8%);
+}
+
+/* ─── Base Styles ─── */
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ─── Custom scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted-foreground);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground);
+}
+
+/* ─── Selection ─── */
+::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* ─── Focus visible ─── */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+/* ─── Performance ─── */
+.gpu {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* ─── Animations ─── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+.animate-fade-up { animation: fade-up 0.9s var(--ease-out-expo) both; }
+.animate-float-y { animation: float-y 7s ease-in-out infinite; }
+.animate-marquee { animation: marquee 40s linear infinite; }
+.animate-pulse-dot { animation: pulse-dot 1.8s ease-in-out infinite; }

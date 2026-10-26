@@ -1,0 +1,867 @@
+/* ===========================================
+   CHARCHA - Doodle Campus Theme
+   A hand-drawn, notebook-style aesthetic
+   =========================================== */
+
+/* Import handwriting fonts */
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Indie+Flower&family=Caveat:wght@400;600&display=swap');
+
+/* ============ CSS Variables ============ */
+:root {
+  /* Paper colors */
+  --charcha-bg: #fef6e4;           /* Cream paper */
+  --charcha-bg-dark: #f8eedf;      /* Slightly darker paper */
+  --charcha-paper: #ffffff;        /* White paper */
+  --charcha-lines: #e8dccc;        /* Notebook lines */
+  
+  /* Ink colors */
+  --charcha-ink: #2d2d2d;          /* Dark ink */
+  --charcha-ink-light: #555555;    /* Light ink */
+  --charcha-ink-faded: #888888;    /* Faded ink */
+  
+  /* Highlighter colors */
+  --charcha-highlight-yellow: #fff176;
+  --charcha-highlight-pink: #f48fb1;
+  --charcha-highlight-green: #a5d6a7;
+  --charcha-highlight-blue: #90caf9;
+  --charcha-highlight-orange: #ffcc80;
+  
+  /* Pencil stroke */
+  --charcha-pencil: #4a4a4a;
+  --charcha-pencil-light: #888888;
+  
+  /* Accent colors */
+  --charcha-accent-1: #ff6b6b;     /* Coral red */
+  --charcha-accent-2: #4ecdc4;     /* Teal */
+  --charcha-accent-3: #ffe66d;     /* Yellow */
+  --charcha-accent-4: #95e1d3;     /* Mint */
+  
+  /* Shadows */
+  --charcha-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+  --charcha-shadow-hover: 4px 4px 0 rgba(0,0,0,0.15);
+  
+  /* Fonts */
+  --charcha-font-hand: 'Patrick Hand', cursive;
+  --charcha-font-title: 'Caveat', cursive;
+  --charcha-font-body: 'Indie Flower', cursive;
+  
+  /* Border radius (sketchy) */
+  --charcha-radius: 3px;
+}
+
+/* Dark theme overrides */
+.dark .charcha-page {
+  --charcha-bg: #1a1a2e;
+  --charcha-bg-dark: #16213e;
+  --charcha-paper: #252542;
+  --charcha-lines: #343458;
+  --charcha-ink: #f0f0f0;
+  --charcha-ink-light: #cccccc;
+  --charcha-ink-faded: #888888;
+}
+
+/* ============ Main Container ============ */
+.charcha-page {
+  min-height: 100vh;
+  background-color: var(--charcha-bg);
+  background-image: 
+    repeating-linear-gradient(
+      transparent,
+      transparent 31px,
+      var(--charcha-lines) 31px,
+      var(--charcha-lines) 32px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 100%
+    );
+  font-family: var(--charcha-font-body);
+  color: var(--charcha-ink);
+  padding: 1rem;
+}
+
+/* ============ Header ============ */
+.charcha-header {
+  text-align: center;
+  padding: 2rem 1rem;
+  position: relative;
+}
+
+.charcha-title {
+  font-family: var(--charcha-font-title);
+  font-size: 4rem;
+  font-weight: 600;
+  color: var(--charcha-ink);
+  margin: 0;
+  text-shadow: 2px 2px 0 var(--charcha-highlight-yellow);
+  letter-spacing: 2px;
+  position: relative;
+  display: inline-block;
+}
+
+.charcha-title::before,
+.charcha-title::after {
+  content: '✏️';
+  position: absolute;
+  font-size: 2rem;
+}
+
+.charcha-title::before {
+  left: -3rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(-15deg);
+}
+
+.charcha-title::after {
+  right: -3rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(15deg);
+}
+
+.charcha-subtitle {
+  font-family: var(--charcha-font-hand);
+  font-size: 1.2rem;
+  color: var(--charcha-ink-light);
+  margin-top: 0.5rem;
+}
+
+/* ============ Sort Tabs ============ */
+.charcha-sort-tabs {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 1.5rem 0;
+  padding: 0 1rem;
+}
+
+.charcha-sort-tab {
+  font-family: var(--charcha-font-hand);
+  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+  border: 2px dashed var(--charcha-pencil-light);
+  background: var(--charcha-paper);
+  color: var(--charcha-ink);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: var(--charcha-radius);
+  position: relative;
+}
+
+.charcha-sort-tab:hover {
+  border-style: solid;
+  transform: translateY(-2px);
+  box-shadow: var(--charcha-shadow);
+}
+
+.charcha-sort-tab.active {
+  background: var(--charcha-highlight-yellow);
+  border-style: solid;
+  border-color: var(--charcha-pencil);
+  font-weight: bold;
+}
+
+/* ============ Category Tags ============ */
+.charcha-categories {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 1rem 0 2rem;
+  padding: 0 1rem;
+}
+
+.charcha-category {
+  font-family: var(--charcha-font-hand);
+  font-size: 1rem;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.charcha-category:hover {
+  transform: scale(1.05);
+}
+
+.charcha-category.active {
+  border-color: var(--charcha-pencil);
+  box-shadow: var(--charcha-shadow);
+}
+
+.charcha-category.doubts {
+  background: var(--charcha-highlight-blue);
+}
+
+.charcha-category.resources {
+  background: var(--charcha-highlight-green);
+}
+
+.charcha-category.memes {
+  background: var(--charcha-highlight-pink);
+}
+
+.charcha-category.off-topic {
+  background: var(--charcha-highlight-yellow);
+}
+
+.charcha-category.announcements {
+  background: var(--charcha-highlight-orange);
+}
+
+/* ============ Layout ============ */
+.charcha-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (max-width: 900px) {
+  .charcha-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .charcha-sidebar {
+    display: none;
+  }
+}
+
+/* ============ Feed ============ */
+.charcha-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ============ Post Card ============ */
+.charcha-post-card {
+  background: var(--charcha-paper);
+  border: 2px solid var(--charcha-pencil-light);
+  border-radius: var(--charcha-radius);
+  padding: 1.25rem;
+  position: relative;
+  transition: all 0.2s ease;
+  /* Sketchy edge effect */
+  box-shadow: 
+    3px 3px 0 var(--charcha-bg-dark),
+    inset 0 0 0 1px rgba(0,0,0,0.02);
+}
+
+.charcha-post-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    5px 5px 0 var(--charcha-bg-dark),
+    inset 0 0 0 1px rgba(0,0,0,0.02);
+  border-color: var(--charcha-pencil);
+}
+
+.charcha-post-card::before {
+  content: '📌';
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  font-size: 1.5rem;
+  transform: rotate(15deg);
+}
+
+/* Post header */
+.charcha-post-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.charcha-post-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px dashed var(--charcha-pencil-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: var(--charcha-bg);
+}
+
+.charcha-post-meta {
+  flex: 1;
+}
+
+.charcha-post-author {
+  font-family: var(--charcha-font-hand);
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--charcha-ink);
+}
+
+.charcha-post-time {
+  font-size: 0.85rem;
+  color: var(--charcha-ink-faded);
+}
+
+.charcha-post-tag {
+  font-family: var(--charcha-font-hand);
+  font-size: 0.85rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+}
+
+/* Post content */
+.charcha-post-title {
+  font-family: var(--charcha-font-title);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--charcha-ink);
+  margin: 0 0 0.5rem;
+  line-height: 1.3;
+}
+
+.charcha-post-content {
+  font-family: var(--charcha-font-body);
+  font-size: 1.1rem;
+  color: var(--charcha-ink-light);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+/* Post actions */
+.charcha-post-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--charcha-lines);
+}
+
+.charcha-vote-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.6rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--charcha-font-hand);
+  font-size: 1rem;
+  color: var(--charcha-ink-light);
+  transition: all 0.2s ease;
+  border-radius: var(--charcha-radius);
+}
+
+.charcha-vote-btn:hover {
+  background: var(--charcha-bg);
+}
+
+.charcha-vote-btn.upvoted {
+  color: var(--charcha-accent-1);
+}
+
+.charcha-vote-btn.downvoted {
+  color: var(--charcha-highlight-blue);
+}
+
+.charcha-vote-btn .icon {
+  font-size: 1.3rem;
+  transition: transform 0.2s ease;
+}
+
+.charcha-vote-btn:hover .icon {
+  transform: scale(1.2);
+}
+
+.charcha-score {
+  font-family: var(--charcha-font-hand);
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--charcha-ink);
+  min-width: 30px;
+  text-align: center;
+}
+
+.charcha-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.6rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--charcha-font-hand);
+  font-size: 0.95rem;
+  color: var(--charcha-ink-light);
+  transition: all 0.2s ease;
+  border-radius: var(--charcha-radius);
+}
+
+.charcha-action-btn:hover {
+  background: var(--charcha-bg);
+  color: var(--charcha-ink);
+}
+
+/* ============ Sidebar ============ */
+.charcha-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.charcha-sidebar-card {
+  background: var(--charcha-paper);
+  border: 2px solid var(--charcha-pencil-light);
+  border-radius: var(--charcha-radius);
+  padding: 1rem;
+  box-shadow: 3px 3px 0 var(--charcha-bg-dark);
+}
+
+.charcha-sidebar-title {
+  font-family: var(--charcha-font-title);
+  font-size: 1.5rem;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px dashed var(--charcha-lines);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ============ Create Post Button ============ */
+.charcha-create-btn {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--charcha-accent-1);
+  color: white;
+  border: 3px solid var(--charcha-ink);
+  font-size: 2rem;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--charcha-ink);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.charcha-create-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--charcha-ink);
+}
+
+.charcha-create-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--charcha-ink);
+}
+
+/* ============ Modal ============ */
+.charcha-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.charcha-modal {
+  background: var(--charcha-paper);
+  border: 3px solid var(--charcha-ink);
+  border-radius: var(--charcha-radius);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 8px 8px 0 var(--charcha-ink);
+  position: relative;
+}
+
+.charcha-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 2px dashed var(--charcha-lines);
+}
+
+.charcha-modal-title {
+  font-family: var(--charcha-font-title);
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.charcha-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: var(--charcha-ink);
+}
+
+.charcha-modal-body {
+  padding: 1.25rem;
+}
+
+/* ============ Form ============ */
+.charcha-form-group {
+  margin-bottom: 1rem;
+}
+
+.charcha-form-label {
+  display: block;
+  font-family: var(--charcha-font-hand);
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+  color: var(--charcha-ink);
+}
+
+.charcha-form-input,
+.charcha-form-textarea,
+.charcha-form-select {
+  width: 100%;
+  padding: 0.75rem;
+  font-family: var(--charcha-font-body);
+  font-size: 1rem;
+  border: 2px dashed var(--charcha-pencil-light);
+  border-radius: var(--charcha-radius);
+  background: var(--charcha-bg);
+  color: var(--charcha-ink);
+  transition: border-color 0.2s ease;
+}
+
+.charcha-form-input:focus,
+.charcha-form-textarea:focus,
+.charcha-form-select:focus {
+  outline: none;
+  border-style: solid;
+  border-color: var(--charcha-pencil);
+}
+
+.charcha-form-textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.charcha-form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--charcha-font-hand);
+  cursor: pointer;
+}
+
+.charcha-form-checkbox input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--charcha-accent-1);
+}
+
+.charcha-submit-btn {
+  width: 100%;
+  padding: 0.75rem;
+  font-family: var(--charcha-font-hand);
+  font-size: 1.2rem;
+  background: var(--charcha-accent-2);
+  color: white;
+  border: 2px solid var(--charcha-ink);
+  border-radius: var(--charcha-radius);
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--charcha-ink);
+  transition: all 0.2s ease;
+}
+
+.charcha-submit-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--charcha-ink);
+}
+
+.charcha-submit-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--charcha-ink);
+}
+
+.charcha-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============ Leaderboard ============ */
+.charcha-leaderboard-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed var(--charcha-lines);
+}
+
+.charcha-leaderboard-item:last-child {
+  border-bottom: none;
+}
+
+.charcha-leaderboard-rank {
+  font-family: var(--charcha-font-title);
+  font-size: 1.3rem;
+  font-weight: bold;
+  width: 30px;
+  text-align: center;
+}
+
+.charcha-leaderboard-rank.gold {
+  color: #ffd700;
+}
+
+.charcha-leaderboard-rank.silver {
+  color: #c0c0c0;
+}
+
+.charcha-leaderboard-rank.bronze {
+  color: #cd7f32;
+}
+
+.charcha-leaderboard-user {
+  flex: 1;
+}
+
+.charcha-leaderboard-name {
+  font-family: var(--charcha-font-hand);
+  font-size: 1rem;
+}
+
+.charcha-leaderboard-karma {
+  font-family: var(--charcha-font-hand);
+  font-size: 0.9rem;
+  color: var(--charcha-ink-faded);
+}
+
+/* ============ Empty State ============ */
+.charcha-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.charcha-empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.charcha-empty-title {
+  font-family: var(--charcha-font-title);
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.charcha-empty-text {
+  font-family: var(--charcha-font-body);
+  font-size: 1.1rem;
+  color: var(--charcha-ink-light);
+}
+
+/* ============ Loading ============ */
+.charcha-loading {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.charcha-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px dashed var(--charcha-pencil);
+  border-radius: 50%;
+  animation: charcha-spin 1s linear infinite;
+}
+
+@keyframes charcha-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============ Animations ============ */
+@keyframes charcha-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.charcha-vote-btn.voted .icon {
+  animation: charcha-bounce 0.3s ease;
+}
+
+/* ============ Responsive ============ */
+@media (max-width: 600px) {
+  .charcha-page {
+    padding: 0.5rem;
+  }
+
+  .charcha-header {
+    padding: 1rem 0.5rem;
+  }
+
+  .charcha-title {
+    font-size: 2.5rem;
+  }
+  
+  .charcha-title::before,
+  .charcha-title::after {
+    display: none;
+  }
+
+  .charcha-subtitle {
+    font-size: 1rem;
+  }
+
+  .charcha-sort-tabs {
+    gap: 0.35rem;
+    padding: 0 0.5rem;
+  }
+
+  .charcha-sort-tab {
+    font-size: 0.95rem;
+    padding: 0.4rem 0.7rem;
+  }
+
+  .charcha-categories {
+    gap: 0.4rem;
+    padding: 0 0.5rem;
+    margin: 0.75rem 0 1.5rem;
+  }
+
+  .charcha-category {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.7rem;
+  }
+
+  .charcha-post-card {
+    padding: 1rem;
+  }
+
+  .charcha-post-card::before {
+    font-size: 1.2rem;
+    top: -10px;
+    right: 12px;
+  }
+
+  .charcha-post-title {
+    font-size: 1.3rem;
+  }
+
+  .charcha-post-content {
+    font-size: 0.95rem;
+  }
+  
+  .charcha-post-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .charcha-action-btn {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.4rem;
+  }
+  
+  .charcha-create-btn {
+    bottom: 80px;
+    right: 16px;
+    width: 52px;
+    height: 52px;
+    font-size: 1.6rem;
+  }
+
+  .charcha-modal {
+    max-width: calc(100vw - 1rem);
+    max-height: 95vh;
+    border-radius: 8px;
+    box-shadow: 4px 4px 0 var(--charcha-ink);
+  }
+
+  .charcha-modal-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .charcha-modal-title {
+    font-size: 1.4rem;
+  }
+
+  .charcha-modal-body {
+    padding: 1rem;
+  }
+
+  .charcha-layout {
+    padding: 0 0.5rem;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+  .charcha-title {
+    font-size: 3rem;
+  }
+
+  .charcha-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .charcha-sidebar {
+    display: none;
+  }
+}
+
+/* ============ Comments ============ */
+.charcha-comment {
+  padding: 1rem 0;
+  border-bottom: 1px dashed var(--charcha-lines);
+}
+
+.charcha-comment:last-child {
+  border-bottom: none;
+}
+
+.charcha-comment-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.charcha-comment-avatar {
+  font-size: 1.3rem;
+}
+
+.charcha-comment-author {
+  font-family: var(--charcha-font-hand);
+  font-weight: bold;
+  color: var(--charcha-ink);
+}
+
+.charcha-comment-time {
+  font-size: 0.8rem;
+  color: var(--charcha-ink-faded);
+}
+
+.charcha-comment-content {
+  font-family: var(--charcha-font-body);
+  font-size: 1rem;
+  color: var(--charcha-ink-light);
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+  white-space: pre-wrap;
+}
+
+.charcha-comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.charcha-replies {
+  margin-top: 0.5rem;
+}
