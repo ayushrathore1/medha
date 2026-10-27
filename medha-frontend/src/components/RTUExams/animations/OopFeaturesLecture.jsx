@@ -20,7 +20,7 @@ const Scene1 = () => {
   const [phase, setPhase] = useState(0);
   useEffect(() => { const t = [setTimeout(() => setPhase(1), 800), setTimeout(() => setPhase(2), 1600)]; return () => t.forEach(clearTimeout); }, []);
   return (
-    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%)" }}>
+    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #0a0a0f 0%, #1F1F1F 50%, #0a0a0f 100%)" }}>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ textAlign: "center", marginBottom: "1.5rem" }}>
         <div style={{ color: colors.accent, fontWeight: 700, fontSize: "12px", letterSpacing: "3px", marginBottom: "0.5rem" }}>CHAPTER 1</div>
         <div style={{ fontSize: "1.5rem", fontWeight: 700, color: colors.text }}>From Chaos to a City</div>
@@ -310,7 +310,7 @@ const Scene10 = () => {
   const [phase, setPhase] = useState(0);
   useEffect(() => { const t = [setTimeout(() => setPhase(1), 1000), setTimeout(() => setPhase(2), 2000)]; return () => t.forEach(clearTimeout); }, []);
   return (
-    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%)" }}>
+    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #0a0a0f 0%, #1F1F1F 50%, #0a0a0f 100%)" }}>
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: "center", marginBottom: "2rem" }}>
         <div style={{ color: colors.textSec, fontSize: "12px" }}>"OOP is not about writing code."</div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: phase >= 1 ? 1 : 0 }} style={{ color: colors.accent, fontSize: "1.3rem", fontWeight: 700, marginTop: "0.5rem" }}>"It is about designing systems."</motion.div>

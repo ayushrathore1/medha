@@ -1,138 +1,54 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import Card from "../components/Common/Card";
-import Button from "../components/Common/Button";
-import Loader from "../components/Common/Loader";
+import React, { useMemo, useState } from "react";
+import RevisionShell from "../components/Revision/RevisionShell";
+import SubjectCard from "../components/Revision/SubjectCard";
+import { SUBJECTS } from "../data/subjectCatalog";
 
-const Subjects = () => {
-  const [subjects, setSubjects] = useState([]);
-  const [newSubject, setNewSubject] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
+export default function Subjects() {
+  const [query, setQuery] = useState("");
+  const [semester, setSemester] = useState("all");
 
-  useEffect(() => {
-    fetchSubjects();
-  }, []);
-
-  const fetchSubjects = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/subjects`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setSubjects(response.data);
-    } catch (error) {
-      console.error("Error fetching subjects:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAddSubject = async (e) => {
-    e.preventDefault();
-    if (!newSubject.trim()) return;
-
-    setSubmitting(true);
-    try {
-      const token = localStorage.getItem("token");
-      await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/subjects`,
-        { name: newSubject },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setNewSubject("");
-      fetchSubjects();
-    } catch (error) {
-      console.error("Error adding subject:", error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleDeleteSubject = async (id) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(
-        `${import.meta.env.VITE_BACKEND_URL}/api/subjects/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      fetchSubjects();
-    } catch (error) {
-      console.error("Error deleting subject:", error);
-    }
-  };
-
-  if (loading) {
-    return <Loader fullScreen />;
-  }
+  const filtered = useMemo(() => {
+    return SUBJECTS.filter((subject) => {
+      const matchesQuery = !query || subject.name.toLowerCase().includes(query.toLowerCase()) || subject.short.toLowerCase().includes(query.toLowerCase());
+      const matchesSem = semester === "all" || String(subject.semester) === semester;
+      return matchesQuery && matchesSem;
+    });
+  }, [query, semester]);
 
   return (
-    <div className="min-h-screen w-full p-6">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-extrabold mb-8" style={{ color: "var(--text-primary)" }}>
-          Subjects
-        </h1>
-
-        {/* Add Subject Form */}
-        <Card className="mb-8">
-          <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--text-primary)" }}>
-            Add New Subject
-          </h2>
-          <form onSubmit={handleAddSubject} className="flex gap-4">
-            <input
-              type="text"
-              value={newSubject}
-              onChange={(e) => setNewSubject(e.target.value)}
-              placeholder="Subject name..."
-              className="flex-1 px-5 py-3 rounded-xl border-2 font-medium focus:outline-none focus:ring-2"
-              style={{
-                backgroundColor: "var(--bg-primary)",
-                borderColor: "var(--accent-secondary)",
-                color: "var(--text-primary)",
-              }}
-            />
-            <Button type="submit" loading={submitting} disabled={submitting || !newSubject.trim()}>
-              Add Subject
-            </Button>
-          </form>
-        </Card>
-
-        {/* Subjects List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {subjects.length === 0 ? (
-            <Card className="col-span-full text-center py-12">
-              <p className="text-xl font-semibold" style={{ color: "var(--text-secondary)" }}>
-                No subjects yet. Add your first subject to get started!
-              </p>
-            </Card>
-          ) : (
-            subjects.map((subject) => (
-              <Card key={subject._id}>
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>
-                    {subject.name}
-                  </h3>
-                  <Button
-                    variant="danger"
-                    size="small"
-                    onClick={() => handleDeleteSubject(subject._id)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-                {subject.noteCount !== undefined && (
-                  <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)" }}>
-                    {subject.noteCount} notes
-                  </p>
-                )}
-              </Card>
-            ))
-          )}
-        </div>
+    <RevisionShell title="Subjects">
+      <p className="mb-5 text-[14px] text-[#5C5C5C]">
+        Third and fourth semester, listed as they appear in the RTU syllabus.
+      </p>
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Filter by name"
+        className="w-full border-b border-[#E5E5E5] bg-transparent py-2 text-[15px] shadow-none outline-none focus:border-[#1F1F1F]"
+      />
+      <div className="mt-4 flex gap-4 text-[13px]">
+        {["all", "3", "4"].map((value) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setSemester(value)}
+            className={`pb-1 ${
+              semester === value ? "border-b border-[#1F1F1F] font-medium text-[#1F1F1F]" : "text-[#8A8A8A]"
+            }`}
+          >
+            {value === "all" ? "All" : value === "3" ? "3rd sem" : "4th sem"}
+          </button>
+        ))}
       </div>
-    </div>
-  );
-};
 
-export default Subjects;
+      <div className="mt-2 border-t border-[#E5E5E5]">
+        {filtered.map((subject) => (
+          <SubjectCard key={subject.slug} subject={subject} />
+        ))}
+        {filtered.length === 0 && (
+          <p className="py-8 text-[14px] text-[#5C5C5C]">No subject by that name.</p>
+        )}
+      </div>
+    </RevisionShell>
+  );
+}

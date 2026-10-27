@@ -31,10 +31,10 @@ const LandingNavbar = ({ studentsOnline }) => {
     <>
       <nav className="landing-nav" style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        background: scrolled ? 'rgba(242,237,228,0.9)' : '#F2EDE4',
+        background: scrolled ? 'rgba(255,255,255,0.9)' : '#FFFFFF',
         backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        borderBottom: scrolled ? '1px solid #E8E4DC' : '1px solid transparent',
-        boxShadow: scrolled ? '0 1px 0 rgba(232,228,220,0.8), 0 4px 20px rgba(242,237,228,0.6)' : 'none',
+        borderBottom: scrolled ? '1px solid #E5E5E5' : '1px solid transparent',
+        boxShadow: scrolled ? '0 1px 0 rgba(229,229,229,0.8), 0 4px 20px rgba(255,255,255,0.6)' : 'none',
         transition: 'all 300ms ease',
         padding: '0 32px',
       }}>
@@ -45,7 +45,7 @@ const LandingNavbar = ({ studentsOnline }) => {
         }}>
           {/* Logo */}
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', zIndex: 200 }}>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 800, fontSize: 22, letterSpacing: '-0.03em', color: '#1A1A2E' }}>
+            <span style={{ fontFamily: "ui-sans-serif, system-ui, sans-serif", fontWeight: 800, fontSize: 22, letterSpacing: '-0.03em', color: '#1F1F1F' }}>
               MEDHA
             </span>
             <span className="logo-dot" style={{
@@ -58,11 +58,11 @@ const LandingNavbar = ({ studentsOnline }) => {
           <div className="nav-links-desktop">
             {navLinks.map(link => (
               <Link key={link.label} to={link.to} style={{
-                fontSize: 15, fontWeight: 400, color: '#1A1A2E',
+                fontSize: 15, fontWeight: 400, color: '#1F1F1F',
                 textDecoration: 'none', transition: 'color 150ms',
               }}
               onMouseEnter={e => e.currentTarget.style.color = '#7DC67A'}
-              onMouseLeave={e => e.currentTarget.style.color = '#1A1A2E'}
+              onMouseLeave={e => e.currentTarget.style.color = '#1F1F1F'}
               >
                 {link.label}
               </Link>
@@ -73,11 +73,11 @@ const LandingNavbar = ({ studentsOnline }) => {
           <div className="nav-right-desktop">
             {/* Login */}
             <Link to="/login" style={{
-              fontSize: 15, fontWeight: 400, color: '#1A1A2E',
+              fontSize: 15, fontWeight: 400, color: '#1F1F1F',
               textDecoration: 'none', transition: 'color 150ms',
             }}
             onMouseEnter={e => e.currentTarget.style.color = '#7DC67A'}
-            onMouseLeave={e => e.currentTarget.style.color = '#1A1A2E'}
+            onMouseLeave={e => e.currentTarget.style.color = '#1F1F1F'}
             >
               Login
             </Link>
@@ -85,7 +85,7 @@ const LandingNavbar = ({ studentsOnline }) => {
             {/* Get Started */}
             <Link to="/register" style={{
               display: 'flex', alignItems: 'center', gap: 8,
-              background: '#1A1A2E', color: 'white',
+              background: '#1F1F1F', color: 'white',
               borderRadius: 999, padding: '10px 20px',
               fontSize: 14, fontWeight: 600, textDecoration: 'none',
               transition: 'transform 150ms',

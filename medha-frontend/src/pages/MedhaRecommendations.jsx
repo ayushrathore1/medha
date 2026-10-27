@@ -29,18 +29,18 @@ import api from "../api/api";
 
 // ─── Design Tokens (matches app theme) ──────────────────────
 const T = {
-  bg: "#F2EDE4",
+  bg: "#FFFFFF",
   bgCard: "white",
-  bgTertiary: "#F9F6F1",
-  text: "#1A1A2E",
+  bgTertiary: "#F6F6F6",
+  text: "#1F1F1F",
   textSecondary: "#6B6B6B",
   textMuted: "#9A9A9A",
-  border: "#E8E4DC",
+  border: "#E5E5E5",
   accent: "#7DC67A",
   accentDark: "#4A9E47",
   accentSecondary: "#A78BFA",
   amber: "#F59E0B",
-  font: "'DM Sans', 'Inter', sans-serif",
+  font: "ui-sans-serif, system-ui, sans-serif",
 };
 
 // ─── Score Circle SVG ───────────────────────────────────────

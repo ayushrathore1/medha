@@ -49,7 +49,7 @@ const Scene1 = () => {
     { icon: "⚡", label: "Inline Functions", color: colors.warning },
   ];
   return (
-    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%)" }}>
+    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #1F1F1F 0%, #16213e 50%, #1F1F1F 100%)" }}>
       <motion.div initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: "center", marginBottom: "2rem" }}>
         <div style={{ color: colors.accent, fontWeight: 700, fontSize: "12px", letterSpacing: "3px", marginBottom: "0.5rem" }}>RTU OOP DEEP DIVE</div>
         <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} style={{ fontSize: "2rem", fontWeight: 700, color: colors.text }}>Versatile Functions in C++</motion.div>

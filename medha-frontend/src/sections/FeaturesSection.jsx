@@ -48,9 +48,9 @@ const FeaturesSection = () => {
     : features.filter(f => f.category === activeTab);
 
   return (
-    <section style={{ background: '#F2EDE4', position: 'relative', padding: '96px 0', overflow: 'hidden' }}>
+    <section style={{ background: '#FFFFFF', position: 'relative', padding: '96px 0', overflow: 'hidden' }}>
       <div className="dot-grid" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }} />
-      <div style={{ position: 'absolute', right: '-2%', bottom: '-5%', fontSize: 300, fontWeight: 900, color: 'rgba(26,26,46,0.025)', lineHeight: 1, pointerEvents: 'none', userSelect: 'none' }}>4</div>
+      <div style={{ position: 'absolute', right: '-2%', bottom: '-5%', fontSize: 300, fontWeight: 900, color: 'rgba(31,31,31,0.025)', lineHeight: 1, pointerEvents: 'none', userSelect: 'none' }}>4</div>
 
       <div className="section-container" style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px', position: 'relative', zIndex: 10 }}>
         {/* Header */}
@@ -70,7 +70,7 @@ const FeaturesSection = () => {
 
           <motion.h2 {...fadeUp} style={{
             fontSize: 'clamp(40px, 4.5vw, 56px)', fontWeight: 800,
-            color: '#1A1A2E', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
+            color: '#1F1F1F', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
           }}>
             Enter the MEDHA Era<span style={{ color: '#F59E0B' }}>.</span>
           </motion.h2>
@@ -84,11 +84,11 @@ const FeaturesSection = () => {
               onClick={() => setActiveTab(tab)}
               style={{
                 padding: '10px 20px', borderRadius: 999, fontSize: 14, fontWeight: 600,
-                border: activeTab === tab ? '1px solid #1A1A2E' : '1px solid rgba(26,26,46,0.1)',
-                background: activeTab === tab ? '#1A1A2E' : 'transparent',
+                border: activeTab === tab ? '1px solid #1F1F1F' : '1px solid rgba(31,31,31,0.1)',
+                background: activeTab === tab ? '#1F1F1F' : 'transparent',
                 color: activeTab === tab ? 'white' : '#6B6B6B',
                 cursor: 'pointer', transition: 'all 150ms',
-                fontFamily: "'DM Sans', sans-serif"
+                fontFamily: "ui-sans-serif, system-ui, sans-serif"
               }}
             >{tab}</button>
           ))}
@@ -114,7 +114,7 @@ const FeaturesSection = () => {
               {feat.popular && (
                 <div style={{
                   position: 'absolute', top: 0, left: 0,
-                  background: '#1A1A2E', color: 'white',
+                  background: '#1F1F1F', color: 'white',
                   fontSize: 10, fontWeight: 700, padding: '6px 14px',
                   borderRadius: '0 0 10px 0', letterSpacing: '0.06em', zIndex: 5
                 }}>MOST POPULAR</div>
@@ -131,11 +131,11 @@ const FeaturesSection = () => {
               {/* Content */}
               <div style={{ padding: 24 }}>
                 <span style={{
-                  display: 'inline-block', background: 'rgba(26,26,46,0.1)', borderRadius: 999,
-                  padding: '4px 12px', fontSize: 11, fontWeight: 600, color: '#1A1A2E',
+                  display: 'inline-block', background: 'rgba(31,31,31,0.1)', borderRadius: 999,
+                  padding: '4px 12px', fontSize: 11, fontWeight: 600, color: '#1F1F1F',
                   marginBottom: 12, letterSpacing: '0.04em'
                 }}>{feat.badge}</span>
-                <div style={{ fontSize: 20, fontWeight: 700, color: '#1A1A2E', letterSpacing: '-0.02em', marginBottom: 6 }}>{feat.title}</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: '#1F1F1F', letterSpacing: '-0.02em', marginBottom: 6 }}>{feat.title}</div>
                 <div style={{ fontSize: 14, color: '#6B6B6B' }}>{feat.sub}</div>
               </div>
             </motion.div>
@@ -160,7 +160,7 @@ const NoteIllustration = ({ bg }) => (
     {/* Arrow */}
     <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%,-50%)', width: 32, height: 32, borderRadius: '50%', background: '#7DC67A', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: 'white', fontWeight: 700, boxShadow: '0 4px 12px rgba(125,198,122,0.4)', zIndex: 3 }}>→</div>
     {/* After note */}
-    <div className="float-delay" style={{ position: 'absolute', right: 16, top: 30, width: 110, height: 140, background: '#1A1A2E', borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', transform: 'rotate(4deg)', padding: 10, overflow: 'hidden' }}>
+    <div className="float-delay" style={{ position: 'absolute', right: 16, top: 30, width: 110, height: 140, background: '#1F1F1F', borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', transform: 'rotate(4deg)', padding: 10, overflow: 'hidden' }}>
       <div style={{ height: 8, background: '#7DC67A', borderRadius: 2, marginBottom: 6, width: '70%' }} />
       {[85,65,75,55,70,60].map((w,i) => <div key={i} style={{ height: 5, background: i%3===0 ? 'rgba(125,198,122,0.4)' : 'rgba(255,255,255,0.1)', borderRadius: 2, marginBottom: 5, width: `${w}%` }} />)}
       <div style={{ marginTop: 8, height: 6, background: 'rgba(245,158,11,0.4)', borderRadius: 2, width: '50%' }} />
@@ -169,7 +169,7 @@ const NoteIllustration = ({ bg }) => (
 );
 
 const PYQIllustration = () => (
-  <div style={{ background: 'rgba(26,26,46,0.06)', borderRadius: 12, padding: 16, height: '100%', paddingTop: 40 }}>
+  <div style={{ background: 'rgba(31,31,31,0.06)', borderRadius: 12, padding: 16, height: '100%', paddingTop: 40 }}>
     <div style={{ fontSize: 10, fontWeight: 600, color: '#4A9E47', letterSpacing: '0.08em', marginBottom: 12 }}>RTU QUESTION FREQUENCY</div>
     {[
       { label: 'Joins', pct: 85, highlighted: true },
@@ -179,11 +179,11 @@ const PYQIllustration = () => (
       { label: 'Views', pct: 55, highlighted: false },
     ].map((bar, i) => (
       <div key={i} style={{ marginBottom: 8 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9, fontWeight: 500, color: bar.highlighted ? '#1A1A2E' : 'rgba(26,26,46,0.4)', marginBottom: 3 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9, fontWeight: 500, color: bar.highlighted ? '#1F1F1F' : 'rgba(31,31,31,0.4)', marginBottom: 3 }}>
           <span>{bar.label}</span><span>{bar.pct}%</span>
         </div>
-        <div style={{ height: 8, background: 'rgba(26,26,46,0.08)', borderRadius: 4, overflow: 'hidden' }}>
-          <div style={{ width: `${bar.pct}%`, height: '100%', background: bar.highlighted ? 'linear-gradient(90deg, #7DC67A, #4A9E47)' : 'rgba(26,26,46,0.15)', borderRadius: 4 }} />
+        <div style={{ height: 8, background: 'rgba(31,31,31,0.08)', borderRadius: 4, overflow: 'hidden' }}>
+          <div style={{ width: `${bar.pct}%`, height: '100%', background: bar.highlighted ? 'linear-gradient(90deg, #7DC67A, #4A9E47)' : 'rgba(31,31,31,0.15)', borderRadius: 4 }} />
         </div>
       </div>
     ))}
@@ -210,18 +210,18 @@ const TutorIllustration = () => (
 );
 
 const ExamPrepIllustration = () => (
-  <div style={{ background: 'rgba(26,26,46,0.08)', borderRadius: 12, padding: 14, height: '100%' }}>
+  <div style={{ background: 'rgba(31,31,31,0.08)', borderRadius: 12, padding: 14, height: '100%' }}>
     <div style={{ fontSize: 9, fontWeight: 700, color: '#8B5CF6', letterSpacing: '0.08em', marginBottom: 10 }}>UNIT PRIORITY MAP</div>
     {[
       { unit: 'Unit 3', priority: 'HIGH', color: '#EF4444', w: '90%' },
       { unit: 'Unit 1', priority: 'HIGH', color: '#F59E0B', w: '80%' },
       { unit: 'Unit 5', priority: 'MEDIUM', color: '#7DC67A', w: '60%' },
       { unit: 'Unit 2', priority: 'MEDIUM', color: '#3B82F6', w: '50%' },
-      { unit: 'Unit 6', priority: 'LOW', color: 'rgba(26,26,46,0.2)', w: '30%' },
+      { unit: 'Unit 6', priority: 'LOW', color: 'rgba(31,31,31,0.2)', w: '30%' },
     ].map((item, i) => (
       <div key={i} style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
-        <div style={{ fontSize: 9, color: '#1A1A2E', width: 36, fontWeight: 500 }}>{item.unit}</div>
-        <div style={{ flex: 1, height: 10, background: 'rgba(26,26,46,0.06)', borderRadius: 5 }}>
+        <div style={{ fontSize: 9, color: '#1F1F1F', width: 36, fontWeight: 500 }}>{item.unit}</div>
+        <div style={{ flex: 1, height: 10, background: 'rgba(31,31,31,0.06)', borderRadius: 5 }}>
           <div style={{ width: item.w, height: '100%', background: item.color, borderRadius: 5 }} />
         </div>
         <div style={{ fontSize: 8, fontWeight: 700, color: item.priority === 'HIGH' ? '#EF4444' : item.priority === 'MEDIUM' ? '#F59E0B' : '#9A9A9A', width: 36 }}>{item.priority}</div>
@@ -229,7 +229,7 @@ const ExamPrepIllustration = () => (
     ))}
     <div style={{ marginTop: 10, padding: '6px 10px', background: 'rgba(139,92,246,0.15)', borderRadius: 6, border: '1px solid rgba(139,92,246,0.3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <span style={{ fontSize: 9, color: '#8B5CF6', fontWeight: 600 }}>EXAM IN</span>
-      <span style={{ fontSize: 13, fontWeight: 800, color: '#1A1A2E' }}>3d 14h</span>
+      <span style={{ fontSize: 13, fontWeight: 800, color: '#1F1F1F' }}>3d 14h</span>
     </div>
   </div>
 );

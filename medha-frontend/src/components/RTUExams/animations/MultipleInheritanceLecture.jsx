@@ -43,7 +43,7 @@ const Scene1 = () => {
   const [phase, setPhase] = useState(0);
   useEffect(() => { const t = [setTimeout(() => setPhase(1), 600), setTimeout(() => setPhase(2), 1200)]; return () => t.forEach(clearTimeout); }, []);
   return (
-    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%)" }}>
+    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #1F1F1F 0%, #16213e 50%, #1F1F1F 100%)" }}>
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: "center", marginBottom: "1.5rem" }}>
         <div style={{ color: colors.accent, fontWeight: 700, fontSize: "12px", letterSpacing: "3px", marginBottom: "0.3rem" }}>RTU OOP DEEP DIVE</div>
         <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} style={{ fontSize: "1.8rem", fontWeight: 700, color: colors.text }}>Multiple Inheritance in C++</motion.div>
@@ -390,7 +390,7 @@ const Scene11 = () => {
   const [phase, setPhase] = useState(0);
   useEffect(() => { const t = [setTimeout(() => setPhase(1), 800), setTimeout(() => setPhase(2), 1600)]; return () => t.forEach(clearTimeout); }, []);
   return (
-    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%)" }}>
+    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #1F1F1F 0%, #0f0f1a 100%)" }}>
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: "center", marginBottom: "1.5rem" }}>
         <div style={{ color: colors.textSec, fontSize: "12px" }}>"The real question is not:</div>
         <div style={{ color: colors.text, fontSize: "14px", fontWeight: 600 }}>Can I use inheritance?"</div>

@@ -44,7 +44,7 @@ const Scene1 = () => {
   useEffect(() => { const t = [setTimeout(() => setPhase(1), 800), setTimeout(() => setPhase(2), 1600)]; return () => t.forEach(clearTimeout); }, []);
   const code = `Student s1;`;
   return (
-    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%)" }}>
+    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #0a0a0f 0%, #1F1F1F 50%, #0a0a0f 100%)" }}>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ textAlign: "center", marginBottom: "1.5rem" }}>
         <div style={{ color: colors.accent, fontWeight: 700, fontSize: "12px", letterSpacing: "3px", marginBottom: "0.5rem" }}>CHAPTER 1</div>
         <div style={{ fontSize: "1.5rem", fontWeight: 700, color: colors.danger }}>The Dangerous Birth</div>
@@ -608,7 +608,7 @@ const Scene17 = () => {
     { emoji: "🟨", name: "COPY", desc: "Cloned birth", color: colors.warning },
   ];
   return (
-    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%)" }}>
+    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #0a0a0f 0%, #1F1F1F 50%, #0a0a0f 100%)" }}>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ textAlign: "center", marginBottom: "1.5rem" }}>
         <div style={{ color: colors.accent, fontWeight: 700, fontSize: "12px", letterSpacing: "3px", marginBottom: "0.5rem" }}>FINAL CHAPTER</div>
         <div style={{ fontSize: "1.5rem", fontWeight: 700, color: colors.text }}>The Three Birth Types</div>

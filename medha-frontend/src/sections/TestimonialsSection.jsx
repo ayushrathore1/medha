@@ -44,7 +44,7 @@ const TestimonialsSection = () => {
   const constraintsRef = useRef(null);
 
   return (
-    <section style={{ background: '#1A1A2E', padding: '96px 0', position: 'relative', overflow: 'hidden' }}>
+    <section style={{ background: '#1F1F1F', padding: '96px 0', position: 'relative', overflow: 'hidden' }}>
       {/* BG */}
       <div className="line-grid" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }} />
       <div className="blob blob-green" style={{ width: 400, height: 400, left: -80, top: -80, position: 'absolute' }} />

@@ -26,7 +26,7 @@ export const ThemeProvider = ({ children }) => {
   const appearance = {
     bgImage: 'none',
     bgOverlay: 0,
-    fontFamily: 'Manrope',
+    fontFamily: 'sans-serif',
     fontScale: 1,
   };
 

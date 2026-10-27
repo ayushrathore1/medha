@@ -174,14 +174,14 @@ const ChatbotWidget = () => {
           100% { transform:scale(1.6); opacity:0; }
         }
         .chatbot-prose h1,.chatbot-prose h2,.chatbot-prose h3 {
-          color:#1A1A2E; font-weight:700; margin:8px 0 4px;
+          color:#1F1F1F; font-weight:700; margin:8px 0 4px;
         }
         .chatbot-prose p { margin:4px 0; }
         .chatbot-prose ul,.chatbot-prose ol { padding-left:16px; margin:4px 0; }
         .chatbot-prose code {
           background:#F0FAF0; padding:1px 4px; border-radius:4px; font-size:13px;
         }
-        .chatbot-prose pre { background:#1A1A2E; color:#F9F6F1; padding:10px; border-radius:8px; overflow-x:auto; }
+        .chatbot-prose pre { background:#1F1F1F; color:#F6F6F6; padding:10px; border-radius:8px; overflow-x:auto; }
         .chatbot-prose pre code { background:transparent; color:inherit; }
         .chatbot-prose a { color:#7DC67A; }
       `}</style>
@@ -201,9 +201,9 @@ const ChatbotWidget = () => {
           width: 52,
           height: 52,
           borderRadius: "50%",
-          background: "#1A1A2E",
+          background: "#1F1F1F",
           border: "2px solid rgba(125,198,122,0.4)",
-          boxShadow: "0 8px 24px rgba(26,26,46,0.3)",
+          boxShadow: "0 8px 24px rgba(31,31,31,0.3)",
           cursor: "pointer",
           zIndex: 1000,
           display: "flex",
@@ -279,17 +279,17 @@ const ChatbotWidget = () => {
               bottom: 84,
               right: 24,
               background: "white",
-              border: "1px solid #E8E4DC",
+              border: "1px solid #E5E5E5",
               borderRadius: "14px 14px 4px 14px",
               padding: "10px 16px",
               fontSize: 13,
-              color: "#1A1A2E",
+              color: "#1F1F1F",
               fontWeight: 500,
               boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
               cursor: "pointer",
               zIndex: 999,
               maxWidth: 220,
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "ui-sans-serif, system-ui, sans-serif",
             }}
           >
             {nudgeText}
@@ -301,7 +301,7 @@ const ChatbotWidget = () => {
                 width: 12,
                 height: 12,
                 background: "white",
-                border: "1px solid #E8E4DC",
+                border: "1px solid #E5E5E5",
                 borderTop: "none",
                 borderLeft: "none",
                 transform: "rotate(45deg)",
@@ -329,20 +329,20 @@ const ChatbotWidget = () => {
               maxHeight: "70vh",
               background: "white",
               borderRadius: 20,
-              border: "1px solid #E8E4DC",
+              border: "1px solid #E5E5E5",
               boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
               display: "flex",
               flexDirection: "column",
               overflow: "hidden",
               zIndex: 999,
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "ui-sans-serif, system-ui, sans-serif",
             }}
           >
             {/* HEADER */}
             <div
               style={{
                 padding: "16px 20px",
-                background: "#1A1A2E",
+                background: "#1F1F1F",
                 display: "flex",
                 alignItems: "center",
                 gap: 10,
@@ -461,11 +461,11 @@ const ChatbotWidget = () => {
                         width: "100%",
                         textAlign: "left",
                         padding: "10px 12px",
-                        background: "#F9F6F1",
-                        border: "1px solid #E8E4DC",
+                        background: "#F6F6F6",
+                        border: "1px solid #E5E5E5",
                         borderRadius: 10,
                         fontSize: 13,
-                        color: "#1A1A2E",
+                        color: "#1F1F1F",
                         cursor: "pointer",
                         marginBottom: 6,
                         transition: "all 150ms",
@@ -476,8 +476,8 @@ const ChatbotWidget = () => {
                         e.target.style.background = "#F0FAF0";
                       }}
                       onMouseLeave={(e) => {
-                        e.target.style.borderColor = "#E8E4DC";
-                        e.target.style.background = "#F9F6F1";
+                        e.target.style.borderColor = "#E5E5E5";
+                        e.target.style.background = "#F6F6F6";
                       }}
                     >
                       {prompt}
@@ -528,8 +528,8 @@ const ChatbotWidget = () => {
                           ? "14px 14px 4px 14px"
                           : "14px 14px 14px 4px",
                       background:
-                        msg.role === "user" ? "#1A1A2E" : "#F9F6F1",
-                      color: msg.role === "user" ? "white" : "#1A1A2E",
+                        msg.role === "user" ? "#1F1F1F" : "#F6F6F6",
+                      color: msg.role === "user" ? "white" : "#1F1F1F",
                       fontSize: 14,
                       lineHeight: 1.6,
                     }}
@@ -547,7 +547,7 @@ const ChatbotWidget = () => {
                               gap: 8,
                               marginTop: 8,
                               paddingTop: 8,
-                              borderTop: "1px solid #E8E4DC",
+                              borderTop: "1px solid #E5E5E5",
                               fontSize: 11,
                               color: "#9A9A9A",
                             }}
@@ -587,7 +587,7 @@ const ChatbotWidget = () => {
                   </div>
                   <div
                     style={{
-                      background: "#F9F6F1",
+                      background: "#F6F6F6",
                       borderRadius: "14px 14px 14px 4px",
                       padding: "12px 16px",
                       display: "flex",
@@ -634,7 +634,7 @@ const ChatbotWidget = () => {
             <div
               style={{
                 padding: "12px 16px",
-                borderTop: "1px solid #E8E4DC",
+                borderTop: "1px solid #E5E5E5",
                 background: "white",
               }}
             >
@@ -651,17 +651,17 @@ const ChatbotWidget = () => {
                   style={{
                     flex: 1,
                     padding: "10px 14px",
-                    border: "1.5px solid #E8E4DC",
+                    border: "1.5px solid #E5E5E5",
                     borderRadius: 10,
                     fontSize: 14,
                     outline: "none",
-                    color: "#1A1A2E",
-                    background: "#F9F6F1",
+                    color: "#1F1F1F",
+                    background: "#F6F6F6",
                     transition: "border-color 200ms",
                     fontFamily: "inherit",
                   }}
                   onFocus={(e) => (e.target.style.borderColor = "#7DC67A")}
-                  onBlur={(e) => (e.target.style.borderColor = "#E8E4DC")}
+                  onBlur={(e) => (e.target.style.borderColor = "#E5E5E5")}
                 />
                 <button
                   type="submit"
@@ -670,7 +670,7 @@ const ChatbotWidget = () => {
                     width: 40,
                     height: 40,
                     borderRadius: 10,
-                    background: inputText.trim() ? "#7DC67A" : "#E8E4DC",
+                    background: inputText.trim() ? "#7DC67A" : "#E5E5E5",
                     border: "none",
                     cursor: inputText.trim() ? "pointer" : "default",
                     display: "flex",

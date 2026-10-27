@@ -1,205 +1,99 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { FaBuildingColumns, FaLock } from "react-icons/fa6";
-
-import { useTour } from "../context/TourContext";
+import React, { useContext, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
-import "../styles/responsive-pages.css";
+import RevisionShell from "../components/Revision/RevisionShell";
+import SearchBar from "../components/Revision/SearchBar";
+import SubjectCard from "../components/Revision/SubjectCard";
+import { POPULAR_TOPICS, SUBJECTS, getRecentSearches, saveRecentSearch } from "../data/subjectCatalog";
 
-const SEMESTERS = [
-  {
-    sem: 3,
-    label: "3rd Semester",
-    active: true,
-    description: "CS / AIDS · RTU",
-    color: "#7DC67A",
-    subjects: 7,
-  },
-  {
-    sem: 4,
-    label: "4th Semester",
-    active: true,
-    description: "CS / AIDS · RTU",
-    color: "#8B5CF6",
-    subjects: 6,
-  },
-];
-
-const Dashboard = () => {
-  const { isGuestMode } = useTour();
+export default function Dashboard() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const recents = useMemo(() => getRecentSearches(), []);
+  const featured = SUBJECTS.slice(0, 6);
 
-  const [greeting, setGreeting] = useState("Good Morning");
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting("Good Morning");
-    else if (hour < 18) setGreeting("Good Afternoon");
-    else setGreeting("Good Evening");
-  }, []);
-
-  const handleSemClick = (sem) => {
-    if (!sem.active) return;
-    navigate(`/semester/${sem.sem}`);
+  const goSearch = (value) => {
+    const next = (value || query).trim();
+    if (!next) {
+      navigate("/search");
+      return;
+    }
+    saveRecentSearch(next);
+    navigate(`/search?q=${encodeURIComponent(next)}`);
   };
 
+  const firstName = user?.name?.split(" ")[0];
+
   return (
-    <div className="min-h-screen w-full px-4 py-8 sm:px-8 bg-transparent">
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-3xl md:text-4xl font-black text-[var(--text-primary)] tracking-tight mb-2">
-            {greeting},{" "}
-            {isGuestMode ? "Alex" : user?.name || "Student"}!{" "}
-            <span className="inline-block animate-wave origin-bottom-right">
-              👋
-            </span>
-          </h1>
-          <p className="text-base md:text-lg text-[var(--text-secondary)] font-medium">
-            Choose your semester to get started.
-          </p>
-        </motion.div>
+    <RevisionShell>
+      <section>
+        <p className="text-[13px] text-[#5C5C5C]">
+          {firstName ? `Hi ${firstName}.` : "RTU CSE / AIDS"}
+        </p>
+        <h1 className="mt-1 max-w-md text-[28px] font-semibold leading-[1.2] tracking-[-0.03em] text-[#1F1F1F]">
+          Notes for the unit you have tomorrow.
+        </h1>
+        <p className="mt-3 max-w-md text-[14px] leading-6 text-[#5C5C5C]">
+          Search a topic. Open the notes, lectures, and GFG pages that match. Sign in only to download or share.
+        </p>
+        <div className="mt-5">
+          <SearchBar value={query} onChange={setQuery} onSubmit={goSearch} />
+        </div>
+      </section>
 
-        {/* Semester Cards */}
-        <div className="dashboard-sem-grid">
-          {SEMESTERS.map((sem, idx) => (
-            <motion.div
-              key={sem.sem}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.12, duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-              whileHover={
-                sem.active
-                  ? {
-                      y: -8,
-                      boxShadow: `0 20px 50px ${sem.color}25`,
-                      borderColor: sem.color,
-                    }
-                  : {}
-              }
-              whileTap={sem.active ? { scale: 0.97 } : {}}
-              onClick={() => handleSemClick(sem)}
-              className="sem-card"
-              style={{
-                position: "relative",
-                background: "var(--bg-tertiary)",
-                border: "1.5px solid var(--border-default)",
-                borderRadius: 28,
-                padding: "40px 32px",
-                cursor: sem.active ? "pointer" : "not-allowed",
-                transition: "all 0.3s ease",
-                opacity: sem.active ? 1 : 0.55,
-                textAlign: "center",
-                overflow: "hidden",
-              }}
+      <section className="mt-8">
+        <div className="mb-3 flex items-baseline justify-between">
+          <h2 className="text-[15px] font-semibold text-[#1F1F1F]">Often searched</h2>
+          <Link to="/subjects" className="text-[13px] text-[#5C5C5C] no-underline">
+            All subjects
+          </Link>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {POPULAR_TOPICS.map((topic) => (
+            <button
+              key={topic.label}
+              type="button"
+              onClick={() => goSearch(topic.query)}
+              className="border border-[#E5E5E5] bg-white px-3 py-1.5 text-[13px] text-[#1F1F1F]"
             >
-              {/* Background glow */}
-              {sem.active && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: -40,
-                    right: -40,
-                    width: 160,
-                    height: 160,
-                    borderRadius: "50%",
-                    background: `${sem.color}08`,
-                    filter: "blur(40px)",
-                    pointerEvents: "none",
-                  }}
-                />
-              )}
-
-              {/* Icon */}
-              <div
-                style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: 22,
-                  background: sem.active
-                    ? `linear-gradient(135deg, ${sem.color}, ${sem.color}cc)`
-                    : "var(--bg-secondary)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  margin: "0 auto 20px",
-                  boxShadow: sem.active
-                    ? `0 8px 24px ${sem.color}30`
-                    : "none",
-                  position: "relative",
-                  zIndex: 1,
-                }}
-              >
-                {sem.active ? (
-                  <FaBuildingColumns size={30} style={{ color: "#fff" }} />
-                ) : (
-                  <FaLock size={24} style={{ color: "var(--text-tertiary)" }} />
-                )}
-              </div>
-
-              <h2
-                style={{
-                  fontSize: 24,
-                  fontWeight: 800,
-                  color: "var(--text-primary)",
-                  margin: "0 0 8px",
-                  position: "relative",
-                  zIndex: 1,
-                }}
-              >
-                {sem.label}
-              </h2>
-
-              <p
-                style={{
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: "var(--text-tertiary)",
-                  margin: "0 0 16px",
-                  position: "relative",
-                  zIndex: 1,
-                }}
-              >
-                {sem.description}
-              </p>
-
-              {/* CTA pill */}
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  padding: "8px 20px",
-                  borderRadius: 100,
-                  background: sem.active
-                    ? `${sem.color}12`
-                    : "var(--bg-secondary)",
-                  color: sem.active ? sem.color : "var(--text-tertiary)",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  position: "relative",
-                  zIndex: 1,
-                }}
-              >
-                {sem.active ? (
-                  <>
-                    {sem.subjects} Subjects · Explore →
-                  </>
-                ) : (
-                  "Coming Soon"
-                )}
-              </div>
-            </motion.div>
+              {topic.label}
+            </button>
           ))}
         </div>
-      </div>
-    </div>
-  );
-};
+      </section>
 
-export default Dashboard;
+      {recents.length > 0 && (
+        <section className="mt-8">
+          <h2 className="mb-3 text-[15px] font-semibold text-[#1F1F1F]">Continue</h2>
+          <div className="flex flex-wrap gap-2">
+            {recents.map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => goSearch(item)}
+                className="bg-[#1F1F1F] px-3 py-1.5 text-[13px] text-white"
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="mt-10">
+        <div className="mb-1 flex items-baseline justify-between">
+          <h2 className="text-[15px] font-semibold text-[#1F1F1F]">Subjects</h2>
+          <Link to="/subjects" className="text-[13px] text-[#5C5C5C] no-underline">
+            See all
+          </Link>
+        </div>
+        <div className="border-t border-[#E5E5E5]">
+          {featured.map((subject) => (
+            <SubjectCard key={subject.slug} subject={subject} compact />
+          ))}
+        </div>
+      </section>
+    </RevisionShell>
+  );
+}

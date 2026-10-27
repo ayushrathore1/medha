@@ -6,6 +6,9 @@ const notifications = require("./notificationController");
 const fs = require("fs");
 const path = require("path");
 const { uploadToCloudinary, CLOUDINARY_MAX_BYTES } = require("../utils/cloudinaryUpload");
+const { extractPdfText, moderateNote } = require("../utils/noteModerator");
+
+const AURA_PER_DOWNLOAD = 3;
 
 // List user's own notes (optionally filtered by subject)
 exports.getNotes = async (req, res) => {
@@ -38,7 +41,7 @@ exports.getPublicNotes = async (req, res) => {
     
     // Use aggregation for searching by owner name
     const pipeline = [
-      { $match: { isPublic: true } },
+      { $match: { isPublic: true, verificationStatus: { $ne: "rejected" } } },
       // Lookup owner details
       {
         $lookup: {
@@ -115,6 +118,8 @@ exports.getPublicNotes = async (req, res) => {
           likes: 1,
           isPublic: 1,
           createdAt: 1,
+          downloadCount: 1,
+          verificationStatus: 1,
           owner: {
             _id: "$ownerData._id",
             name: "$ownerData.name",
@@ -180,8 +185,35 @@ exports.uploadNote = async (req, res) => {
       return res.status(400).json({ error: "No file uploaded." });
     }
 
-    let fileUrl;
     const localFilePath = file.path; // multer saved to ./uploads/notes/
+    const extractedText = /pdf/i.test(file.mimetype)
+      ? await extractPdfText(localFilePath)
+      : "";
+
+    let verdict;
+    try {
+      verdict = await moderateNote({
+        title: title.trim(),
+        subject: subjectTag || "",
+        description: req.body.content || "",
+        filename: file.originalname,
+        extractedText,
+      });
+    } catch (modErr) {
+      console.error("[Upload] Groq check failed:", modErr.message);
+      fs.unlink(localFilePath, () => {});
+      return res.status(503).json({ error: "We could not check this file. Try again in a minute." });
+    }
+
+    if (!verdict.allowed) {
+      fs.unlink(localFilePath, () => {});
+      return res.status(400).json({
+        error: verdict.reason || "This file was not accepted as study material.",
+        verificationStatus: "rejected",
+      });
+    }
+
+    let fileUrl;
 
     // Decide storage strategy based on file size
     if (file.size <= CLOUDINARY_MAX_BYTES) {
@@ -212,8 +244,12 @@ exports.uploadNote = async (req, res) => {
       fileType: file.mimetype,
       originalName: file.originalname,
       content: req.body.content || "",
-      extractedText: req.body.content || "",
-      isPublic: isPublic === 'true' || isPublic === true,
+      extractedText: extractedText || req.body.content || "",
+      isPublic: isPublic === "true" || isPublic === true,
+      verificationStatus: "approved",
+      verificationReason: verdict.reason || "",
+      moderationLabel: verdict.label || "notes",
+      downloadCount: 0,
     };
 
     // Save semester and noteType if provided
@@ -233,7 +269,11 @@ exports.uploadNote = async (req, res) => {
     // Populate owner info before returning
     await note.populate("owner", "name email avatar");
     
-    res.status(201).json({ message: "Note uploaded successfully!", note });
+    res.status(201).json({
+      message: "Note uploaded successfully!",
+      note,
+      verification: { status: "approved", reason: verdict.reason, label: verdict.label },
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -375,13 +415,15 @@ exports.deleteNote = async (req, res) => {
 exports.getNoteById = async (req, res) => {
   try {
     const { noteId } = req.params;
+    const userId = req.user?._id;
     
-    // First try to find as owner
-    let note = await Note.findOne({ _id: noteId, owner: req.user._id })
-      .populate("owner", "name email")
-      .populate("subject", "name");
-    
-    // If not owner, check if it's public
+    let note = null;
+    if (userId) {
+      note = await Note.findOne({ _id: noteId, owner: userId })
+        .populate("owner", "name email")
+        .populate("subject", "name");
+    }
+
     if (!note) {
       note = await Note.findOne({ _id: noteId, isPublic: true })
         .populate("owner", "name email")
@@ -389,7 +431,15 @@ exports.getNoteById = async (req, res) => {
     }
     
     if (!note) return res.status(404).json({ error: "Note not found." });
-    res.json(note);
+    if (note.verificationStatus === "rejected" && String(note.owner?._id || note.owner) !== String(userId || "")) {
+      return res.status(404).json({ error: "Note not found." });
+    }
+
+    const payload = note.toObject();
+    if (!userId) {
+      payload.fileUrl = null;
+    }
+    res.json(payload);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -461,6 +511,48 @@ exports.toggleLike = async (req, res) => {
 
   } catch (err) {
     console.error("Toggle like error:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Record a download and award Aura to the owner (once per downloader)
+exports.recordDownload = async (req, res) => {
+  try {
+    const { noteId } = req.params;
+    const userId = req.user._id;
+
+    const note = await Note.findById(noteId);
+    if (!note || note.verificationStatus === "rejected") {
+      return res.status(404).json({ error: "Note not found." });
+    }
+
+    const isOwner = String(note.owner) === String(userId);
+    if (!note.isPublic && !isOwner) {
+      return res.status(404).json({ error: "Note not found." });
+    }
+
+    const already = (note.downloadedBy || []).some((id) => String(id) === String(userId));
+    let awarded = 0;
+
+    if (!already) {
+      note.downloadedBy = note.downloadedBy || [];
+      note.downloadedBy.push(userId);
+      note.downloadCount = (note.downloadCount || 0) + 1;
+      await note.save();
+
+      if (!isOwner) {
+        awarded = AURA_PER_DOWNLOAD;
+        await User.findByIdAndUpdate(note.owner, { $inc: { auraPoints: awarded } });
+      }
+    }
+
+    res.json({
+      fileUrl: note.fileUrl,
+      downloadCount: note.downloadCount,
+      awarded,
+    });
+  } catch (err) {
+    console.error("Download record error:", err);
     res.status(500).json({ error: err.message });
   }
 };

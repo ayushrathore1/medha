@@ -41,6 +41,7 @@ exports.register = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        auraPoints: user.auraPoints || 0,
       },
       token,
     });
@@ -111,6 +112,7 @@ exports.login = async (req, res) => {
         gender: user.gender,
         isAdmin: user.isAdmin || user.role === "admin" || user.role === "team",
         role: user.role || "user",
+        auraPoints: user.auraPoints || 0,
       },
       token,
     });

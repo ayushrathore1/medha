@@ -17,7 +17,7 @@ const HeroSection = ({ totalStudents }) => {
   const headlines = ["The Last-Minute", "Exam Prep Tool", "for College Students."];
 
   return (
-    <section className="hero-section" style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden', background: '#F2EDE4', paddingTop: 72 }}>
+    <section className="hero-section" style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden', background: '#FFFFFF', paddingTop: 72 }}>
       {/* BG Layer 1 — Grain */}
       <div className="grain" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
 
@@ -37,7 +37,7 @@ const HeroSection = ({ totalStudents }) => {
       {/* BG Layer 4 — Large watermark */}
       <div className="bg-watermark" style={{
         position: 'absolute', userSelect: 'none', pointerEvents: 'none', zIndex: 0,
-        fontSize: 180, fontWeight: 900, color: 'rgba(26,26,46,0.025)',
+        fontSize: 180, fontWeight: 900, color: 'rgba(31,31,31,0.025)',
         letterSpacing: '-0.05em', lineHeight: 1, top: '10%', left: '-2%'
       }}>MEDHA</div>
 
@@ -73,7 +73,7 @@ const HeroSection = ({ totalStudents }) => {
                   transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 + i * 0.15 }}
                   style={{
                     fontSize: 'clamp(32px, 5vw, 72px)', fontWeight: 800,
-                    letterSpacing: '-0.04em', lineHeight: 1.0, color: '#1A1A2E', margin: 0,
+                    letterSpacing: '-0.04em', lineHeight: 1.0, color: '#1F1F1F', margin: 0,
                   }}
                 >
                   {i === 2 ? (
@@ -92,10 +92,10 @@ const HeroSection = ({ totalStudents }) => {
             transition={{ delay: 0.55, duration: 0.6 }}
             style={{ marginTop: 24, fontSize: 17, color: '#6B6B6B', lineHeight: 1.7, maxWidth: 480 }}
           >
-            Everyone's prepping you for <span style={{ fontWeight: 700, color: '#1A1A2E' }}>placements</span>. 
-            But you still have <span style={{ fontWeight: 700, color: '#1A1A2E' }}>4 years of end-sems</span> to survive.{' '}
+            Everyone's prepping you for <span style={{ fontWeight: 700, color: '#1F1F1F' }}>placements</span>. 
+            But you still have <span style={{ fontWeight: 700, color: '#1F1F1F' }}>4 years of end-sems</span> to survive.{' '}
             You game, party, code, chill — and study <span style={{ fontWeight: 700, color: '#7DC67A' }}>1-2 weeks before exams</span>.{' '}
-            <span style={{ fontWeight: 800, color: '#1A1A2E' }}>
+            <span style={{ fontWeight: 800, color: '#1F1F1F' }}>
               That's enough. MEDHA Revision has your back.
             </span>
           </motion.p>
@@ -107,7 +107,7 @@ const HeroSection = ({ totalStudents }) => {
             transition={{ delay: 0.65 }}
             style={{
               marginTop: 32, display: 'flex', alignItems: 'center',
-              background: 'white', borderRadius: 14, border: '1.5px solid #E8E4DC',
+              background: 'white', borderRadius: 14, border: '1.5px solid #E5E5E5',
               boxShadow: '0 4px 20px rgba(0,0,0,0.06)', overflow: 'hidden', width: '100%',
               maxWidth: 460,
             }}
@@ -126,10 +126,10 @@ const HeroSection = ({ totalStudents }) => {
             <input
               placeholder="Find your subject"
               style={{
-                padding: '16px 12px', fontSize: 16, color: '#1A1A2E',
+                padding: '16px 12px', fontSize: 16, color: '#1F1F1F',
                 border: 'none', outline: 'none', background: 'transparent',
                 flex: 1, minWidth: 0,
-                fontFamily: "'DM Sans', sans-serif"
+                fontFamily: "ui-sans-serif, system-ui, sans-serif"
               }}
             />
             <Link to="/rtu-exams" style={{
@@ -155,10 +155,10 @@ const HeroSection = ({ totalStudents }) => {
                 { initials: 'PM', from: '#F59E0B', to: '#D97706' },
                 { initials: 'AK', from: '#8B5CF6', to: '#6D28D9' },
                 { initials: 'DP', from: '#EF4444', to: '#DC2626' },
-                { initials: '+5', from: '#1A1A2E', to: '#2D2D3F' },
+                { initials: '+5', from: '#1F1F1F', to: '#2D2D3F' },
               ].map((a, i) => (
                 <div key={i} style={{
-                  width: 36, height: 36, borderRadius: '50%', border: '2px solid #F2EDE4',
+                  width: 36, height: 36, borderRadius: '50%', border: '2px solid #FFFFFF',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 11, fontWeight: 700, color: 'white',
                   background: `linear-gradient(135deg, ${a.from}, ${a.to})`,
@@ -173,7 +173,7 @@ const HeroSection = ({ totalStudents }) => {
               <span style={{ color: 'white', fontSize: 11, fontWeight: 700 }}>✓</span>
             </div>
             <p style={{ fontSize: 14, color: '#6B6B6B', margin: 0 }}>
-              <span style={{ fontWeight: 700, color: '#1A1A2E' }}>{totalStudents}</span>{' '}students crushed their exams
+              <span style={{ fontWeight: 700, color: '#1F1F1F' }}>{totalStudents}</span>{' '}students crushed their exams
             </p>
           </motion.div>
         </div>

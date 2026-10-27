@@ -19,7 +19,7 @@
 
 /* ── DOT GRID ────────────────────────────────────── */
 .dot-grid {
-  background-image: radial-gradient(circle, rgba(26,26,46,0.12) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(31,31,31,0.12) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -55,7 +55,7 @@
 .blob-green  { background: radial-gradient(circle, #7DC67A 0%, transparent 70%); opacity: 0.12; }
 .blob-amber  { background: radial-gradient(circle, #F59E0B 0%, transparent 70%); opacity: 0.10; }
 .blob-purple { background: radial-gradient(circle, #8B5CF6 0%, transparent 70%); opacity: 0.10; }
-.blob-dark   { background: radial-gradient(circle, #1A1A2E 0%, transparent 70%); opacity: 0.08; }
+.blob-dark   { background: radial-gradient(circle, #1F1F1F 0%, transparent 70%); opacity: 0.08; }
 
 /* ── DECORATIVE RING ─────────────────────────────── */
 .ring {

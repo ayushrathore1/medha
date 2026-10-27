@@ -66,9 +66,9 @@ const chipStyle = (active) => ({
   borderRadius: 10,
   fontSize: 13,
   fontWeight: 600,
-  background: active ? "#1A1A2E" : "white",
+  background: active ? "#1F1F1F" : "white",
   color: active ? "white" : "#6B6B6B",
-  border: `1.5px solid ${active ? "#1A1A2E" : "#E8E4DC"}`,
+  border: `1.5px solid ${active ? "#1F1F1F" : "#E5E5E5"}`,
   cursor: "pointer",
   transition: "all 150ms",
   fontFamily: "inherit",
@@ -87,14 +87,14 @@ const labelStyle = {
 const inputStyle = {
   width: "100%",
   padding: "14px 16px",
-  border: "1.5px solid #E8E4DC",
+  border: "1.5px solid #E5E5E5",
   borderRadius: 12,
   fontSize: 15,
-  color: "#1A1A2E",
-  background: "#F9F6F1",
+  color: "#1F1F1F",
+  background: "#F6F6F6",
   outline: "none",
   transition: "border-color 200ms, box-shadow 200ms",
-  fontFamily: "'DM Sans', sans-serif",
+  fontFamily: "ui-sans-serif, system-ui, sans-serif",
 };
 
 const inputFocus = (e) => {
@@ -103,9 +103,9 @@ const inputFocus = (e) => {
   e.target.style.background = "white";
 };
 const inputBlur = (e) => {
-  e.target.style.borderColor = "#E8E4DC";
+  e.target.style.borderColor = "#E5E5E5";
   e.target.style.boxShadow = "none";
-  e.target.style.background = "#F9F6F1";
+  e.target.style.background = "#F6F6F6";
 };
 
 /* ── NoteCard component ──────────────────────────────────────── */
@@ -120,7 +120,7 @@ const NoteCard = ({ note, onClick, getOwnerName, getSubjectName }) => {
       style={{
         background: "white",
         borderRadius: 16,
-        border: "1.5px solid #E8E4DC",
+        border: "1.5px solid #E5E5E5",
         overflow: "hidden",
         cursor: "pointer",
         transition: "all 200ms",
@@ -143,7 +143,7 @@ const NoteCard = ({ note, onClick, getOwnerName, getSubjectName }) => {
           style={{
             fontSize: 64,
             fontWeight: 900,
-            color: "rgba(26,26,46,0.08)",
+            color: "rgba(31,31,31,0.08)",
             lineHeight: 1,
             userSelect: "none",
           }}
@@ -157,7 +157,7 @@ const NoteCard = ({ note, onClick, getOwnerName, getSubjectName }) => {
             position: "absolute",
             top: 10,
             left: 10,
-            background: fileType === "PDF" ? "#EF4444" : "#1A1A2E",
+            background: fileType === "PDF" ? "#EF4444" : "#1F1F1F",
             color: "white",
             fontSize: 10,
             fontWeight: 700,
@@ -176,7 +176,7 @@ const NoteCard = ({ note, onClick, getOwnerName, getSubjectName }) => {
               position: "absolute",
               top: 10,
               right: 10,
-              background: "rgba(26,26,46,0.6)",
+              background: "rgba(31,31,31,0.6)",
               backdropFilter: "blur(8px)",
               color: "white",
               fontSize: 10,
@@ -234,7 +234,7 @@ const NoteCard = ({ note, onClick, getOwnerName, getSubjectName }) => {
           style={{
             fontSize: 14,
             fontWeight: 600,
-            color: "#1A1A2E",
+            color: "#1F1F1F",
             lineHeight: 1.4,
             marginBottom: 8,
             display: "-webkit-box",
@@ -299,7 +299,7 @@ const NoteDetailModal = ({ note, onClose, getOwnerName, getSubjectName }) => {
         style={{
           position: "fixed",
           inset: 0,
-          background: "rgba(26,26,46,0.6)",
+          background: "rgba(31,31,31,0.6)",
           backdropFilter: "blur(4px)",
           zIndex: 9999,
           display: "flex",
@@ -330,7 +330,7 @@ const NoteDetailModal = ({ note, onClose, getOwnerName, getSubjectName }) => {
             className="notes-modal-header"
             style={{
               padding: "20px 24px",
-              borderBottom: "1px solid #E8E4DC",
+              borderBottom: "1px solid #E5E5E5",
               display: "flex",
               justifyContent: "space-between",
               alignItems: "flex-start",
@@ -359,7 +359,7 @@ const NoteDetailModal = ({ note, onClose, getOwnerName, getSubjectName }) => {
                 style={{
                   fontSize: 20,
                   fontWeight: 700,
-                  color: "#1A1A2E",
+                  color: "#1F1F1F",
                   marginTop: 6,
                   wordBreak: "break-word",
                 }}
@@ -419,7 +419,7 @@ const NoteDetailModal = ({ note, onClose, getOwnerName, getSubjectName }) => {
                   justifyContent: "center",
                   transition: "background 150ms",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#F9F6F1")}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#F6F6F6")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
               >
                 ×
@@ -466,14 +466,14 @@ const NoteDetailModal = ({ note, onClose, getOwnerName, getSubjectName }) => {
                       alignItems: "center",
                       justifyContent: "center",
                       fontSize: 48,
-                      border: "2px solid #E8E4DC",
+                      border: "2px solid #E5E5E5",
                     }}
                   >
                     📄
                   </div>
 
                   <div>
-                    <div style={{ fontSize: 18, fontWeight: 700, color: "#1A1A2E", marginBottom: 6 }}>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: "#1F1F1F", marginBottom: 6 }}>
                       {note.originalName || note.title}
                     </div>
                     <div style={{ fontSize: 13, color: "#9A9A9A" }}>
@@ -533,14 +533,14 @@ const NoteDetailModal = ({ note, onClose, getOwnerName, getSubjectName }) => {
               className="notes-modal-sidebar"
               style={{
                 padding: 20,
-                borderLeft: "1px solid #E8E4DC",
+                borderLeft: "1px solid #E5E5E5",
                 overflowY: "auto",
               }}
             >
               {/* About */}
               <div
                 style={{
-                  background: "#F9F6F1",
+                  background: "#F6F6F6",
                   borderRadius: 12,
                   padding: 16,
                   marginBottom: 16,
@@ -559,7 +559,7 @@ const NoteDetailModal = ({ note, onClose, getOwnerName, getSubjectName }) => {
               {/* AI Summary placeholder (premium) */}
               <div
                 style={{
-                  background: "#1A1A2E",
+                  background: "#1F1F1F",
                   borderRadius: 12,
                   padding: 16,
                   marginBottom: 16,
@@ -594,7 +594,7 @@ const NoteDetailModal = ({ note, onClose, getOwnerName, getSubjectName }) => {
                     alignItems: "center",
                     gap: 4,
                     background: "#F59E0B",
-                    color: "#1A1A2E",
+                    color: "#1F1F1F",
                     borderRadius: 8,
                     padding: "8px 16px",
                     fontSize: 13,
@@ -662,7 +662,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(26,26,46,0.6)",
+        background: "rgba(31,31,31,0.6)",
         backdropFilter: "blur(4px)",
         zIndex: 9999,
         display: "flex",
@@ -695,7 +695,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
             return (
               <React.Fragment key={num}>
                 {i > 0 && (
-                  <div style={{ width: 40, height: 2, background: done ? "#7DC67A" : "#E8E4DC", margin: "0 4px" }} />
+                  <div style={{ width: 40, height: 2, background: done ? "#7DC67A" : "#E5E5E5", margin: "0 4px" }} />
                 )}
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                   <div
@@ -703,8 +703,8 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                       width: 28,
                       height: 28,
                       borderRadius: "50%",
-                      background: done ? "#7DC67A" : active ? "#1A1A2E" : "white",
-                      border: `2px solid ${done ? "#7DC67A" : active ? "#1A1A2E" : "#E8E4DC"}`,
+                      background: done ? "#7DC67A" : active ? "#1F1F1F" : "white",
+                      border: `2px solid ${done ? "#7DC67A" : active ? "#1F1F1F" : "#E5E5E5"}`,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -715,7 +715,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                   >
                     {done ? "✓" : num}
                   </div>
-                  <span style={{ fontSize: 10, color: active ? "#1A1A2E" : "#9A9A9A", fontWeight: 600 }}>{l}</span>
+                  <span style={{ fontSize: 10, color: active ? "#1F1F1F" : "#9A9A9A", fontWeight: 600 }}>{l}</span>
                 </div>
               </React.Fragment>
             );
@@ -725,7 +725,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
         <AnimatePresence mode="wait">
           {step === 1 && (
             <motion.div key="s1" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <h3 style={{ fontSize: 22, fontWeight: 800, color: "#1A1A2E", marginBottom: 4 }}>What are you sharing?</h3>
+              <h3 style={{ fontSize: 22, fontWeight: 800, color: "#1F1F1F", marginBottom: 4 }}>What are you sharing?</h3>
               <p style={{ fontSize: 14, color: "#6B6B6B", marginBottom: 24 }}>This helps students find your note faster.</p>
 
               {/* Title */}
@@ -758,9 +758,9 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                         fontSize: 13,
                         fontWeight: 600,
                         textAlign: "center",
-                        background: semester === s ? "#1A1A2E" : "white",
+                        background: semester === s ? "#1F1F1F" : "white",
                         color: semester === s ? "white" : "#6B6B6B",
-                        border: `1.5px solid ${semester === s ? "#1A1A2E" : "#E8E4DC"}`,
+                        border: `1.5px solid ${semester === s ? "#1F1F1F" : "#E5E5E5"}`,
                         cursor: "pointer",
                         transition: "all 150ms",
                       }}
@@ -801,7 +801,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                         fontWeight: 600,
                         background: noteType === t ? "#F0FAF0" : "white",
                         color: noteType === t ? "#4A9E47" : "#6B6B6B",
-                        border: `1.5px solid ${noteType === t ? "#7DC67A" : "#E8E4DC"}`,
+                        border: `1.5px solid ${noteType === t ? "#7DC67A" : "#E5E5E5"}`,
                         cursor: "pointer",
                         transition: "all 150ms",
                       }}
@@ -818,7 +818,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                 style={{
                   width: "100%",
                   padding: 14,
-                  background: title ? "#1A1A2E" : "#9A9A9A",
+                  background: title ? "#1F1F1F" : "#9A9A9A",
                   color: "white",
                   borderRadius: 12,
                   border: "none",
@@ -834,7 +834,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
 
           {step === 2 && (
             <motion.div key="s2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 30 }}>
-              <h3 style={{ fontSize: 22, fontWeight: 800, color: "#1A1A2E", marginBottom: 4 }}>Upload your file</h3>
+              <h3 style={{ fontSize: 22, fontWeight: 800, color: "#1F1F1F", marginBottom: 4 }}>Upload your file</h3>
               <p style={{ fontSize: 14, color: "#6B6B6B", marginBottom: 24 }}>Drag & drop or click to browse.</p>
 
               {/* Drop zone */}
@@ -844,11 +844,11 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                 onDragLeave={() => setDragOver(false)}
                 onDrop={handleDrop}
                 style={{
-                  border: `2px dashed ${dragOver ? "#7DC67A" : "#E8E4DC"}`,
+                  border: `2px dashed ${dragOver ? "#7DC67A" : "#E5E5E5"}`,
                   borderRadius: 16,
                   padding: "48px 32px",
                   textAlign: "center",
-                  background: dragOver ? "#F0FAF0" : "#F9F6F1",
+                  background: dragOver ? "#F0FAF0" : "#F6F6F6",
                   transition: "all 200ms",
                   cursor: "pointer",
                   marginBottom: 20,
@@ -860,7 +860,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                     height: 64,
                     borderRadius: "50%",
                     background: "white",
-                    border: "2px solid #E8E4DC",
+                    border: "2px solid #E5E5E5",
                     margin: "0 auto 16px",
                     display: "flex",
                     alignItems: "center",
@@ -870,7 +870,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                 >
                   ⬆
                 </div>
-                <div style={{ fontSize: 16, fontWeight: 600, color: "#1A1A2E", marginBottom: 6 }}>
+                <div style={{ fontSize: 16, fontWeight: 600, color: "#1F1F1F", marginBottom: 6 }}>
                   {file ? file.name : "Drop your file here"}
                 </div>
                 <div style={{ fontSize: 13, color: "#9A9A9A", marginBottom: 16 }}>
@@ -880,7 +880,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                   <span
                     style={{
                       display: "inline-block",
-                      background: "#1A1A2E",
+                      background: "#1F1F1F",
                       color: "white",
                       borderRadius: 10,
                       padding: "10px 24px",
@@ -912,7 +912,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                     background: "white",
                     color: "#6B6B6B",
                     borderRadius: 10,
-                    border: "1.5px solid #E8E4DC",
+                    border: "1.5px solid #E5E5E5",
                     fontSize: 14,
                     fontWeight: 600,
                     cursor: "pointer",
@@ -926,7 +926,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                   style={{
                     flex: 1,
                     padding: 14,
-                    background: file ? "#1A1A2E" : "#9A9A9A",
+                    background: file ? "#1F1F1F" : "#9A9A9A",
                     color: "white",
                     borderRadius: 12,
                     border: "none",
@@ -943,13 +943,13 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
 
           {step === 3 && (
             <motion.div key="s3" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 30 }}>
-              <h3 style={{ fontSize: 22, fontWeight: 800, color: "#1A1A2E", marginBottom: 4 }}>Almost done!</h3>
+              <h3 style={{ fontSize: 22, fontWeight: 800, color: "#1F1F1F", marginBottom: 4 }}>Almost done!</h3>
               <p style={{ fontSize: 14, color: "#6B6B6B", marginBottom: 24 }}>Add some context and share.</p>
 
               {/* Preview */}
               <div
                 style={{
-                  background: "#F9F6F1",
+                  background: "#F6F6F6",
                   borderRadius: 12,
                   padding: 16,
                   marginBottom: 16,
@@ -974,7 +974,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                   📄
                 </div>
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: "#1A1A2E" }}>{title}</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: "#1F1F1F" }}>{title}</div>
                   <div style={{ fontSize: 12, color: "#9A9A9A" }}>
                     {file?.name} · {file ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : ""}
                   </div>
@@ -1016,7 +1016,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                     background: "white",
                     color: "#6B6B6B",
                     borderRadius: 10,
-                    border: "1.5px solid #E8E4DC",
+                    border: "1.5px solid #E5E5E5",
                     fontSize: 14,
                     fontWeight: 600,
                     cursor: "pointer",
@@ -1032,7 +1032,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                     flex: 1,
                     padding: 14,
                     background: rights && edu && !uploading ? "#7DC67A" : "#9A9A9A",
-                    color: "#1A1A2E",
+                    color: "#1F1F1F",
                     borderRadius: 12,
                     border: "none",
                     fontSize: 15,
@@ -1157,9 +1157,9 @@ const Notes = () => {
   return (
     <div
       style={{
-        background: "#F2EDE4",
+        background: "#FFFFFF",
         minHeight: "100vh",
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "ui-sans-serif, system-ui, sans-serif",
         position: "relative",
       }}
     >
@@ -1182,14 +1182,14 @@ const Notes = () => {
           .notes-modal-header { padding: 14px 16px !important; }
           .notes-modal-title-text { font-size: 16px !important; }
           .notes-modal-body-grid { grid-template-columns: 1fr !important; min-height: 300px !important; }
-          .notes-modal-sidebar { border-left: none !important; border-top: 1px solid #E8E4DC !important; padding: 16px !important; }
+          .notes-modal-sidebar { border-left: none !important; border-top: 1px solid #E5E5E5 !important; padding: 16px !important; }
           .notes-upload-overlay { padding: 8px !important; }
           .notes-upload-card { border-radius: 16px !important; padding: 20px !important; max-height: 95vh !important; }
         }
         @media (min-width: 641px) and (max-width: 768px) {
           .notes-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .notes-modal-body-grid { grid-template-columns: 1fr !important; }
-          .notes-modal-sidebar { border-left: none !important; border-top: 1px solid #E8E4DC !important; }
+          .notes-modal-sidebar { border-left: none !important; border-top: 1px solid #E5E5E5 !important; }
         }
         @media (min-width: 769px) and (max-width: 1024px) {
           .notes-grid { grid-template-columns: repeat(2, 1fr) !important; }
@@ -1201,7 +1201,7 @@ const Notes = () => {
         style={{
           position: "fixed",
           inset: 0,
-          backgroundImage: "radial-gradient(circle, rgba(26,26,46,0.12) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(circle, rgba(31,31,31,0.12) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
           opacity: 0.3,
           pointerEvents: "none",
@@ -1234,7 +1234,7 @@ const Notes = () => {
         {/* ── HEADER ── */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16 }}>
           <div>
-            <h1 className="notes-header-title" style={{ fontSize: 36, fontWeight: 800, color: "#1A1A2E", letterSpacing: "-0.03em", margin: 0 }}>
+            <h1 className="notes-header-title" style={{ fontSize: 36, fontWeight: 800, color: "#1F1F1F", letterSpacing: "-0.03em", margin: 0 }}>
               Notes Community
             </h1>
             <p style={{ fontSize: 15, color: "#6B6B6B", marginTop: 4 }}>
@@ -1255,7 +1255,7 @@ const Notes = () => {
               alignItems: "center",
               gap: 6,
               padding: "12px 20px",
-              background: "#1A1A2E",
+              background: "#1F1F1F",
               color: "white",
               borderRadius: 12,
               border: "none",
@@ -1315,7 +1315,7 @@ const Notes = () => {
           style={{
             background: "white",
             borderRadius: 16,
-            border: "1px solid #E8E4DC",
+            border: "1px solid #E5E5E5",
             padding: 20,
             marginTop: 24,
             boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
@@ -1375,12 +1375,12 @@ const Notes = () => {
                 style={{
                   width: "100%",
                   padding: "12px 16px 12px 44px",
-                  border: "1.5px solid #E8E4DC",
+                  border: "1.5px solid #E5E5E5",
                   borderRight: "none",
                   borderRadius: "10px 0 0 10px",
                   fontSize: 15,
-                  background: "#F9F6F1",
-                  color: "#1A1A2E",
+                  background: "#F6F6F6",
+                  color: "#1F1F1F",
                   outline: "none",
                   fontFamily: "inherit",
                 }}
@@ -1462,7 +1462,7 @@ const Notes = () => {
               style={{
                 width: 40,
                 height: 40,
-                border: "3px solid #E8E4DC",
+                border: "3px solid #E5E5E5",
                 borderTopColor: "#7DC67A",
                 borderRadius: "50%",
                 margin: "0 auto",

@@ -5,7 +5,7 @@ const auth = require("../middleware/auth");
 const upload = require("../middleware/upload");
 
 // Get all public notes (explore feature) - must be before /:noteId
-router.get("/public", auth, noteController.getPublicNotes);
+router.get("/public", auth.optionalAuth, noteController.getPublicNotes);
 
 // List user's own notes (optionally by subject)
 router.get("/", auth, noteController.getNotes);
@@ -22,6 +22,9 @@ router.patch("/:noteId/visibility", auth, noteController.toggleVisibility);
 // Toggle Like
 router.post("/:noteId/like", auth, noteController.toggleLike);
 
+// Record a download and award Aura
+router.post("/:noteId/download", auth, noteController.recordDownload);
+
 // Update/Edit a note by ID
 router.put("/:noteId", auth, noteController.updateNote);
 
@@ -29,6 +32,6 @@ router.put("/:noteId", auth, noteController.updateNote);
 router.delete("/:noteId", auth, noteController.deleteNote);
 
 // Get a single note by ID
-router.get("/:noteId", auth, noteController.getNoteById);
+router.get("/:noteId", auth.optionalAuth, noteController.getNoteById);
 
 module.exports = router;

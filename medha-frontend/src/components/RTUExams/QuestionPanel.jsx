@@ -115,7 +115,7 @@ const QuestionPanel = ({
       animate={{ opacity: 1, x: 0 }}
     >
       {/* Header - Premium */}
-      <div className="p-5 border-b border-[#2a2a4a] bg-gradient-to-r from-[#1a1a2e] to-[#16213e]">
+      <div className="p-5 border-b border-[#2a2a4a] bg-gradient-to-r from-[#1F1F1F] to-[#16213e]">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <span
@@ -334,7 +334,7 @@ const QuestionPanel = ({
       </div>
 
       {/* Footer Navigation - Premium */}
-      <div className="p-4 border-t border-[#2a2a4a] bg-gradient-to-r from-[#1a1a2e] to-[#16213e] flex items-center justify-between">
+      <div className="p-4 border-t border-[#2a2a4a] bg-gradient-to-r from-[#1F1F1F] to-[#16213e] flex items-center justify-between">
         <button
           onClick={onPrevious}
           disabled={!hasPrevious}
