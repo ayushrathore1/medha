@@ -1,12 +1,10 @@
 /* =============================================
    MEDHA Landing Page — Scoped Reset & Design Tokens
    ============================================= */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,300&display=swap');
-
 .landing-page {
-  font-family: 'DM Sans', sans-serif;
-  color: #1A1A2E;
-  background: #F2EDE4;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  color: #1F1F1F;
+  background: #FFFFFF;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -26,7 +24,7 @@
 .landing-page h5,
 .landing-page h6 {
   color: inherit;
-  font-family: 'DM Sans', sans-serif;
+  font-family: ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Reset inherited link styles */
@@ -54,7 +52,7 @@
 
 /* Reset inherited body pseudo-element backgrounds */
 .landing-page button {
-  font-family: 'DM Sans', sans-serif;
+  font-family: ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Floating badge animation */
@@ -87,7 +85,7 @@
   display: block;
   width: 22px;
   height: 2px;
-  background: #1A1A2E;
+  background: #1F1F1F;
   border-radius: 2px;
   transition: all 300ms ease;
 }
@@ -140,7 +138,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(242, 237, 228, 0.98);
+    background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(20px);
     z-index: 150;
     padding: 100px 32px 40px;
@@ -156,10 +154,10 @@
   .nav-mobile-overlay a {
     font-size: 20px;
     font-weight: 600;
-    color: #1A1A2E;
+    color: #1F1F1F;
     text-decoration: none;
     padding: 16px 0;
-    border-bottom: 1px solid #E8E4DC;
+    border-bottom: 1px solid #E5E5E5;
     transition: color 200ms;
   }
 
@@ -170,7 +168,7 @@
   .nav-mobile-overlay .mobile-cta {
     margin-top: 24px;
     text-align: center;
-    background: #1A1A2E;
+    background: #1F1F1F;
     color: white;
     border-radius: 12px;
     padding: 16px;

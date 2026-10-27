@@ -76,6 +76,29 @@ const NoteSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    verificationStatus: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+    verificationReason: {
+      type: String,
+      default: "",
+    },
+    moderationLabel: {
+      type: String,
+      default: "",
+    },
+    downloadCount: {
+      type: Number,
+      default: 0,
+    },
+    downloadedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );

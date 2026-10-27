@@ -39,10 +39,10 @@ const CTASection = ({ totalStudents }) => {
 
         <motion.div {...fadeUp} className="cta-buttons" style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 40 }}>
           <Link to="/register" className="btn-shine" style={{
-            background: '#7DC67A', color: '#1A1A2E', padding: '16px 32px',
+            background: '#7DC67A', color: '#1F1F1F', padding: '16px 32px',
             borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none',
             cursor: 'pointer', textDecoration: 'none', boxShadow: '0 8px 32px rgba(125,198,122,0.3)',
-            transition: 'all 200ms', display: 'inline-block', fontFamily: "'DM Sans', sans-serif"
+            transition: 'all 200ms', display: 'inline-block', fontFamily: "ui-sans-serif, system-ui, sans-serif"
           }}>
             Start Learning Free →
           </Link>
@@ -50,7 +50,7 @@ const CTASection = ({ totalStudents }) => {
             border: '1px solid rgba(255,255,255,0.3)', color: 'white',
             padding: '16px 32px', borderRadius: 12, fontWeight: 600, fontSize: 16,
             cursor: 'pointer', textDecoration: 'none', transition: 'all 200ms',
-            background: 'transparent', display: 'inline-block', fontFamily: "'DM Sans', sans-serif"
+            background: 'transparent', display: 'inline-block', fontFamily: "ui-sans-serif, system-ui, sans-serif"
           }}>
             Login
           </Link>

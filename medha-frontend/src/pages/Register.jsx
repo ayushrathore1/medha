@@ -7,7 +7,7 @@ import { AuthContext } from "../AuthContext";
 const AuthLeftColumn = ({ preLabel, headline1, headline2, subText }) => (
   <div
     style={{
-      background: "#1A1A2E",
+      background: "#1F1F1F",
       position: "relative",
       overflow: "hidden",
       display: "flex",
@@ -83,7 +83,7 @@ const AuthLeftColumn = ({ preLabel, headline1, headline2, subText }) => (
               fontWeight: 800,
               color: "white",
               letterSpacing: "-0.03em",
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "ui-sans-serif, system-ui, sans-serif",
             }}
           >
             MEDHA
@@ -209,7 +209,7 @@ const AuthLeftColumn = ({ preLabel, headline1, headline2, subText }) => (
               width: 32,
               height: 32,
               borderRadius: "50%",
-              border: "2px solid #1A1A2E",
+              border: "2px solid #1F1F1F",
               background: `linear-gradient(135deg, ${a.from}, ${a.to})`,
               marginLeft: i === 0 ? 0 : -8,
               display: "flex",
@@ -243,7 +243,7 @@ function getStrength(pw) {
 }
 
 const strengthLabels = ["", "Weak", "Fair", "Strong", "Very Strong"];
-const strengthColors = ["#E8E4DC", "#EF4444", "#F59E0B", "#7DC67A", "#7DC67A"];
+const strengthColors = ["#E5E5E5", "#EF4444", "#F59E0B", "#7DC67A", "#7DC67A"];
 
 // ─── Constants ──────────────────────────────────────────────
 const BRANCHES = ["CSE", "ECE", "ME", "Civil", "IT", "AIDS", "CSD", "CAI"];
@@ -280,14 +280,14 @@ const Register = () => {
   const inputStyle = {
     width: "100%",
     padding: "14px 16px",
-    border: "1.5px solid #E8E4DC",
+    border: "1.5px solid #E5E5E5",
     borderRadius: 12,
     fontSize: 15,
-    color: "#1A1A2E",
-    background: "#F9F6F1",
+    color: "#1F1F1F",
+    background: "#F6F6F6",
     outline: "none",
     transition: "border-color 200ms, box-shadow 200ms",
-    fontFamily: "'DM Sans', sans-serif",
+    fontFamily: "ui-sans-serif, system-ui, sans-serif",
   };
   const inputFocus = (e) => {
     e.target.style.borderColor = "#7DC67A";
@@ -295,9 +295,9 @@ const Register = () => {
     e.target.style.background = "white";
   };
   const inputBlur = (e) => {
-    e.target.style.borderColor = "#E8E4DC";
+    e.target.style.borderColor = "#E5E5E5";
     e.target.style.boxShadow = "none";
-    e.target.style.background = "#F9F6F1";
+    e.target.style.background = "#F6F6F6";
   };
   const labelStyle = {
     fontSize: 12,
@@ -475,7 +475,7 @@ const Register = () => {
         display: "grid",
         gridTemplateColumns: "55% 45%",
         minHeight: "100vh",
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "ui-sans-serif, system-ui, sans-serif",
       }}
     >
       <style>{`
@@ -516,7 +516,7 @@ const Register = () => {
       <div
         className="auth-form-panel-reg"
         style={{
-          background: "#F2EDE4",
+          background: "#FFFFFF",
           padding: "40px 48px",
           display: "flex",
           flexDirection: "column",
@@ -531,7 +531,7 @@ const Register = () => {
             position: "absolute",
             inset: 0,
             backgroundImage:
-              "radial-gradient(circle, rgba(26,26,46,0.12) 1px, transparent 1px)",
+              "radial-gradient(circle, rgba(31,31,31,0.12) 1px, transparent 1px)",
             backgroundSize: "24px 24px",
             opacity: 0.3,
             pointerEvents: "none",
@@ -546,7 +546,7 @@ const Register = () => {
             background: "white",
             borderRadius: 20,
             padding: "36px 40px",
-            border: "1px solid #E8E4DC",
+            border: "1px solid #E5E5E5",
             boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
             position: "relative",
             zIndex: 10,
@@ -558,7 +558,7 @@ const Register = () => {
         >
           {/* Mobile logo */}
           <div className="auth-mobile-logo" style={{ display: "none", marginBottom: 16 }}>
-            <span style={{ fontSize: 18, fontWeight: 800, color: "#1A1A2E" }}>MEDHA</span>
+            <span style={{ fontSize: 18, fontWeight: 800, color: "#1F1F1F" }}>MEDHA</span>
             <span
               style={{
                 display: "inline-block",
@@ -601,7 +601,7 @@ const Register = () => {
                 style={{
                   fontSize: 24,
                   fontWeight: 800,
-                  color: "#1A1A2E",
+                  color: "#1F1F1F",
                   marginBottom: 8,
                 }}
               >
@@ -622,7 +622,7 @@ const Register = () => {
               <div
                 style={{
                   height: 4,
-                  background: "#E8E4DC",
+                  background: "#E5E5E5",
                   borderRadius: 2,
                   overflow: "hidden",
                 }}
@@ -646,7 +646,7 @@ const Register = () => {
                 style={{
                   fontSize: 24,
                   fontWeight: 800,
-                  color: "#1A1A2E",
+                  color: "#1F1F1F",
                   marginBottom: 4,
                 }}
               >
@@ -716,7 +716,7 @@ const Register = () => {
                   background:
                     loading || verificationCode.length !== 6
                       ? "#9A9A9A"
-                      : "#1A1A2E",
+                      : "#1F1F1F",
                   color: "white",
                   borderRadius: 12,
                   border: "none",
@@ -768,7 +768,7 @@ const Register = () => {
                 style={{
                   fontSize: 28,
                   fontWeight: 800,
-                  color: "#1A1A2E",
+                  color: "#1F1F1F",
                   letterSpacing: "-0.03em",
                   margin: 0,
                 }}
@@ -802,7 +802,7 @@ const Register = () => {
                       flex: 1,
                       height: 4,
                       borderRadius: 2,
-                      background: step >= s ? "#7DC67A" : "#E8E4DC",
+                      background: step >= s ? "#7DC67A" : "#E5E5E5",
                       transition: "background 300ms",
                     }}
                   />
@@ -919,7 +919,7 @@ const Register = () => {
                                   background:
                                     strength >= level
                                       ? strengthColors[level]
-                                      : "#E8E4DC",
+                                      : "#E5E5E5",
                                   transition: "background 200ms",
                                 }}
                               />
@@ -946,7 +946,7 @@ const Register = () => {
                       style={{
                         width: "100%",
                         padding: 16,
-                        background: "#1A1A2E",
+                        background: "#1F1F1F",
                         color: "white",
                         borderRadius: 12,
                         border: "none",
@@ -1005,10 +1005,10 @@ const Register = () => {
                               fontSize: 13,
                               fontWeight: 600,
                               background:
-                                formData.branch === b ? "#1A1A2E" : "white",
+                                formData.branch === b ? "#1F1F1F" : "white",
                               color:
                                 formData.branch === b ? "white" : "#6B6B6B",
-                              border: `1.5px solid ${formData.branch === b ? "#1A1A2E" : "#E8E4DC"}`,
+                              border: `1.5px solid ${formData.branch === b ? "#1F1F1F" : "#E5E5E5"}`,
                             }}
                           >
                             {b}
@@ -1040,10 +1040,10 @@ const Register = () => {
                               fontWeight: 600,
                               textAlign: "center",
                               background:
-                                formData.semester === s ? "#1A1A2E" : "white",
+                                formData.semester === s ? "#1F1F1F" : "white",
                               color:
                                 formData.semester === s ? "white" : "#6B6B6B",
-                              border: `1.5px solid ${formData.semester === s ? "#1A1A2E" : "#E8E4DC"}`,
+                              border: `1.5px solid ${formData.semester === s ? "#1F1F1F" : "#E5E5E5"}`,
                             }}
                           >
                             {s}
@@ -1079,7 +1079,7 @@ const Register = () => {
                         width: "100%",
                         padding: 16,
                         background: loading ? "#9A9A9A" : "#7DC67A",
-                        color: "#1A1A2E",
+                        color: "#1F1F1F",
                         borderRadius: 12,
                         border: "none",
                         fontSize: 16,

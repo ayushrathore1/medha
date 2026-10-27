@@ -119,6 +119,10 @@ const userSchema = new mongoose.Schema(
       sparse: true,
       trim: true,
     },
+    auraPoints: {
+      type: Number,
+      default: 0,
+    },
     // Karma points from upvotes/downvotes
     karma: {
       type: Number,

@@ -1,37 +1,35 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
-
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: "Poppins", "Manrope", sans-serif;
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
   
-  /* MEDHA Landing Theme Palette */
-  --color-medha-cream: #F2EDE4;
-  --color-medha-navy: #1A1A2E;
-  --color-medha-green: #7DC67A;
+  /* MEDHA white theme */
+  --color-medha-cream: #FFFFFF;
+  --color-medha-navy: #1F1F1F;
+  --color-medha-green: #3F8F4C;
   --color-medha-purple: #8B5CF6;
-  --color-medha-card: #F9F6F1;
-  --color-medha-border: #E8E4DC;
+  --color-medha-card: #FFFFFF;
+  --color-medha-border: #E5E5E5;
 
   /* shadcn/ui color tokens — mapped to Medha theme */
-  --color-background: #F2EDE4;
-  --color-foreground: #1A1A2E;
+  --color-background: #FFFFFF;
+  --color-foreground: #1F1F1F;
 
-  --color-card: #F9F6F1;
-  --color-card-foreground: #1A1A2E;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #1F1F1F;
 
-  --color-popover: #F9F6F1;
-  --color-popover-foreground: #1A1A2E;
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #1F1F1F;
 
-  --color-primary: #7DC67A;
+  --color-primary: #3F8F4C;
   --color-primary-foreground: #ffffff;
 
   --color-secondary: #8B5CF6;
   --color-secondary-foreground: #ffffff;
 
-  --color-muted: #E8E4DC;
+  --color-muted: #F6F6F6;
   --color-muted-foreground: #6B6B6B;
 
   --color-accent: #8B5CF6;
@@ -40,41 +38,41 @@
   --color-destructive: #ef4444;
   --color-destructive-foreground: #ffffff;
 
-  --color-border: #E8E4DC;
-  --color-input: #E8E4DC;
-  --color-ring: #7DC67A;
+  --color-border: #E5E5E5;
+  --color-input: #E5E5E5;
+  --color-ring: #3F8F4C;
 
   --radius: 1rem;
 }
 
 :root {
   --custom-font: var(--font-sans);
-  font-family: var(--custom-font);
+  font-family: ui-sans-serif, system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   /* Backgrounds */
-  --bg-primary: #F2EDE4;
-  --bg-secondary: #E8E4DC;   
-  --bg-tertiary: #F9F6F1;   
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F6F6F6;   
+  --bg-tertiary: #FFFFFF;   
   
   /* Text */
-  --text-primary: #1A1A2E;
+  --text-primary: #1F1F1F;
   --text-secondary: #6B6B6B;
-  --text-tertiary: #9A9A9A;
+  --text-tertiary: #8A8A8A;
   
   /* Actions */
-  --action-primary: #7DC67A;
-  --action-hover: #6ab367;
+  --action-primary: #3F8F4C;
+  --action-hover: #357A41;
   --accent-secondary: #8B5CF6;
 
   /* Borders */
-  --border-default: #E8E4DC;
-  --border-glow: rgba(125, 198, 122, 0.4);
+  --border-default: #E5E5E5;
+  --border-glow: rgba(63, 143, 76, 0.35);
   
   /* Shadows */
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.02);
-  --shadow-glow: 0 0 30px rgba(125, 198, 122, 0.15);
+  --shadow-card: 0 1px 2px rgba(31, 31, 31, 0.04), 0 0 0 1px #E5E5E5;
+  --shadow-glow: 0 0 24px rgba(63, 143, 76, 0.12);
 
   /* Semantic Status Colors */
   --color-success-bg: rgba(125, 198, 122, 0.15);
@@ -90,8 +88,8 @@
   --gradient-gold: linear-gradient(135deg, #7DC67A 0%, #8B5CF6 100%);
 
   /* Glass Effect */
-  --glass-bg: rgba(249, 246, 241, 0.85);
-  --glass-border: rgba(232, 228, 220, 0.8);
+  --glass-bg: rgba(255, 255, 255, 0.92);
+  --glass-border: rgba(229, 229, 229, 0.9);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
 
   color: var(--text-primary);
@@ -114,30 +112,61 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background: var(--bg-primary);
+  font-family: ui-sans-serif, system-ui, sans-serif;
   position: relative;
   overflow-x: hidden;
 }
 
-/* Base Elements */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  color: var(--text-primary);
-}
+/* Base Elements — @layer base so Tailwind utilities can override on revision screens */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
+  }
 
-h1 { font-size: 2.5rem; line-height: 1.1; }
-h2 { font-size: 2rem; line-height: 1.25; }
-h3 { font-size: 1.5rem; line-height: 1.33; }
+  h1 { font-size: 2.5rem; line-height: 1.1; }
+  h2 { font-size: 2rem; line-height: 1.25; }
+  h3 { font-size: 1.5rem; line-height: 1.33; }
 
-a {
-  font-weight: 500;
-  color: var(--action-primary);
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
+  a {
+    font-weight: 500;
+    color: var(--action-primary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
 
-a:hover {
-  filter: brightness(0.9);
+  a:hover {
+    filter: brightness(0.9);
+  }
+
+  button, .btn {
+    transition: all 0.2s ease;
+  }
+
+  button:hover:not(:disabled), .btn:hover:not(:disabled) {
+    filter: brightness(0.95);
+  }
+
+  input, textarea, select {
+    background: #ffffff;
+    border: 1px solid var(--border-default);
+    color: var(--text-primary);
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--action-primary);
+    box-shadow: 0 0 0 3px rgba(125, 198, 122, 0.15);
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  .revision-app a:hover,
+  .revision-app button:hover:not(:disabled) {
+    filter: none;
+  }
 }
 
 /* Glass Panels */
@@ -189,31 +218,6 @@ a:hover {
   outline-offset: 2px;
 }
 
-/* Button Base Styling */
-button, .btn {
-  transition: all 0.2s ease;
-}
-
-button:hover:not(:disabled), .btn:hover:not(:disabled) {
-  filter: brightness(0.95);
-}
-
-/* Input Fields */
-input, textarea, select {
-  background: #ffffff;
-  border: 1px solid var(--border-default);
-  color: var(--text-primary);
-}
-
-input:focus, textarea:focus, select:focus {
-  border-color: var(--action-primary);
-  box-shadow: 0 0 0 3px rgba(125, 198, 122, 0.15);
-}
-
-input::placeholder, textarea::placeholder {
-  color: var(--text-tertiary);
-}
-
 /* Shimmer Effect */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
@@ -244,4 +248,32 @@ input::placeholder, textarea::placeholder {
 
 .glow-pulse {
   animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.revision-app {
+  --ink: #1f1f1f;
+  --muted: #5c5c5c;
+  --line: #e5e5e5;
+  --fill: #f4f4f4;
+  background: #ffffff;
+  color: #1f1f1f;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.revision-app h1,
+.revision-app h2,
+.revision-app h3 {
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #1f1f1f;
+}
+
+.revision-app button,
+.revision-app input,
+.revision-app select,
+.revision-app textarea {
+  font-family: inherit;
 }

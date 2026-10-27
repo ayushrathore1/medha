@@ -236,7 +236,7 @@
   border-radius: 10px;
   overflow: hidden;
   position: relative;
-  background: #1a1a2e;
+  background: #1F1F1F;
   display: block;
   transition: transform 0.15s, box-shadow 0.15s;
 }

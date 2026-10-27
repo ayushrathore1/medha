@@ -25,7 +25,7 @@ const PainSection = () => {
   ];
 
   return (
-    <section style={{ background: '#1A1A2E', position: 'relative', overflow: 'hidden', padding: '96px 0' }}>
+    <section style={{ background: '#1F1F1F', position: 'relative', overflow: 'hidden', padding: '96px 0' }}>
 
       {/* BG — Line grid */}
       <div className="line-grid" style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }} />

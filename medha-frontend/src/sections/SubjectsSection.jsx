@@ -22,17 +22,17 @@ const SubjectIllustration = ({ shape }) => {
     case 'nodes':
       return (
         <>
-          <div style={{ ...commonStyle, width: 40, height: 40, background: 'rgba(26,26,46,0.1)', top: 20, left: 30 }} />
+          <div style={{ ...commonStyle, width: 40, height: 40, background: 'rgba(31,31,31,0.1)', top: 20, left: 30 }} />
           <div style={{ ...commonStyle, width: 24, height: 24, background: 'rgba(125,198,122,0.3)', top: 50, right: 30 }} />
           <div style={{ ...commonStyle, width: 32, height: 32, background: 'rgba(245,158,11,0.2)', bottom: 30, left: '50%', transform: 'translateX(-50%)' }} />
-          <div style={{ position: 'absolute', top: 40, left: 50, width: 60, height: 1, background: 'rgba(26,26,46,0.1)', transform: 'rotate(30deg)' }} />
-          <div style={{ position: 'absolute', top: 60, left: 80, width: 40, height: 1, background: 'rgba(26,26,46,0.1)', transform: 'rotate(-20deg)' }} />
+          <div style={{ position: 'absolute', top: 40, left: 50, width: 60, height: 1, background: 'rgba(31,31,31,0.1)', transform: 'rotate(30deg)' }} />
+          <div style={{ position: 'absolute', top: 60, left: 80, width: 40, height: 1, background: 'rgba(31,31,31,0.1)', transform: 'rotate(-20deg)' }} />
         </>
       );
     case 'chip':
       return (
         <>
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 50, height: 50, border: '2px solid rgba(26,26,46,0.15)', borderRadius: 8 }} />
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 50, height: 50, border: '2px solid rgba(31,31,31,0.15)', borderRadius: 8 }} />
           {Array(4).fill(null).map((_, i) => (
             <div key={i} style={{ position: 'absolute', top: '50%', left: `${20 + i * 20}%`, width: 2, height: 20, background: 'rgba(125,198,122,0.3)', transform: 'translateY(-50%)' }} />
           ))}
@@ -42,7 +42,7 @@ const SubjectIllustration = ({ shape }) => {
       return (
         <>
           {[0, 1, 2].map(i => (
-            <div key={i} style={{ position: 'absolute', left: '50%', top: 20 + i * 36, transform: 'translateX(-50%)', width: 60, height: 28, borderRadius: '50%', border: '2px solid rgba(26,26,46,0.12)', background: `rgba(125,198,122,${0.05 + i * 0.05})` }} />
+            <div key={i} style={{ position: 'absolute', left: '50%', top: 20 + i * 36, transform: 'translateX(-50%)', width: 60, height: 28, borderRadius: '50%', border: '2px solid rgba(31,31,31,0.12)', background: `rgba(125,198,122,${0.05 + i * 0.05})` }} />
           ))}
         </>
       );
@@ -50,15 +50,15 @@ const SubjectIllustration = ({ shape }) => {
       return (
         <>
           {[{x:20,y:30}, {x:70,y:20}, {x:45,y:70}, {x:80,y:65}].map((p,i) => (
-            <div key={i} style={{ ...commonStyle, width: 16, height: 16, background: 'rgba(26,26,46,0.1)', left: `${p.x}%`, top: `${p.y}%` }} />
+            <div key={i} style={{ ...commonStyle, width: 16, height: 16, background: 'rgba(31,31,31,0.1)', left: `${p.x}%`, top: `${p.y}%` }} />
           ))}
-          <div style={{ position: 'absolute', left: '28%', top: '35%', width: 80, height: 1, background: 'rgba(26,26,46,0.08)', transform: 'rotate(-15deg)' }} />
+          <div style={{ position: 'absolute', left: '28%', top: '35%', width: 80, height: 1, background: 'rgba(31,31,31,0.08)', transform: 'rotate(-15deg)' }} />
         </>
       );
     default:
       return (
         <>
-          <div style={{ ...commonStyle, width: 50, height: 50, background: 'rgba(26,26,46,0.06)', top: '30%', left: '30%' }} />
+          <div style={{ ...commonStyle, width: 50, height: 50, background: 'rgba(31,31,31,0.06)', top: '30%', left: '30%' }} />
           <div style={{ position: 'absolute', bottom: 20, right: 20, width: 30, height: 30, background: 'rgba(125,198,122,0.15)', borderRadius: 6 }} />
         </>
       );
@@ -70,7 +70,7 @@ const SubjectsSection = () => {
   const filtered = tab === 'All' ? subjects : subjects.filter(s => s.branch === tab);
 
   return (
-    <section style={{ background: '#F2EDE4', padding: '96px 0', position: 'relative' }}>
+    <section style={{ background: '#FFFFFF', padding: '96px 0', position: 'relative' }}>
       <div className="section-container" style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 48 }}>
@@ -89,7 +89,7 @@ const SubjectsSection = () => {
 
           <motion.h2 {...fadeUp} style={{
             fontSize: 'clamp(40px, 4.5vw, 56px)', fontWeight: 800,
-            color: '#1A1A2E', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
+            color: '#1F1F1F', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
           }}>
             Pick your battlefield<span style={{ color: '#F59E0B' }}>.</span>
           </motion.h2>
@@ -100,10 +100,10 @@ const SubjectsSection = () => {
           {subjectTabs.map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
               padding: '10px 20px', borderRadius: 999, fontSize: 14, fontWeight: 600,
-              border: tab === t ? '1px solid #1A1A2E' : '1px solid rgba(26,26,46,0.1)',
-              background: tab === t ? '#1A1A2E' : 'transparent',
+              border: tab === t ? '1px solid #1F1F1F' : '1px solid rgba(31,31,31,0.1)',
+              background: tab === t ? '#1F1F1F' : 'transparent',
               color: tab === t ? 'white' : '#6B6B6B',
-              cursor: 'pointer', transition: 'all 150ms', fontFamily: "'DM Sans', sans-serif"
+              cursor: 'pointer', transition: 'all 150ms', fontFamily: "ui-sans-serif, system-ui, sans-serif"
             }}>{t}</button>
           ))}
         </motion.div>
@@ -128,7 +128,7 @@ const SubjectsSection = () => {
                 <SubjectIllustration shape={subj.shape} />
               </div>
               <div style={{ padding: '20px 24px' }}>
-                <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A2E', marginBottom: 4 }}>{subj.name}</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: '#1F1F1F', marginBottom: 4 }}>{subj.name}</div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: '#6B6B6B' }}>{subj.units} Units • {subj.branch}</div>
               </div>
             </motion.div>

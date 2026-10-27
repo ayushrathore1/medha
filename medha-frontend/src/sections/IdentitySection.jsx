@@ -53,7 +53,7 @@ const IdentitySection = ({ stats }) => {
 
           <motion.h2 {...fadeUp} style={{
             fontSize: 'clamp(40px, 4.5vw, 56px)', fontWeight: 800,
-            color: '#1A1A2E', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
+            color: '#1F1F1F', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
           }}>
             Your exam prep<br />co-pilot<span style={{ color: '#F59E0B' }}>.</span>
           </motion.h2>
@@ -69,11 +69,11 @@ const IdentitySection = ({ stats }) => {
           <motion.div {...fadeUp} className="identity-stats-row" style={{ display: 'flex', alignItems: 'center', gap: 32, marginTop: 40 }}>
             {[
               { value: stats.totalStudents, label: 'STUDENTS', color: '#7DC67A', live: true },
-              { value: '250+', label: 'TOPICS COVERED', color: '#1A1A2E', live: false },
+              { value: '250+', label: 'TOPICS COVERED', color: '#1F1F1F', live: false },
               { value: '10', label: 'YEARS OF PYQs', color: '#F59E0B', live: false },
             ].map((stat, i) => (
               <React.Fragment key={i}>
-                {i > 0 && <div className="identity-stats-separator" style={{ width: 1, height: 60, background: '#E8E4DC' }} />}
+                {i > 0 && <div className="identity-stats-separator" style={{ width: 1, height: 60, background: '#E5E5E5' }} />}
                 <div>
                   <div className="stat-number" style={{ fontSize: 48, fontWeight: 800, color: stat.color, letterSpacing: '-0.04em', lineHeight: 1 }}>
                     {stat.live ? <CountUp target={stat.value} /> : stat.value}
@@ -90,10 +90,10 @@ const IdentitySection = ({ stats }) => {
           {/* CTA */}
           <motion.div {...fadeUp}>
             <button className="btn-shine" style={{
-              marginTop: 40, background: '#1A1A2E', color: 'white',
+              marginTop: 40, background: '#1F1F1F', color: 'white',
               padding: '16px 40px', borderRadius: 12, fontWeight: 600, fontSize: 16,
               border: 'none', cursor: 'pointer', transition: 'all 200ms',
-              fontFamily: "'DM Sans', sans-serif"
+              fontFamily: "ui-sans-serif, system-ui, sans-serif"
             }}>
               Start Prepping Free →
             </button>
@@ -148,10 +148,10 @@ const IdentitySection = ({ stats }) => {
           <div className="float" style={{
             position: 'absolute', bottom: -16, left: -32,
             background: 'white', borderRadius: 14, padding: '14px 18px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.1)', border: '1px solid #E8E4DC', minWidth: 200
+            boxShadow: '0 8px 32px rgba(0,0,0,0.1)', border: '1px solid #E5E5E5', minWidth: 200
           }}>
             <div style={{ fontSize: 12, color: '#7DC67A', fontWeight: 600, marginBottom: 4 }}>✓ Concept cleared</div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1A2E' }}>Unit 3: SQL Joins</div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#1F1F1F' }}>Unit 3: SQL Joins</div>
             <div style={{ fontSize: 12, color: '#9A9A9A', marginTop: 2 }}>→ Next: Normalization</div>
           </div>
         </motion.div>

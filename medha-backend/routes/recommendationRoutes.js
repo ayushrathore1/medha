@@ -18,7 +18,7 @@ const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const groq = GROQ_API_KEY ? new Groq({ apiKey: GROQ_API_KEY }) : null;
 
 // ─── POST /search — Smart lecture search ────────────────────
-router.post("/search", authMiddleware, async (req, res) => {
+router.post("/search", authMiddleware.optionalAuth, async (req, res) => {
   try {
     const { topic, subject, unit } = req.body;
 

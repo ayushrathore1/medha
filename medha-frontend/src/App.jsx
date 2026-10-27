@@ -37,7 +37,12 @@ const SubjectNotes = React.lazy(() => import("./pages/SubjectNotes"));
 const SemesterSubjects = React.lazy(() => import("./pages/SemesterSubjects"));
 const SuggestPage = React.lazy(() => import("./pages/SuggestPage"));
 const GoogleAuthSuccess = React.lazy(() => import("./pages/GoogleAuthSuccess"));
-const SearchEngine = React.lazy(() => import("./pages/SearchEngine"));
+const SearchEngine = React.lazy(() => import("./pages/RevisionSearch"));
+const SubjectTopics = React.lazy(() => import("./pages/SubjectTopics"));
+const TopicDetail = React.lazy(() => import("./pages/TopicDetail"));
+const NotePreview = React.lazy(() => import("./pages/NotePreview"));
+const UploadNotes = React.lazy(() => import("./pages/UploadNotes"));
+const MyUploads = React.lazy(() => import("./pages/MyUploads"));
 
 // Feature flag for Charcha (discussion forum)
 const CHARCHA_ENABLED = import.meta.env.VITE_ENABLE_CHARCHA === 'true';
@@ -126,8 +131,38 @@ const AppContent = () => {
                 <Route
                   path="/dashboard"
                   element={
+                    <PageTransition><Dashboard /></PageTransition>
+                  }
+                />
+                <Route
+                  path="/subjects/:subjectSlug/:unitSlug"
+                  element={
+                    <PageTransition><TopicDetail /></PageTransition>
+                  }
+                />
+                <Route
+                  path="/subjects/:subjectSlug"
+                  element={
+                    <PageTransition><SubjectTopics /></PageTransition>
+                  }
+                />
+                <Route
+                  path="/note/:noteId"
+                  element={
+                    <PageTransition><NotePreview /></PageTransition>
+                  }
+                />
+                <Route
+                  path="/upload"
+                  element={
+                    <PageTransition><UploadNotes /></PageTransition>
+                  }
+                />
+                <Route
+                  path="/uploads"
+                  element={
                     <ProtectedRoute>
-                      <PageTransition><Dashboard /></PageTransition>
+                      <PageTransition><MyUploads /></PageTransition>
                     </ProtectedRoute>
                   }
                 />
@@ -189,9 +224,7 @@ const AppContent = () => {
                 <Route
                   path="/subjects"
                   element={
-                    <ProtectedRoute>
-                      <PageTransition><Subjects /></PageTransition>
-                    </ProtectedRoute>
+                    <PageTransition><Subjects /></PageTransition>
                   }
                 />
                 <Route

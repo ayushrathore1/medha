@@ -133,7 +133,7 @@ const SubjectPreviewCard = ({ subjectName, index = 0, onTabClick }) => {
                   borderRadius: 10,
                   overflow: "hidden",
                   position: "relative",
-                  background: "#1a1a2e",
+                  background: "#1F1F1F",
                 }}
               >
                 <img
@@ -212,7 +212,7 @@ const SubjectPreviewCard = ({ subjectName, index = 0, onTabClick }) => {
         style={{
           position: "absolute",
           inset: 0,
-          background: "rgba(26, 26, 46, 0.65)",
+          background: "rgba(31, 31, 31, 0.65)",
           backdropFilter: "blur(4px)",
           display: "flex",
           flexDirection: "column",

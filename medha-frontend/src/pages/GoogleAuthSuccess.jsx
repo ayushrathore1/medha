@@ -51,7 +51,7 @@ const GoogleAuthSuccess = () => {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          fontFamily: "'DM Sans', sans-serif",
+          fontFamily: "ui-sans-serif, system-ui, sans-serif",
           background: "var(--bg-primary)",
           color: "var(--text-primary)",
         }}
@@ -74,7 +74,7 @@ const GoogleAuthSuccess = () => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "ui-sans-serif, system-ui, sans-serif",
         background: "var(--bg-primary)",
         color: "var(--text-primary)",
         gap: 16,

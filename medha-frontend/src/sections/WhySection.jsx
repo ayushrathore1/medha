@@ -32,7 +32,7 @@ const WhySection = ({ stats }) => {
 
           <motion.h2 {...fadeUp} style={{
             fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 800,
-            color: '#1A1A2E', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20, marginBottom: 40
+            color: '#1F1F1F', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20, marginBottom: 40
           }}>
             How MEDHA saves<br />your semester<span style={{ color: '#F59E0B' }}>.</span>
           </motion.h2>
@@ -49,7 +49,7 @@ const WhySection = ({ stats }) => {
               >
                 <div style={{ fontSize: 24, flexShrink: 0, marginTop: 2 }}>{item.icon}</div>
                 <div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A2E', marginBottom: 2 }}>{item.title}</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: '#1F1F1F', marginBottom: 2 }}>{item.title}</div>
                   <div style={{ fontSize: 14, color: '#6B6B6B', lineHeight: 1.5 }}>{item.copy}</div>
                 </div>
               </motion.div>
@@ -71,14 +71,14 @@ const WhySection = ({ stats }) => {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', position: 'relative', zIndex: 1 }}>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', opacity: 0.6, marginBottom: 8 }}>LIVE</div>
-                <div style={{ fontSize: 48, fontWeight: 900, color: '#1A1A2E', letterSpacing: '-0.03em', lineHeight: 1 }}>{stats.studentsOnline}</div>
+                <div style={{ fontSize: 48, fontWeight: 900, color: '#1F1F1F', letterSpacing: '-0.03em', lineHeight: 1 }}>{stats.studentsOnline}</div>
                 <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.7, marginTop: 6, display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
                   STUDYING RIGHT NOW <span className="pulse-dot" style={{ display: 'inline-block' }} />
                 </div>
               </div>
-              <div style={{ width: 1, height: 60, background: 'rgba(26,26,46,0.15)' }} />
+              <div style={{ width: 1, height: 60, background: 'rgba(31,31,31,0.15)' }} />
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 48, fontWeight: 900, color: '#1A1A2E', letterSpacing: '-0.03em', lineHeight: 1 }}>250+</div>
+                <div style={{ fontSize: 48, fontWeight: 900, color: '#1F1F1F', letterSpacing: '-0.03em', lineHeight: 1 }}>250+</div>
                 <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.7, marginTop: 6 }}>TOPICS COVERED</div>
               </div>
             </div>
@@ -86,12 +86,12 @@ const WhySection = ({ stats }) => {
 
           {/* Secondary cards */}
           <div className="why-stats-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            <div style={{ background: '#1A1A2E', borderRadius: 16, padding: 24 }}>
+            <div style={{ background: '#1F1F1F', borderRadius: 16, padding: 24 }}>
               <div style={{ fontSize: 36, fontWeight: 900, color: '#F59E0B', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 8 }}>10</div>
               <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.4 }}>Years of RTU Past Papers</div>
             </div>
-            <div style={{ background: '#F2EDE4', borderRadius: 16, padding: 24, border: '1px solid #E8E4DC' }}>
-              <div style={{ fontSize: 36, fontWeight: 900, color: '#1A1A2E', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 8 }}>4.8★</div>
+            <div style={{ background: '#FFFFFF', borderRadius: 16, padding: 24, border: '1px solid #E5E5E5' }}>
+              <div style={{ fontSize: 36, fontWeight: 900, color: '#1F1F1F', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 8 }}>4.8★</div>
               <div style={{ fontSize: 13, color: '#6B6B6B', lineHeight: 1.4 }}>Average student rating</div>
             </div>
           </div>

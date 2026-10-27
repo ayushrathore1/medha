@@ -84,7 +84,7 @@ const Navbar = ({ user, onLogout }) => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: BASE_EASE }}
       style={{
-        background: "rgba(242, 237, 228, 0.94)",
+        background: "rgba(255, 255, 255, 0.94)",
         backdropFilter: "blur(12px)",
         borderBottom: "1px solid var(--border-default)",
       }}
@@ -100,7 +100,7 @@ const Navbar = ({ user, onLogout }) => {
         >
           <span
             style={{
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "ui-sans-serif, system-ui, sans-serif",
               fontWeight: 700,
               fontSize: 21,
               letterSpacing: "-0.03em",

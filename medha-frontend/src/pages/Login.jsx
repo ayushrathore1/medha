@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { AuthContext } from "../AuthContext";
 
@@ -7,7 +7,7 @@ import { AuthContext } from "../AuthContext";
 const AuthLeftColumn = ({ preLabel, headline1, headline2, subText }) => (
   <div
     style={{
-      background: "#1A1A2E",
+      background: "#1F1F1F",
       position: "relative",
       overflow: "hidden",
       display: "flex",
@@ -84,7 +84,7 @@ const AuthLeftColumn = ({ preLabel, headline1, headline2, subText }) => (
               fontWeight: 800,
               color: "white",
               letterSpacing: "-0.03em",
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "ui-sans-serif, system-ui, sans-serif",
             }}
           >
             MEDHA
@@ -217,7 +217,7 @@ const AuthLeftColumn = ({ preLabel, headline1, headline2, subText }) => (
               width: 32,
               height: 32,
               borderRadius: "50%",
-              border: "2px solid #1A1A2E",
+              border: "2px solid #1F1F1F",
               background: `linear-gradient(135deg, ${a.from}, ${a.to})`,
               marginLeft: i === 0 ? 0 : -8,
               display: "flex",
@@ -251,8 +251,10 @@ const Login = () => {
   const [otpStep, setOtpStep] = useState("email"); // "email" | "code"
   const [otpCode, setOtpCode] = useState("");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { login } = useContext(AuthContext);
   const baseUrl = import.meta.env.VITE_BACKEND_URL;
+  const nextPath = searchParams.get("next") || "/dashboard";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -278,7 +280,7 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         login(data.user);
-        navigate("/dashboard");
+        navigate(nextPath);
       } else {
         setError(data.message || "Login failed");
       }
@@ -337,7 +339,7 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         login(data.user);
-        navigate("/dashboard");
+        navigate(nextPath);
       } else {
         setError(data.message || "Verification failed");
       }
@@ -354,14 +356,14 @@ const Login = () => {
   const inputStyle = {
     width: "100%",
     padding: "14px 16px",
-    border: "1.5px solid #E8E4DC",
+    border: "1.5px solid #E5E5E5",
     borderRadius: 12,
     fontSize: 15,
-    color: "#1A1A2E",
-    background: "#F9F6F1",
+    color: "#1F1F1F",
+    background: "#F6F6F6",
     outline: "none",
     transition: "border-color 200ms, box-shadow 200ms",
-    fontFamily: "'DM Sans', sans-serif",
+    fontFamily: "ui-sans-serif, system-ui, sans-serif",
   };
 
   const inputFocus = (e) => {
@@ -370,9 +372,9 @@ const Login = () => {
     e.target.style.background = "white";
   };
   const inputBlur = (e) => {
-    e.target.style.borderColor = "#E8E4DC";
+    e.target.style.borderColor = "#E5E5E5";
     e.target.style.boxShadow = "none";
-    e.target.style.background = "#F9F6F1";
+    e.target.style.background = "#F6F6F6";
   };
 
   const tabStyle = (active) => ({
@@ -381,12 +383,12 @@ const Login = () => {
     fontSize: 13,
     fontWeight: 600,
     border: "none",
-    borderBottom: active ? "2px solid #1A1A2E" : "2px solid transparent",
+    borderBottom: active ? "2px solid #1F1F1F" : "2px solid transparent",
     background: "none",
-    color: active ? "#1A1A2E" : "#9A9A9A",
+    color: active ? "#1F1F1F" : "#9A9A9A",
     cursor: "pointer",
     transition: "all 200ms",
-    fontFamily: "'DM Sans', sans-serif",
+    fontFamily: "ui-sans-serif, system-ui, sans-serif",
   });
 
   return (
@@ -396,7 +398,7 @@ const Login = () => {
         display: "grid",
         gridTemplateColumns: "55% 45%",
         minHeight: "100vh",
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "ui-sans-serif, system-ui, sans-serif",
       }}
     >
       <style>{`
@@ -439,7 +441,7 @@ const Login = () => {
       <div
         className="auth-form-panel"
         style={{
-          background: "#F2EDE4",
+          background: "#FFFFFF",
           padding: "60px 48px",
           display: "flex",
           flexDirection: "column",
@@ -453,7 +455,7 @@ const Login = () => {
             position: "absolute",
             inset: 0,
             backgroundImage:
-              "radial-gradient(circle, rgba(26,26,46,0.12) 1px, transparent 1px)",
+              "radial-gradient(circle, rgba(31,31,31,0.12) 1px, transparent 1px)",
             backgroundSize: "24px 24px",
             opacity: 0.3,
             pointerEvents: "none",
@@ -469,7 +471,7 @@ const Login = () => {
             background: "white",
             borderRadius: 20,
             padding: 40,
-            border: "1px solid #E8E4DC",
+            border: "1px solid #E5E5E5",
             boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
             position: "relative",
             zIndex: 10,
@@ -488,7 +490,7 @@ const Login = () => {
               style={{
                 fontSize: 18,
                 fontWeight: 800,
-                color: "#1A1A2E",
+                color: "#1F1F1F",
                 letterSpacing: "-0.03em",
               }}
             >
@@ -511,7 +513,7 @@ const Login = () => {
             style={{
               fontSize: 28,
               fontWeight: 800,
-              color: "#1A1A2E",
+              color: "#1F1F1F",
               letterSpacing: "-0.03em",
               margin: 0,
             }}
@@ -533,7 +535,7 @@ const Login = () => {
           <div
             style={{
               display: "flex",
-              borderBottom: "1px solid #E8E4DC",
+              borderBottom: "1px solid #E5E5E5",
               marginBottom: 24,
             }}
           >
@@ -683,7 +685,7 @@ const Login = () => {
                 style={{
                   width: "100%",
                   padding: 16,
-                  background: loading ? "#2D2D3F" : "#1A1A2E",
+                  background: loading ? "#2D2D3F" : "#1F1F1F",
                   color: "white",
                   borderRadius: 12,
                   border: "none",
@@ -786,7 +788,7 @@ const Login = () => {
                   }}
                 >
                   Enter the 6-digit code sent to{" "}
-                  <strong style={{ color: "#1A1A2E" }}>{email}</strong>
+                  <strong style={{ color: "#1F1F1F" }}>{email}</strong>
                 </p>
               </div>
 

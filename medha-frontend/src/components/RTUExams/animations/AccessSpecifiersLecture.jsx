@@ -43,7 +43,7 @@ const Scene1 = () => {
   const [phase, setPhase] = useState(0);
   useEffect(() => { const t = [setTimeout(() => setPhase(1), 800)]; return () => t.forEach(clearTimeout); }, []);
   return (
-    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%)" }}>
+    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #0a0a0f 0%, #1F1F1F 50%, #0a0a0f 100%)" }}>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ textAlign: "center", marginBottom: "1.5rem" }}>
         <div style={{ color: colors.accent, fontWeight: 700, fontSize: "12px", letterSpacing: "3px", marginBottom: "0.5rem" }}>CHAPTER 1</div>
         <div style={{ fontSize: "1.5rem", fontWeight: 700, color: colors.text }}>The Game World Is Born 🎮</div>
@@ -474,7 +474,7 @@ const Scene15 = () => {
   const code = `GameItem inventory[10];
 // durability = ❓`;
   return (
-    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%)" }}>
+    <div style={{ ...containerStyle, background: "linear-gradient(135deg, #0a0a0f 0%, #1F1F1F 50%, #0a0a0f 100%)" }}>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ textAlign: "center", marginBottom: "1.5rem" }}>
         <div style={{ color: colors.accent, fontWeight: 700, fontSize: "12px", letterSpacing: "3px", marginBottom: "0.5rem" }}>ENDING</div>
         <div style={{ fontSize: "1.5rem", fontWeight: 700, color: colors.text }}>The Next Mystery 🔮</div>
