@@ -5,7 +5,7 @@ import { fadeUp, staggerChild } from '../lib/motionPresets';
 const features = [
   {
     bg: '#E8F1FF',
-    height: 480,
+    height: 440,
     badge: '2 min',
     title: 'Turn notes into revision',
     sub: 'Organise key ideas into quick, clear revision sheets',
@@ -13,7 +13,7 @@ const features = [
   },
   {
     bg: '#DCEAFF',
-    height: 560,
+    height: 460,
     badge: 'RTU Focused',
     title: 'Find patterns in past papers',
     sub: 'Spot recurring topics and prioritise your revision',
@@ -60,10 +60,10 @@ const FeaturesSection = () => {
               display: 'inline-flex', alignItems: 'center', gap: 8,
               background: 'rgba(19,184,212,0.1)', border: '1px solid rgba(19,184,212,0.25)',
               borderRadius: 999, padding: '6px 16px',
-              fontSize: 11, fontWeight: 600, color: '#13B8D4',
+              fontSize: 11, fontWeight: 600, color: '#2563EB',
               textTransform: 'uppercase', letterSpacing: '0.1em'
             }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#13B8D4' }} />
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#2563EB' }} />
               FEATURES
             </span>
           </motion.div>
@@ -84,9 +84,9 @@ const FeaturesSection = () => {
               onClick={() => setActiveTab(tab)}
               style={{
                 padding: '10px 20px', borderRadius: 999, fontSize: 14, fontWeight: 600,
-                border: activeTab === tab ? '1px solid #1F1F1F' : '1px solid rgba(31,31,31,0.1)',
-                background: activeTab === tab ? '#1F1F1F' : 'transparent',
-                color: activeTab === tab ? 'white' : '#6B6B6B',
+                border: activeTab === tab ? '1px solid #2563EB' : '1px solid #DCE7F5',
+                background: activeTab === tab ? '#10233F' : '#FFFFFF',
+                color: activeTab === tab ? 'white' : '#52647A',
                 cursor: 'pointer', transition: 'all 150ms',
                 fontFamily: "ui-sans-serif, system-ui, sans-serif"
               }}
@@ -114,7 +114,7 @@ const FeaturesSection = () => {
               {feat.popular && (
                 <div style={{
                   position: 'absolute', top: 0, left: 0,
-                  background: '#1F1F1F', color: 'white',
+                  background: '#10233F', color: 'white',
                   fontSize: 10, fontWeight: 700, padding: '6px 14px',
                   borderRadius: '0 0 10px 0', letterSpacing: '0.06em', zIndex: 5
                 }}>MOST POPULAR</div>
@@ -122,10 +122,10 @@ const FeaturesSection = () => {
 
               {/* Visual area */}
               <div style={{ height: feat.popular ? 360 : 280, position: 'relative', overflow: 'hidden', padding: feat.title === 'PYQ Archive' || feat.title === '24/7 AI Tutor' || feat.title === 'Smart Exam Prep' ? 16 : 0 }}>
-                {feat.title === 'AI Note Intelligence' && <NoteIllustration bg={feat.bg} />}
-                {feat.title === 'PYQ Archive' && <PYQIllustration />}
-                {feat.title === '24/7 AI Tutor' && <TutorIllustration />}
-                {feat.title === 'Smart Exam Prep' && <ExamPrepIllustration />}
+                {feat.category === 'AI Tools' && feat.title === 'Turn notes into revision' && <NoteIllustration bg={feat.bg} />}
+                {feat.category === 'PYQ Archive' && <PYQIllustration />}
+                {feat.title === 'Get unstuck with AI' && <TutorIllustration />}
+                {feat.title === 'Build a focused study plan' && <ExamPrepIllustration />}
               </div>
 
               {/* Content */}
@@ -150,7 +150,7 @@ const FeaturesSection = () => {
 
 const NoteIllustration = ({ bg }) => (
   <div style={{ height: '100%', position: 'relative', overflow: 'hidden' }}>
-    <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(160deg, #c9a88f 0%, ${bg} 100%)` }} />
+    <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(145deg, #FFFFFF 0%, ${bg} 100%)` }} />
     {/* Before note */}
     <div className="float" style={{ position: 'absolute', left: 16, top: 20, width: 110, height: 140, background: 'white', borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.15)', transform: 'rotate(-5deg)', padding: 10, overflow: 'hidden' }}>
       {[0,1,2,3,4,5,6,7].map(i => <div key={i} style={{ height: 1, background: 'rgba(19,184,212,0.3)', marginBottom: 12 }} />)}
@@ -160,7 +160,7 @@ const NoteIllustration = ({ bg }) => (
     {/* Arrow */}
     <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%,-50%)', width: 32, height: 32, borderRadius: '50%', background: '#13B8D4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: 'white', fontWeight: 700, boxShadow: '0 4px 12px rgba(19,184,212,0.4)', zIndex: 3 }}>→</div>
     {/* After note */}
-    <div className="float-delay" style={{ position: 'absolute', right: 16, top: 30, width: 110, height: 140, background: '#1F1F1F', borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', transform: 'rotate(4deg)', padding: 10, overflow: 'hidden' }}>
+    <div className="float-delay" style={{ position: 'absolute', right: 16, top: 30, width: 110, height: 140, background: '#FFFFFF', border: '1px solid #DCE7F5', borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', transform: 'rotate(4deg)', padding: 10, overflow: 'hidden' }}>
       <div style={{ height: 8, background: '#13B8D4', borderRadius: 2, marginBottom: 6, width: '70%' }} />
       {[85,65,75,55,70,60].map((w,i) => <div key={i} style={{ height: 5, background: i%3===0 ? 'rgba(19,184,212,0.4)' : 'rgba(255,255,255,0.1)', borderRadius: 2, marginBottom: 5, width: `${w}%` }} />)}
       <div style={{ marginTop: 8, height: 6, background: 'rgba(154,223,234,0.4)', borderRadius: 2, width: '50%' }} />
