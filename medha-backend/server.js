@@ -256,13 +256,15 @@ app.use((req, res, next) => {
 });
 
 // Global error handler
+const { handleUploadError } = require("./middleware/upload");
+app.use(handleUploadError);
 app.use((err, req, res, next) => {
   console.error(`[ERROR] ${err.message}`, err.stack);
 
   // Don't leak error details in production
   const isProduction = process.env.NODE_ENV === "production";
 
-  res.status(err.status || 500).json({
+  res.status(err.status || err.statusCode || 500).json({
     success: false,
     message: isProduction ? "An error occurred" : err.message,
     ...(isProduction ? {} : { stack: err.stack }),

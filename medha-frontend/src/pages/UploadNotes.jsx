@@ -35,6 +35,10 @@ export default function UploadNotes() {
       setError("Add a file, a title, and a subject.");
       return;
     }
+    if (file.size > 25 * 1024 * 1024) {
+      setError("File too large. Maximum size is 25MB.");
+      return;
+    }
     setSubmitting(true);
     setError("");
     try {
