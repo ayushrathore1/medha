@@ -191,6 +191,9 @@ Middleware order in `app.js`: Helmet → compression → CORS → static `/uploa
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - User login
 - `GET /api/auth/me` - Get current user (protected)
+- `GET /api/auth/google` - Start Google OAuth (sets HttpOnly `oauth_state` cookie)
+- `GET /api/auth/google/callback` - Google callback; redirects with a one-time `code` only
+- `POST /api/auth/google/exchange` - Exchange that `code` for `{ token, user }`
 
 ### User Management
 - `GET /api/users/profile` - Get user profile (protected)
@@ -306,9 +309,12 @@ Authorization: Bearer <your_jwt_token>
 ```
 
 To authenticate:
-1. Register or login to receive a JWT token
+1. Register, login, or complete Google OAuth to receive a JWT token
 2. Include the token in the Authorization header for protected routes
-3. Tokens expire based on the JWT_EXPIRE environment variable
+3. Session JWTs expire after **7 days**. There is no refresh-token rotation; after expiry the user signs in again.
+4. Logout is client-side: the SPA clears `localStorage` (`token` and `user`). JWTs are not revoked on the server before they expire.
+
+Google OAuth never puts access tokens or JWTs in redirect URLs. `GET /api/auth/google` stores CSRF `state` in an HttpOnly `SameSite=Lax` cookie on the API host. The callback validates that cookie against Google's `state`, then redirects to the allowlisted frontend with a single-use `code` (60s TTL). `POST /api/auth/google/exchange` returns the JWT in the JSON body and invalidates the code. `FRONTEND_URL` must be on the origin allowlist (add extras via `OAUTH_ALLOWED_ORIGINS`).
 
 ## 🧪 Development
 
