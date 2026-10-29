@@ -7,6 +7,31 @@ const fs = require("fs");
 const path = require("path");
 const { uploadToCloudinary, CLOUDINARY_MAX_BYTES } = require("../utils/cloudinaryUpload");
 const { extractPdfText, moderateNote } = require("../utils/noteModerator");
+const {
+  parseNoteListQuery,
+  keysetFilter,
+  previewContent,
+  paginationMeta,
+  escapeRegex,
+} = require("../utils/notePagination");
+
+const NOTE_LIST_SELECT = [
+  "title",
+  "subjectTag",
+  "fileUrl",
+  "fileType",
+  "originalName",
+  "likes",
+  "isPublic",
+  "createdAt",
+  "downloadCount",
+  "verificationStatus",
+  "semester",
+  "noteType",
+  "owner",
+  "subject",
+  "content",
+].join(" ");
 
 function removeLocalFile(filePath) {
   if (!filePath) return;
@@ -22,6 +47,11 @@ const AURA_PER_DOWNLOAD = 3;
 // List user's own notes (optionally filtered by subject)
 exports.getNotes = async (req, res) => {
   try {
+    const paging = parseNoteListQuery(req.query);
+    if (paging.error) {
+      return res.status(400).json({ error: paging.error });
+    }
+
     const { subject } = req.query;
     const filter = { owner: req.user._id };
 
@@ -32,12 +62,40 @@ exports.getNotes = async (req, res) => {
       filter.subject = subject;
     }
 
+    const cursorFilter = keysetFilter(paging.cursor);
+    if (cursorFilter) {
+      filter.$and = [cursorFilter];
+    }
 
-    const notes = await Note.find(filter)
+    let query = Note.find(filter)
+      .select(NOTE_LIST_SELECT)
+      .sort({ createdAt: -1, _id: -1 })
+      .limit(paging.limit + 1);
+
+    if (!paging.cursor) {
+      query = query.skip((paging.page - 1) * paging.limit);
+    }
+
+    const rows = await query
       .populate("owner", "name email")
-      .populate("subject", "name")
-      .sort({ createdAt: -1 });
-    res.json({ notes });
+      .populate("subject", "name");
+
+    const hasMore = rows.length > paging.limit;
+    const notes = rows.slice(0, paging.limit).map((note) => {
+      const obj = note.toObject();
+      obj.content = previewContent(obj.content);
+      return obj;
+    });
+
+    res.json({
+      notes,
+      pagination: paginationMeta({
+        notes,
+        limit: paging.limit,
+        page: paging.page,
+        hasMore,
+      }),
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -46,106 +104,120 @@ exports.getNotes = async (req, res) => {
 // Get all public notes (for explore/discover feature)
 exports.getPublicNotes = async (req, res) => {
   try {
+    const paging = parseNoteListQuery(req.query);
+    if (paging.error) {
+      return res.status(400).json({ error: paging.error });
+    }
+
     const { search, subject, semester, noteType } = req.query;
-    
-    // Use aggregation for searching by owner name
+    const match = { isPublic: true, verificationStatus: { $ne: "rejected" } };
+
+    if (subject) {
+      if (!mongoose.Types.ObjectId.isValid(subject)) {
+        return res.status(400).json({ error: "Invalid subject ID format." });
+      }
+      match.subject = new mongoose.Types.ObjectId(subject);
+    }
+    if (semester) match.semester = semester;
+    if (noteType) {
+      match.noteType =
+        noteType === "pyq"
+          ? { $regex: /pyq/i }
+          : { $regex: new RegExp(escapeRegex(noteType), "i") };
+    }
+
+    if (search) {
+      const regex = new RegExp(escapeRegex(search), "i");
+      const owners = await User.find({
+        $or: [{ name: regex }, { email: regex }],
+      })
+        .select("_id")
+        .limit(50)
+        .lean();
+
+      match.$or = [
+        { title: regex },
+        { content: regex },
+        { subjectTag: regex },
+        { owner: { $in: owners.map((user) => user._id) } },
+      ];
+    }
+
+    const cursorFilter = keysetFilter(paging.cursor);
+    const filter = cursorFilter ? { $and: [match, cursorFilter] } : match;
+
     const pipeline = [
-      { $match: { isPublic: true, verificationStatus: { $ne: "rejected" } } },
-      // Lookup owner details
+      { $match: filter },
+      { $sort: { createdAt: -1, _id: -1 } },
+    ];
+
+    if (!paging.cursor) {
+      pipeline.push({ $skip: (paging.page - 1) * paging.limit });
+    }
+
+    pipeline.push(
+      { $limit: paging.limit + 1 },
       {
         $lookup: {
           from: "users",
           localField: "owner",
           foreignField: "_id",
-          as: "ownerData"
-        }
+          as: "ownerData",
+        },
       },
       { $unwind: { path: "$ownerData", preserveNullAndEmptyArrays: true } },
-      // Lookup subject details
       {
         $lookup: {
           from: "subjects",
           localField: "subject",
           foreignField: "_id",
-          as: "subjectData"
-        }
+          as: "subjectData",
+        },
       },
       { $unwind: { path: "$subjectData", preserveNullAndEmptyArrays: true } },
-    ];
-    
-    // Add search filter if provided
-    if (search) {
-      pipeline.push({
-        $match: {
-          $or: [
-            { title: { $regex: search, $options: "i" } },
-            { content: { $regex: search, $options: "i" } },
-            { subjectTag: { $regex: search, $options: "i" } },
-            { "ownerData.name": { $regex: search, $options: "i" } },
-            { "ownerData.email": { $regex: search, $options: "i" } },
-          ]
-        }
-      });
-    }
-    
-    // Add subject filter if provided
-    if (subject) {
-      const mongoose = require("mongoose");
-      pipeline.push({
-        $match: { subject: new mongoose.Types.ObjectId(subject) }
-      });
-    }
-
-    // Add semester filter if provided (e.g. ?semester=4th)
-    if (semester) {
-      pipeline.push({ $match: { semester: semester } });
-    }
-
-    // Add noteType filter for PYQ filtering (e.g. ?noteType=pyq)
-    if (noteType) {
-      if (noteType === 'pyq') {
-        pipeline.push({ $match: { noteType: { $regex: /pyq/i } } });
-      } else {
-        pipeline.push({ $match: { noteType: { $regex: new RegExp(noteType, 'i') } } });
-      }
-    }
-    
-    // Project the final shape
-    pipeline.push(
-      { $sort: { createdAt: -1 } },
-      { $limit: 50 },
       {
         $project: {
           _id: 1,
           title: 1,
-          content: 1,
+          content: { $substrCP: [{ $ifNull: ["$content", ""] }, 0, 240] },
           subjectTag: 1,
           fileUrl: 1,
           fileType: 1,
           originalName: 1,
-          extractedText: 1,
           likes: 1,
           isPublic: 1,
           createdAt: 1,
           downloadCount: 1,
           verificationStatus: 1,
+          semester: 1,
+          noteType: 1,
           owner: {
             _id: "$ownerData._id",
             name: "$ownerData.name",
             email: "$ownerData.email",
-            avatar: "$ownerData.avatar"
+            avatar: "$ownerData.avatar",
           },
           subject: {
             _id: "$subjectData._id",
-            name: "$subjectData.name"
-          }
-        }
+            name: "$subjectData.name",
+          },
+        },
       }
     );
-    
-    const notes = await Note.aggregate(pipeline);
-    
-    res.json({ notes });
+
+    const rows = await Note.aggregate(pipeline);
+    const hasMore = rows.length > paging.limit;
+    const notes = rows.slice(0, paging.limit);
+
+    res.json({
+      notes,
+      pagination: paginationMeta({
+        notes,
+        limit: paging.limit,
+        page: paging.page,
+        hasMore,
+      }),
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

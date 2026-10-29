@@ -1074,6 +1074,9 @@ const Notes = () => {
   const navigate = useNavigate();
 
   const [publicNotes, setPublicNotes] = useState([]);
+  const [notesCursor, setNotesCursor] = useState(null);
+  const [notesHasMore, setNotesHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [loadingPublic, setLoadingPublic] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [viewNote, setViewNote] = useState(null);
@@ -1098,21 +1101,28 @@ const Notes = () => {
     return "General";
   };
 
-  const fetchPublicNotes = useCallback(async (search = "") => {
-    setLoadingPublic(true);
+  const fetchPublicNotes = useCallback(async (search = "", { cursor, append } = {}) => {
+    if (append) setLoadingMore(true);
+    else setLoadingPublic(true);
     try {
-      const url = search
-        ? `${API_BASE}/api/notes/public?search=${encodeURIComponent(search)}`
-        : `${API_BASE}/api/notes/public`;
-      const res = await fetch(url, {
+      const params = new URLSearchParams({ limit: "20" });
+      if (search) params.set("search", search);
+      if (cursor) params.set("cursor", cursor);
+      const res = await fetch(`${API_BASE}/api/notes/public?${params.toString()}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       const data = await res.json();
-      if (res.ok) setPublicNotes(data.notes || []);
+      if (res.ok) {
+        const nextNotes = data.notes || [];
+        setPublicNotes((prev) => (append ? [...prev, ...nextNotes] : nextNotes));
+        setNotesCursor(data.pagination?.nextCursor || null);
+        setNotesHasMore(Boolean(data.pagination?.hasMore));
+      }
     } catch {
       console.error("Error fetching public notes");
     }
     setLoadingPublic(false);
+    setLoadingMore(false);
   }, [token]);
 
   useEffect(() => {
@@ -1495,6 +1505,7 @@ const Notes = () => {
             <p style={{ fontSize: 14, color: "#9A9A9A", marginTop: 4 }}>Be the first to share your study materials!</p>
           </div>
         ) : (
+          <>
           <div className="notes-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
             {filtered.map(note => (
               <NoteCard
@@ -1506,6 +1517,28 @@ const Notes = () => {
               />
             ))}
           </div>
+          {notesHasMore && (
+            <div style={{ textAlign: "center", marginTop: 28 }}>
+              <button
+                type="button"
+                onClick={() => fetchPublicNotes(searchQuery, { cursor: notesCursor, append: true })}
+                disabled={loadingMore}
+                style={{
+                  padding: "12px 24px",
+                  background: "white",
+                  color: "#1F1F1F",
+                  border: "1.5px solid #E5E5E5",
+                  borderRadius: 10,
+                  fontSize: 14,
+                  fontWeight: 600,
+                  cursor: loadingMore ? "default" : "pointer",
+                }}
+              >
+                {loadingMore ? "Loading..." : "Load more notes"}
+              </button>
+            </div>
+          )}
+          </>
         )}
       </div>
 
