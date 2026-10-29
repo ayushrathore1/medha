@@ -45,12 +45,12 @@ const LandingNavbar = ({ studentsOnline }) => {
         }}>
           {/* Logo */}
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', zIndex: 200 }}>
-            <span style={{ fontFamily: "ui-sans-serif, system-ui, sans-serif", fontWeight: 800, fontSize: 22, letterSpacing: '-0.03em', color: '#1F1F1F' }}>
+            <span style={{ fontFamily: "'Manrope', 'DM Sans', sans-serif", fontWeight: 800, fontSize: 22, letterSpacing: '-0.03em', color: '#1F1F1F' }}>
               MEDHA
             </span>
             <span className="logo-dot" style={{
               display: 'inline-block', width: 8, height: 8, borderRadius: '50%',
-              background: '#F59E0B', marginBottom: 2, marginLeft: 2, verticalAlign: 'middle'
+              background: '#2563EB', marginBottom: 2, marginLeft: 2, verticalAlign: 'middle'
             }} />
           </Link>
 
@@ -61,7 +61,7 @@ const LandingNavbar = ({ studentsOnline }) => {
                 fontSize: 15, fontWeight: 400, color: '#1F1F1F',
                 textDecoration: 'none', transition: 'color 150ms',
               }}
-              onMouseEnter={e => e.currentTarget.style.color = '#7DC67A'}
+              onMouseEnter={e => e.currentTarget.style.color = '#2563EB'}
               onMouseLeave={e => e.currentTarget.style.color = '#1F1F1F'}
               >
                 {link.label}
@@ -76,7 +76,7 @@ const LandingNavbar = ({ studentsOnline }) => {
               fontSize: 15, fontWeight: 400, color: '#1F1F1F',
               textDecoration: 'none', transition: 'color 150ms',
             }}
-            onMouseEnter={e => e.currentTarget.style.color = '#7DC67A'}
+            onMouseEnter={e => e.currentTarget.style.color = '#13B8D4'}
             onMouseLeave={e => e.currentTarget.style.color = '#1F1F1F'}
             >
               Login
@@ -85,7 +85,7 @@ const LandingNavbar = ({ studentsOnline }) => {
             {/* Get Started */}
             <Link to="/register" style={{
               display: 'flex', alignItems: 'center', gap: 8,
-              background: '#1F1F1F', color: 'white',
+              background: '#10233F', color: 'white',
               borderRadius: 999, padding: '10px 20px',
               fontSize: 14, fontWeight: 600, textDecoration: 'none',
               transition: 'transform 150ms',

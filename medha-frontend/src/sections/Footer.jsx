@@ -12,7 +12,7 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#1F1F1F', letterSpacing: '-0.03em', marginBottom: 16 }}>
-              MEDHA<span style={{ color: '#F59E0B', fontSize: 28 }}>.</span>
+              MEDHA<span style={{ color: '#9ADFEA', fontSize: 28 }}>.</span>
             </div>
             <p style={{ fontSize: 14, color: '#6B6B6B', lineHeight: 1.6, marginBottom: 20 }}>
               The last-minute exam prep tool built by RTU students, for RTU students.
@@ -27,7 +27,7 @@ const Footer = () => {
                   fontSize: 12, fontWeight: 700, color: '#1F1F1F',
                   cursor: 'pointer', transition: 'border-color 200ms'
                 }}
-                onMouseEnter={e => e.currentTarget.style.borderColor = '#7DC67A'}
+                onMouseEnter={e => e.currentTarget.style.borderColor = '#13B8D4'}
                 onMouseLeave={e => e.currentTarget.style.borderColor = '#E5E5E5'}
                 >{icon}</div>
               ))}
@@ -39,7 +39,7 @@ const Footer = () => {
             <div style={{ fontSize: 12, fontWeight: 700, color: '#1F1F1F', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 16 }}>Product</div>
             {['Dashboard', 'AI Notes', 'PYQ Analysis', 'Exam Prep', 'Visualizations'].map(item => (
               <Link key={item} to="/dashboard" style={{ display: 'block', fontSize: 14, color: '#6B6B6B', textDecoration: 'none', marginBottom: 10, transition: 'color 150ms' }}
-                onMouseEnter={e => e.currentTarget.style.color = '#7DC67A'}
+                onMouseEnter={e => e.currentTarget.style.color = '#13B8D4'}
                 onMouseLeave={e => e.currentTarget.style.color = '#6B6B6B'}
               >{item}</Link>
             ))}
@@ -50,7 +50,7 @@ const Footer = () => {
             <div style={{ fontSize: 12, fontWeight: 700, color: '#1F1F1F', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 16 }}>Resources</div>
             {['RTU Syllabus', 'Past Papers', 'Study Guides', 'Blog', 'Help Center'].map(item => (
               <Link key={item} to="/rtu-exams" style={{ display: 'block', fontSize: 14, color: '#6B6B6B', textDecoration: 'none', marginBottom: 10, transition: 'color 150ms' }}
-                onMouseEnter={e => e.currentTarget.style.color = '#7DC67A'}
+                onMouseEnter={e => e.currentTarget.style.color = '#13B8D4'}
                 onMouseLeave={e => e.currentTarget.style.color = '#6B6B6B'}
               >{item}</Link>
             ))}
@@ -69,7 +69,7 @@ const Footer = () => {
                 }}
               />
               <button style={{
-                padding: '10px 16px', background: '#7DC67A', color: 'white',
+                padding: '10px 16px', background: '#13B8D4', color: 'white',
                 border: 'none', fontWeight: 700, fontSize: 14, cursor: 'pointer',
                 fontFamily: "ui-sans-serif, system-ui, sans-serif"
               }}>GO</button>
