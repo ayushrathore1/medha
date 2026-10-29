@@ -14,7 +14,7 @@ const floatingBadges = [
 ];
 
 const HeroSection = ({ totalStudents }) => {
-  const headlines = ["The Last-Minute", "Exam Prep Tool", "for College Students."];
+  const headlines = ["Make every", "study session", "count."];
 
   return (
     <section className="hero-section" style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden', background: '#FFFFFF', paddingTop: 72 }}>
@@ -65,7 +65,7 @@ const HeroSection = ({ totalStudents }) => {
               textTransform: 'uppercase', letterSpacing: '0.1em'
             }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#13B8D4' }} />
-              The Last-Minute Exam Tool for College Students
+              A smarter way to prepare for university exams
             </span>
           </motion.div>
 
@@ -79,13 +79,13 @@ const HeroSection = ({ totalStudents }) => {
                   transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 + i * 0.15 }}
                   style={{
                     fontSize: 'clamp(32px, 5vw, 72px)', fontWeight: 800,
-                    letterSpacing: '-0.04em', lineHeight: 1.0, color: '#1F1F1F', margin: 0,
+                    letterSpacing: '-0.04em', lineHeight: 1.0, color: '#10233F', margin: 0,
                   }}
                 >
                   {i === 2 ? (
-                    <>for College Students<span style={{ color: '#9ADFEA' }}>.</span></>
+                    <>count<span style={{ color: '#2563EB' }}>.</span></>
                   ) : i === 1 ? (
-                    <><span className="wavy-underline">Exam Prep</span> Tool</>
+                    <><span className="wavy-underline">study</span> session</>
                   ) : line}
                 </motion.h1>
               </div>
@@ -98,12 +98,7 @@ const HeroSection = ({ totalStudents }) => {
             transition={{ delay: 0.55, duration: 0.6 }}
             style={{ marginTop: 24, fontSize: 17, color: '#6B6B6B', lineHeight: 1.7, maxWidth: 480 }}
           >
-            Everyone's prepping you for <span style={{ fontWeight: 700, color: '#1F1F1F' }}>placements</span>. 
-            But you still have <span style={{ fontWeight: 700, color: '#1F1F1F' }}>4 years of end-sems</span> to survive.{' '}
-            You game, party, code, chill — and study <span style={{ fontWeight: 700, color: '#13B8D4' }}>1-2 weeks before exams</span>.{' '}
-            <span style={{ fontWeight: 800, color: '#1F1F1F' }}>
-              That's enough. MEDHA Revision has your back.
-            </span>
+            Turn scattered notes and past papers into a clear plan. Find important topics, revise with AI-powered study tools, and walk into your RTU exams feeling prepared.
           </motion.p>
 
           {/* Search Bar */}
