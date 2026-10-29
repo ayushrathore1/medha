@@ -728,3 +728,39 @@
     transition-duration: .01ms !important;
   }
 }
+
+/* Premium landing system: spacious, clear, and responsive. */
+.landing-page{--medha-ink:#10233F;--medha-blue:#2563EB;--medha-ice:#EFF6FF;--medha-mist:#F5F8FE;--medha-border:#DCE7F5;--medha-muted:#52647A;font-family:'DM Sans',ui-sans-serif,system-ui,sans-serif;color:var(--medha-ink);background:#fff}
+.landing-page h1,.landing-page h2,.landing-page h3,.landing-page h4,.landing-page h5,.landing-page h6{font-family:'Manrope','DM Sans',ui-sans-serif,system-ui,sans-serif}
+.landing-page .hero-section{background:radial-gradient(ellipse at 78% 35%,rgba(96,165,250,.15),transparent 36%),radial-gradient(ellipse at 15% 82%,rgba(219,234,254,.7),transparent 36%),#fff!important}
+.landing-page .premium-section{position:relative;overflow:hidden;padding:clamp(72px,8vw,112px) 0;background:#fff}
+.landing-page .premium-container{max-width:1200px;margin:0 auto;padding:0 28px;position:relative;z-index:1}
+.landing-page .premium-section-heading{max-width:760px;margin:0 auto 48px;text-align:center}
+.landing-page .premium-eyebrow{display:inline-flex;padding:7px 12px;border:1px solid #DCE7F5;border-radius:999px;background:#F5F8FE;color:#2563EB;font-size:11px;font-weight:700;letter-spacing:.12em}
+.landing-page .premium-section-heading h2{margin:18px 0 14px;color:#10233F;font-size:clamp(34px,4.5vw,54px);font-weight:800;line-height:1.08;letter-spacing:-.045em}
+.landing-page .premium-section-heading h2 span{color:#2563EB}
+.landing-page .premium-section-heading p{max-width:600px;margin:0 auto;color:#52647A;font-size:16px;line-height:1.75}
+.landing-page .pain-section{background:#F5F8FE!important}
+.landing-page .premium-challenge-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.landing-page .premium-challenge-card{min-width:0;min-height:300px;padding:26px;display:flex;flex-direction:column;border:1px solid #DCE7F5;border-radius:22px;background:rgba(255,255,255,.95);box-shadow:0 8px 28px rgba(16,35,63,.035);transition:border-color .25s,box-shadow .25s}
+.landing-page .premium-challenge-card:hover{border-color:#B8CDF4;box-shadow:0 20px 44px rgba(37,99,235,.09)}
+.landing-page .premium-card-topline{display:flex;justify-content:space-between;gap:12px;color:#60738B;font-size:10px;font-weight:700;letter-spacing:.1em}
+.landing-page .premium-card-topline span:last-child{color:#2563EB}
+.landing-page .premium-challenge-icon{display:grid;place-items:center;width:48px;height:48px;margin:30px 0 22px;border:1px solid #DCE7F5;border-radius:15px;background:#EFF6FF;color:#2563EB;font-size:25px}
+.landing-page .premium-challenge-card h3{margin:0 0 10px;color:#10233F;font-size:21px;line-height:1.25;letter-spacing:-.025em}
+.landing-page .premium-challenge-card p{margin:0;color:#52647A;font-size:14px;line-height:1.7}
+.landing-page .premium-card-foot{display:flex;justify-content:space-between;gap:12px;margin-top:auto;padding-top:24px;color:#2563EB;font-size:12px;font-weight:700}
+.landing-page .features-grid>div,.landing-page .subjects-grid>div{border:1px solid rgba(16,35,63,.06);box-shadow:0 10px 30px rgba(16,35,63,.045);transition:box-shadow .28s,border-color .28s}
+.landing-page .features-grid>div:hover,.landing-page .subjects-grid>div:hover{border-color:#C7D9F7;box-shadow:0 22px 50px rgba(37,99,235,.12)}
+.landing-page .features-grid>div{height:auto!important;min-height:430px}
+.landing-page .subjects-grid>div{margin-top:0!important;background:#F5F8FE!important}
+.landing-page .hero-search-bar{border-color:#DCE7F5!important;box-shadow:0 16px 44px rgba(16,35,63,.08)!important;transition:border-color .25s,box-shadow .25s,transform .25s}
+.landing-page .hero-search-bar:focus-within{border-color:#2563EB!important;box-shadow:0 0 0 4px rgba(37,99,235,.1),0 18px 44px rgba(16,35,63,.1)!important;transform:translateY(-2px)}
+.landing-page .hero-calm-orbit-one{animation:medhaOrbit 60s linear infinite;transform-origin:center}
+.landing-page .hero-calm-orbit-two{animation:medhaFloat 7s ease-in-out infinite}
+.landing-page button:focus-visible,.landing-page a:focus-visible,.landing-page input:focus-visible{outline:3px solid rgba(37,99,235,.55);outline-offset:3px}
+.landing-page ::selection{background:rgba(96,165,250,.25);color:#10233F}
+@keyframes medhaOrbit{to{transform:rotate(360deg)}}@keyframes medhaFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@media(max-width:900px){.landing-page .premium-challenge-grid{grid-template-columns:1fr}.landing-page .premium-challenge-card{min-height:0}.landing-page .features-grid,.landing-page .subjects-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:560px){.landing-page .premium-container{padding:0 20px}.landing-page .features-grid,.landing-page .subjects-grid{grid-template-columns:1fr!important}.landing-page .hero-floating-badge{display:none}.landing-page .hero-calm-orbit-one{right:-42%;top:12%;opacity:.25}}
+@media(prefers-reduced-motion:reduce){.landing-page .hero-calm-orbit-one,.landing-page .hero-calm-orbit-two{animation:none!important}.landing-page *,.landing-page *:before,.landing-page *:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
