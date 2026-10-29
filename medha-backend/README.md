@@ -176,10 +176,14 @@ medha-backend/
 │   └── userRoutes.js
 ├── utils/               # Utility functions
 ├── seed/                # Database seeding scripts
-├── app.js               # Express app configuration
-├── server.js            # Server entry point
+├── app.js               # Canonical Express app (middleware + routes). Tests import this.
+├── server.js            # Process entry: HTTP listen + MongoDB (`npm start`)
 └── package.json         # Dependencies
 ```
+
+**Entry points:** `app.js` is the one middleware/route stack. It does not bind a port or open MongoDB. `server.js` loads that app, listens on `0.0.0.0`, then connects to MongoDB. `npm start` / `npm run dev` run `server.js`. Jest imports `app.js` so tests hit the same stack as production.
+
+Middleware order in `app.js`: Helmet → compression → CORS → static `/uploads/notes` → body size validator → JSON/urlencoded → mongo-sanitize → HPP → security logger → suspicious-activity detector → request timeout → general rate limiter → routes → 404 → upload error handler → error handler.
 
 ## 🚀 API Endpoints
 
