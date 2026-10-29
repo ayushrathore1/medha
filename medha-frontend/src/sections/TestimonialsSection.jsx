@@ -8,35 +8,35 @@ const testimonials = [
     name: 'Rahul Sharma',
     role: 'CSE, 3rd Year',
     initials: 'RS',
-    gradient: ['#7DC67A', '#4A9E47'],
+    gradient: ['#13B8D4', '#078DA8'],
   },
   {
     quote: '"The AI notes literally saved me. Uploaded a blurry photo of my register and got clean, formatted notes in 2 minutes."',
     name: 'Priya Meena',
     role: 'ECE, 4th Year',
     initials: 'PM',
-    gradient: ['#F59E0B', '#D97706'],
+    gradient: ['#9ADFEA', '#168FA8'],
   },
   {
     quote: '"I used to panic the night before exams. Now I just open MEDHA and follow the priority map. It\'s like having a topper friend 24/7."',
     name: 'Ankit Kumar',
     role: 'ME, 2nd Year',
     initials: 'AK',
-    gradient: ['#8B5CF6', '#6D28D9'],
+    gradient: ['#77C9E0', '#197F9C'],
   },
   {
     quote: '"The PYQ analysis is insane. 3 topics actually came exactly as predicted. Never studying without MEDHA again."',
     name: 'Deepika Patel',
     role: 'CSE, 3rd Year',
     initials: 'DP',
-    gradient: ['#EF4444', '#DC2626'],
+    gradient: ['#66C8DC', '#168FA8'],
   },
   {
     quote: '"Started using it at 1 AM, covered 4 units by 7 AM. The AI breaks down everything so simply you actually understand."',
     name: 'Vikram Singh',
     role: 'Civil, 4th Year',
     initials: 'VS',
-    gradient: ['#3B82F6', '#2563EB'],
+    gradient: ['#29B9DD', '#2563EB'],
   },
 ];
 
@@ -44,7 +44,7 @@ const TestimonialsSection = () => {
   const constraintsRef = useRef(null);
 
   return (
-    <section style={{ background: '#1F1F1F', padding: '96px 0', position: 'relative', overflow: 'hidden' }}>
+    <section style={{ background: '#F5F8FE', padding: '96px 0', position: 'relative', overflow: 'hidden' }}>
       {/* BG */}
       <div className="line-grid" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }} />
       <div className="blob blob-green" style={{ width: 400, height: 400, left: -80, top: -80, position: 'absolute' }} />
@@ -63,21 +63,21 @@ const TestimonialsSection = () => {
           <motion.div {...fadeUp}>
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'rgba(125,198,122,0.15)', border: '1px solid rgba(125,198,122,0.3)',
+              background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.18)',
               borderRadius: 999, padding: '6px 16px',
-              fontSize: 11, fontWeight: 600, color: '#7DC67A',
+              fontSize: 11, fontWeight: 600, color: '#2563EB',
               textTransform: 'uppercase', letterSpacing: '0.1em'
             }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#7DC67A' }} />
-              TESTIMONIALS
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#13B8D4' }} />
+              MADE FOR REAL STUDY SESSIONS
             </span>
           </motion.div>
 
           <motion.h2 {...fadeUp} style={{
             fontSize: 'clamp(40px, 4.5vw, 56px)', fontWeight: 800,
-            color: 'white', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
+            color: '#10233F', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
           }}>
-            What students say<span style={{ color: '#F59E0B' }}>.</span>
+            A study flow that feels clearer<span style={{ color: '#2563EB' }}>.</span>
           </motion.h2>
         </div>
 
@@ -98,7 +98,7 @@ const TestimonialsSection = () => {
                 transition={{ duration: 0.6, delay: i * 0.1 }}
                 style={{
                   minWidth: 320, maxWidth: 340, flexShrink: 0,
-                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
+                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(16,35,63,0.10)',
                   borderRadius: 20, padding: 32
                 }}
               >
@@ -114,7 +114,7 @@ const TestimonialsSection = () => {
                   }}>{t.initials}</div>
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>{t.name}</div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: '#7DC67A' }}>{t.role}</div>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: '#13B8D4' }}>{t.role}</div>
                   </div>
                 </div>
               </motion.div>

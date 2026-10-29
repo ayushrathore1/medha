@@ -162,7 +162,7 @@
   }
 
   .nav-mobile-overlay a:hover {
-    color: #7DC67A;
+    color: #13B8D4;
   }
 
   .nav-mobile-overlay .mobile-cta {
@@ -546,4 +546,650 @@
     min-width: 250px !important;
     max-width: 260px !important;
   }
+}
+
+
+/* Calm, airy cyan visual system */
+.landing-page {
+  background: #fff;
+  color: #153746;
+}
+
+.landing-page .hero-section {
+  background:
+    radial-gradient(ellipse at 76% 34%, rgba(37, 194, 220, 0.10), transparent 42%),
+    radial-gradient(ellipse at 18% 82%, rgba(183, 237, 244, 0.28), transparent 38%),
+    #fff !important;
+}
+
+.hero-calm-orbit {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  opacity: .8;
+  will-change: transform;
+}
+.hero-calm-orbit svg { display: block; width: 100%; height: 100%; }
+.hero-calm-orbit-one {
+  width: clamp(280px, 42vw, 520px);
+  height: clamp(280px, 42vw, 520px);
+  right: 2%;
+  top: 8%;
+  opacity: .62;
+  animation: calmOrbit 42s linear infinite;
+}
+.hero-calm-orbit-two {
+  width: 130px;
+  height: 130px;
+  left: 48%;
+  bottom: 9%;
+  opacity: .72;
+  animation: calmDrift 10s ease-in-out infinite;
+}
+@keyframes calmOrbit { to { transform: rotate(360deg); } }
+@keyframes calmDrift { 0%,100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(0,-10px,0); } }
+
+.landing-page .hero-left,
+.landing-page .hero-right { position: relative; z-index: 2; }
+
+.landing-page .hero-search-bar {
+  border-color: #CDEEF3 !important;
+  box-shadow: 0 12px 34px rgba(18, 135, 158, .09) !important;
+}
+.landing-page .hero-search-bar:focus-within {
+  border-color: #25C2DC !important;
+  box-shadow: 0 0 0 4px rgba(37,194,220,.12), 0 12px 34px rgba(18,135,158,.09) !important;
+}
+.landing-page a:focus-visible,
+.landing-page button:focus-visible,
+.landing-page input:focus-visible {
+  outline: 3px solid rgba(37,194,220,.65);
+  outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+  .hero-calm-orbit-one { right: -30%; top: 12%; opacity: .38; }
+  .hero-calm-orbit-two { left: 4%; bottom: 7%; width: 90px; height: 90px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-calm-orbit-one, .hero-calm-orbit-two { animation: none !important; }
+  .landing-page *, .landing-page *::before, .landing-page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+
+/* Final polish: keep text selection and mobile focus states on-brand. */
+.landing-page ::selection {
+  background: rgba(37, 194, 220, 0.22);
+  color: #153746;
+}
+
+@media (max-width: 480px) {
+  .landing-page .hero-calm-orbit-one {
+    right: -42%;
+    top: 10%;
+    opacity: 0.28;
+  }
+
+  .landing-page .hero-calm-orbit-two {
+    left: 2%;
+    bottom: 4%;
+    opacity: 0.48;
+  }
+}
+
+
+/* Premium blue system: restrained accents, generous space, clear hierarchy. */
+.landing-page {
+  --medha-navy: #10233F;
+  --medha-blue: #2563EB;
+  --medha-blue-bright: #3B82F6;
+  --medha-sky: #93C5FD;
+  --medha-ice: #EFF6FF;
+  --medha-line: #DCE7F5;
+  font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  color: var(--medha-navy);
+  background: #fff;
+}
+
+.landing-page h1,
+.landing-page h2,
+.landing-page h3,
+.landing-page h4,
+.landing-page h5,
+.landing-page h6,
+.landing-page .brand-display {
+  font-family: 'Manrope', 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+.landing-page .hero-section {
+  background:
+    radial-gradient(ellipse at 82% 38%, rgba(59, 130, 246, .10), transparent 38%),
+    radial-gradient(ellipse at 12% 82%, rgba(147, 197, 253, .18), transparent 34%),
+    #fff !important;
+}
+
+.landing-page .hero-search-bar {
+  border-color: var(--medha-line) !important;
+  box-shadow: 0 16px 44px rgba(16, 35, 63, .08) !important;
+  transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+}
+.landing-page .hero-search-bar:focus-within {
+  border-color: var(--medha-blue) !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, .10), 0 18px 44px rgba(16, 35, 63, .10) !important;
+  transform: translateY(-2px);
+}
+
+.landing-page .nav-hamburger span { background: var(--medha-navy); }
+.landing-page .nav-mobile-overlay a:hover { color: var(--medha-blue); }
+.landing-page a:focus-visible,
+.landing-page button:focus-visible,
+.landing-page input:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .55);
+  outline-offset: 3px;
+}
+
+.landing-page .hero-calm-orbit-one {
+  animation: medhaOrbit 54s linear infinite;
+  transform-origin: center;
+}
+.landing-page .hero-calm-orbit-two {
+  animation: medhaFloat 8s ease-in-out infinite;
+}
+.landing-page .card-shine {
+  box-shadow: 0 10px 28px rgba(16, 35, 63, .045);
+  transition: box-shadow .3s ease, border-color .3s ease;
+}
+.landing-page .card-shine:hover {
+  box-shadow: 0 22px 54px rgba(37, 99, 235, .13);
+}
+@keyframes medhaOrbit { to { transform: rotate(360deg); } }
+@keyframes medhaFloat {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -9px, 0); }
+}
+.landing-page ::selection { background: rgba(59, 130, 246, .20); color: var(--medha-navy); }
+
+@media (max-width: 768px) {
+  .landing-page .hero-calm-orbit-one { right: -34%; top: 12%; opacity: .28; }
+  .landing-page .hero-calm-orbit-two { left: 3%; bottom: 5%; opacity: .42; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-page .hero-calm-orbit-one,
+  .landing-page .hero-calm-orbit-two { animation: none !important; }
+  .landing-page *, .landing-page *::before, .landing-page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* Premium landing system: spacious, clear, and responsive. */
+.landing-page{--medha-ink:#10233F;--medha-blue:#2563EB;--medha-ice:#EFF6FF;--medha-mist:#F5F8FE;--medha-border:#DCE7F5;--medha-muted:#52647A;font-family:'DM Sans',ui-sans-serif,system-ui,sans-serif;color:var(--medha-ink);background:#fff}
+.landing-page h1,.landing-page h2,.landing-page h3,.landing-page h4,.landing-page h5,.landing-page h6{font-family:'Manrope','DM Sans',ui-sans-serif,system-ui,sans-serif}
+.landing-page .hero-section{background:radial-gradient(ellipse at 78% 35%,rgba(96,165,250,.15),transparent 36%),radial-gradient(ellipse at 15% 82%,rgba(219,234,254,.7),transparent 36%),#fff!important}
+.landing-page .premium-section{position:relative;overflow:hidden;padding:clamp(72px,8vw,112px) 0;background:#fff}
+.landing-page .premium-container{max-width:1200px;margin:0 auto;padding:0 28px;position:relative;z-index:1}
+.landing-page .premium-section-heading{max-width:760px;margin:0 auto 48px;text-align:center}
+.landing-page .premium-eyebrow{display:inline-flex;padding:7px 12px;border:1px solid #DCE7F5;border-radius:999px;background:#F5F8FE;color:#2563EB;font-size:11px;font-weight:700;letter-spacing:.12em}
+.landing-page .premium-section-heading h2{margin:18px 0 14px;color:#10233F;font-size:clamp(34px,4.5vw,54px);font-weight:800;line-height:1.08;letter-spacing:-.045em}
+.landing-page .premium-section-heading h2 span{color:#2563EB}
+.landing-page .premium-section-heading p{max-width:600px;margin:0 auto;color:#52647A;font-size:16px;line-height:1.75}
+.landing-page .pain-section{background:#F5F8FE!important}
+.landing-page .premium-challenge-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.landing-page .premium-challenge-card{min-width:0;min-height:300px;padding:26px;display:flex;flex-direction:column;border:1px solid #DCE7F5;border-radius:22px;background:rgba(255,255,255,.95);box-shadow:0 8px 28px rgba(16,35,63,.035);transition:border-color .25s,box-shadow .25s}
+.landing-page .premium-challenge-card:hover{border-color:#B8CDF4;box-shadow:0 20px 44px rgba(37,99,235,.09)}
+.landing-page .premium-card-topline{display:flex;justify-content:space-between;gap:12px;color:#60738B;font-size:10px;font-weight:700;letter-spacing:.1em}
+.landing-page .premium-card-topline span:last-child{color:#2563EB}
+.landing-page .premium-challenge-icon{display:grid;place-items:center;width:48px;height:48px;margin:30px 0 22px;border:1px solid #DCE7F5;border-radius:15px;background:#EFF6FF;color:#2563EB;font-size:25px}
+.landing-page .premium-challenge-card h3{margin:0 0 10px;color:#10233F;font-size:21px;line-height:1.25;letter-spacing:-.025em}
+.landing-page .premium-challenge-card p{margin:0;color:#52647A;font-size:14px;line-height:1.7}
+.landing-page .premium-card-foot{display:flex;justify-content:space-between;gap:12px;margin-top:auto;padding-top:24px;color:#2563EB;font-size:12px;font-weight:700}
+.landing-page .features-grid>div,.landing-page .subjects-grid>div{border:1px solid rgba(16,35,63,.06);box-shadow:0 10px 30px rgba(16,35,63,.045);transition:box-shadow .28s,border-color .28s}
+.landing-page .features-grid>div:hover,.landing-page .subjects-grid>div:hover{border-color:#C7D9F7;box-shadow:0 22px 50px rgba(37,99,235,.12)}
+.landing-page .features-grid>div{height:auto!important;min-height:430px}
+.landing-page .subjects-grid>div{margin-top:0!important;background:#F5F8FE!important}
+.landing-page .hero-search-bar{border-color:#DCE7F5!important;box-shadow:0 16px 44px rgba(16,35,63,.08)!important;transition:border-color .25s,box-shadow .25s,transform .25s}
+.landing-page .hero-search-bar:focus-within{border-color:#2563EB!important;box-shadow:0 0 0 4px rgba(37,99,235,.1),0 18px 44px rgba(16,35,63,.1)!important;transform:translateY(-2px)}
+.landing-page .hero-calm-orbit-one{animation:medhaOrbit 60s linear infinite;transform-origin:center}
+.landing-page .hero-calm-orbit-two{animation:medhaFloat 7s ease-in-out infinite}
+.landing-page button:focus-visible,.landing-page a:focus-visible,.landing-page input:focus-visible{outline:3px solid rgba(37,99,235,.55);outline-offset:3px}
+.landing-page ::selection{background:rgba(96,165,250,.25);color:#10233F}
+@keyframes medhaOrbit{to{transform:rotate(360deg)}}@keyframes medhaFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@media(max-width:900px){.landing-page .premium-challenge-grid{grid-template-columns:1fr}.landing-page .premium-challenge-card{min-height:0}.landing-page .features-grid,.landing-page .subjects-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:560px){.landing-page .premium-container{padding:0 20px}.landing-page .features-grid,.landing-page .subjects-grid{grid-template-columns:1fr!important}.landing-page .hero-floating-badge{display:none}.landing-page .hero-calm-orbit-one{right:-42%;top:12%;opacity:.25}}
+@media(prefers-reduced-motion:reduce){.landing-page .hero-calm-orbit-one,.landing-page .hero-calm-orbit-two{animation:none!important}.landing-page *,.landing-page *:before,.landing-page *:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Research-led editorial study studio: warm paper, ink, cobalt, citron. */
+.landing-page{--medha-paper:#F8F7F2;--medha-paper-deep:#F0EEE6;--medha-ink:#171A2B;--medha-cobalt:#3857F6;--medha-cobalt-deep:#263CC7;--medha-citron:#D9F36A;--medha-muted:#656879;--medha-rule:#E4E2DA;background:var(--medha-paper);color:var(--medha-ink);font-family:'DM Sans',sans-serif}
+.landing-page h1,.landing-page h2,.landing-page h3,.landing-page h4,.landing-page h5,.landing-page h6{font-family:'Manrope',sans-serif;color:var(--medha-ink)}
+.landing-page .landing-nav{background:rgba(248,247,242,.92)!important;border-bottom-color:rgba(23,26,43,.08)!important;backdrop-filter:blur(18px) saturate(130%)!important}
+.landing-page .hero-section{background:radial-gradient(ellipse at 76% 42%,rgba(56,87,246,.10),transparent 32%),linear-gradient(180deg,#F8F7F2 0%,#F8F7F2 74%,#F0EEE6 100%)!important}
+.landing-page .hero-section .grain,.landing-page .hero-section .ring,.landing-page .hero-section .bg-watermark,.landing-page .hero-section .hero-calm-orbit-two{opacity:.22!important}
+.landing-page .hero-section h1{color:var(--medha-ink)!important}
+.landing-page .hero-section h1 .wavy-underline{text-decoration-color:var(--medha-citron)!important;text-decoration-thickness:8px!important;text-underline-offset:-3px}
+.landing-page .hero-section .hero-search-bar{border:1px solid var(--medha-rule)!important;border-radius:16px!important;box-shadow:0 18px 45px rgba(23,26,43,.08)!important}
+.landing-page .hero-section .hero-search-bar a{background:var(--medha-cobalt)!important;transition:background .2s ease,transform .2s ease}
+.landing-page .hero-section .hero-search-bar a:hover{background:var(--medha-cobalt-deep)!important;transform:translateX(2px)}
+.landing-page .premium-eyebrow{color:var(--medha-cobalt)!important;background:rgba(56,87,246,.06)!important;border-color:rgba(56,87,246,.15)!important}
+.landing-page .pain-section{background:var(--medha-paper-deep)!important}
+.landing-page .premium-challenge-card{border-color:var(--medha-rule)!important;border-radius:18px!important;background:#FFFDF8!important;box-shadow:0 4px 14px rgba(23,26,43,.025)!important}
+.landing-page .premium-challenge-card:hover{border-color:rgba(56,87,246,.35)!important;box-shadow:0 18px 36px rgba(23,26,43,.08)!important}
+.landing-page .premium-challenge-icon{background:var(--medha-citron)!important;border-color:transparent!important;color:var(--medha-ink)!important}
+.landing-page .premium-card-foot,.landing-page .premium-section-heading h2 span{color:var(--medha-cobalt)!important}
+.landing-page .features-grid>div{border-radius:18px!important;border-color:var(--medha-rule)!important;box-shadow:0 6px 18px rgba(23,26,43,.035)!important}
+.landing-page .features-grid>div:hover{box-shadow:0 18px 42px rgba(23,26,43,.09)!important;border-color:rgba(56,87,246,.28)!important}
+.landing-page .subjects-grid>div{border-radius:16px!important;border-color:var(--medha-rule)!important;background:#FFFDF8!important}
+.landing-page .identity-layout .stat-number{color:var(--medha-cobalt)!important}
+.landing-page .identity-layout button{background:var(--medha-cobalt)!important}
+.landing-page .identity-layout button:hover{background:var(--medha-cobalt-deep)!important}
+.landing-page section:has(.cta-buttons){background:var(--medha-ink)!important}
+.landing-page section:has(.cta-buttons) .blob{background:var(--medha-cobalt)!important;opacity:.15!important}
+.landing-page section:has(.cta-buttons) .cta-buttons a:first-child{background:var(--medha-citron)!important;color:var(--medha-ink)!important;box-shadow:none!important}
+.landing-page section:has(.cta-buttons) .cta-buttons a:first-child:hover{background:#E5FF8A!important;transform:translateY(-2px)}
+.landing-page section:has(.cta-buttons) .cta-buttons a:last-child{border-color:rgba(255,255,255,.3)!important}
+.landing-page footer{background:var(--medha-paper)!important;border-top:1px solid var(--medha-rule)}
+.landing-page button:focus-visible,.landing-page a:focus-visible,.landing-page input:focus-visible{outline:3px solid rgba(56,87,246,.55);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.landing-page .hero-calm-orbit-one,.landing-page .hero-calm-orbit-two{animation:none!important}}
+
+
+/* Premium editorial finish: one clear hierarchy, quieter surfaces, deliberate accents. */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+.landing-page{background:#F8F7F2!important;color:#171A2B!important;font-family:'DM Sans',sans-serif!important}
+.landing-page h1,.landing-page h2,.landing-page h3,.landing-page h4,.landing-page h5,.landing-page h6{font-family:'Manrope',sans-serif!important;letter-spacing:-.045em}
+.landing-page .landing-nav{padding-left:clamp(18px,4vw,56px)!important;padding-right:clamp(18px,4vw,56px)!important;background:rgba(248,247,242,.9)!important;border-bottom:1px solid rgba(23,26,43,.08)!important;box-shadow:none!important}
+.landing-page .hero-section{min-height:auto!important;padding:116px 0 72px!important;background:radial-gradient(ellipse at 78% 35%,rgba(56,87,246,.10),transparent 34%),#F8F7F2!important}
+.landing-page .hero-inner{min-height:620px!important;gap:5%!important;padding-left:clamp(20px,5vw,72px)!important;padding-right:clamp(20px,5vw,72px)!important}
+.landing-page .hero-left{width:52%!important}
+.landing-page .hero-right{width:43%!important;min-height:520px!important}
+.landing-page .hero-left h1{font-size:clamp(48px,6vw,82px)!important;line-height:.98!important;letter-spacing:-.065em!important;font-weight:800!important}
+.landing-page .hero-left>div:first-child span{background:#EFEDFF!important;border-color:#DCD8FF!important;color:#3857F6!important;letter-spacing:.11em!important}
+.landing-page .hero-left p{color:#656879!important;max-width:500px!important;font-size:17px!important;line-height:1.8!important}
+.landing-page .hero-search-bar{max-width:500px!important;border-radius:14px!important;border-color:#E4E2DA!important;box-shadow:0 14px 34px rgba(23,26,43,.07)!important}
+.landing-page .hero-search-bar input{font-family:'DM Sans',sans-serif!important}
+.landing-page .hero-search-bar a{background:#3857F6!important;color:white!important}
+.landing-page .hero-social-proof{gap:10px!important}
+.landing-page .hero-floating-badge{background:#FFFDF8!important;color:#34364A!important;border:1px solid #E4E2DA!important;box-shadow:0 8px 22px rgba(23,26,43,.07)!important;backdrop-filter:blur(12px)!important}
+.landing-page .hero-calm-orbit-one{opacity:.5!important}
+.landing-page .hero-calm-orbit-two{opacity:.35!important}
+.landing-page .premium-section{padding:clamp(76px,9vw,124px) 0!important}
+.landing-page .premium-section-heading{margin-bottom:56px!important}
+.landing-page .premium-section-heading h2{font-size:clamp(36px,4.8vw,60px)!important;line-height:1.05!important}
+.landing-page .premium-section-heading p{font-size:16px!important;max-width:580px!important}
+.landing-page .features-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:stretch!important;gap:20px!important}
+.landing-page .features-grid>div{height:auto!important;min-height:0!important;border-radius:22px!important;background:#FFFDF8!important;border:1px solid #E4E2DA!important;box-shadow:0 6px 20px rgba(23,26,43,.035)!important}
+.landing-page .features-grid>div>div:first-child{height:250px!important;min-height:250px!important}
+.landing-page .features-grid>div>div:last-child{padding:26px!important}
+.landing-page .features-grid>div>div:last-child>span{background:#EFEDFF!important;color:#3857F6!important;letter-spacing:.06em!important}
+.landing-page .features-grid>div>div:last-child>div:first-of-type{font-family:'Manrope',sans-serif!important;font-size:22px!important;letter-spacing:-.04em!important;color:#171A2B!important}
+.landing-page .features-grid>div>div:last-child>div:last-of-type{color:#656879!important;line-height:1.65!important}
+.landing-page .features-grid>div:hover{transform:translateY(-3px)!important;border-color:#CBC9F7!important;box-shadow:0 18px 40px rgba(23,26,43,.08)!important}
+.landing-page .premium-challenge-card{padding:28px!important;border-radius:20px!important;background:#FFFDF8!important;border-color:#E4E2DA!important}
+.landing-page .premium-challenge-card h3{font-size:22px!important;letter-spacing:-.04em!important}
+.landing-page .subjects-grid{gap:16px!important}
+.landing-page .subjects-grid>div{background:#FFFDF8!important;border-radius:18px!important;border:1px solid #E4E2DA!important;box-shadow:0 5px 18px rgba(23,26,43,.025)!important}
+.landing-page .subjects-grid>div:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(23,26,43,.07)!important}
+.landing-page section[style*="background: white"],.landing-page section[style*="background: 'white'"]{background:#F8F7F2!important}
+.landing-page .identity-layout,.landing-page .why-layout{gap:clamp(28px,5vw,76px)!important}
+.landing-page .identity-layout h2,.landing-page .why-layout h2{font-size:clamp(36px,4.4vw,56px)!important;line-height:1.08!important}
+.landing-page .identity-layout p,.landing-page .why-layout p{color:#656879!important;line-height:1.8!important}
+.landing-page section:has(.cta-buttons){padding:clamp(80px,10vw,132px) 0!important;background:#171A2B!important}
+.landing-page section:has(.cta-buttons) h2{font-size:clamp(42px,6vw,72px)!important;line-height:1.02!important;letter-spacing:-.06em!important}
+.landing-page section:has(.cta-buttons) .cta-buttons a:first-child{background:#D9F36A!important;color:#171A2B!important;border-radius:12px!important}
+.landing-page section:has(.cta-buttons) .cta-buttons a:last-child{border-radius:12px!important}
+.landing-page footer{background:#F8F7F2!important}
+.landing-page footer .section-container{padding-top:56px!important}
+.landing-page button,.landing-page a{transition:color .2s ease,background .2s ease,border-color .2s ease,box-shadow .2s ease,transform .2s ease}
+.landing-page button:focus-visible,.landing-page a:focus-visible,.landing-page input:focus-visible{outline:3px solid rgba(56,87,246,.5)!important;outline-offset:3px!important}
+@media(max-width:900px){.landing-page .hero-inner{min-height:0!important;flex-direction:column!important;align-items:stretch!important;gap:28px!important}.landing-page .hero-left,.landing-page .hero-right{width:100%!important}.landing-page .hero-left{max-width:680px}.landing-page .hero-right{min-height:420px!important}.landing-page .hero-left h1{font-size:clamp(48px,9vw,76px)!important}.landing-page .hero-floating-badge{font-size:11px!important}.landing-page .identity-layout,.landing-page .why-layout{flex-direction:column!important;align-items:stretch!important}.landing-page .features-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:560px){.landing-page .hero-section{padding-top:100px!important}.landing-page .hero-inner{padding-left:20px!important;padding-right:20px!important}.landing-page .hero-left h1{font-size:clamp(44px,13vw,62px)!important}.landing-page .hero-right{min-height:340px!important}.landing-page .hero-right>div[style*="width: '70%'"]{width:72%!important}.landing-page .features-grid,.landing-page .subjects-grid{grid-template-columns:1fr!important}.landing-page .features-grid>div>div:first-child{height:230px!important;min-height:230px!important}.landing-page .premium-container{padding-left:20px!important;padding-right:20px!important}.landing-page .cta-buttons{flex-direction:column!important;align-items:stretch!important}.landing-page .cta-buttons a{text-align:center!important}.landing-page footer .footer-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:28px!important}}
+@media(prefers-reduced-motion:reduce){.landing-page *,.landing-page *:before,.landing-page *:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+
+/* Immersive "learning is a journey" hero, inspired by cinematic landscape storytelling. */
+.landing-page .journey-hero{position:relative;isolation:isolate;min-height:calc(100svh - 0px)!important;overflow:hidden!important;padding:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;background:#073865!important;color:#fff!important}
+.landing-page .journey-hero-sky{position:absolute;inset:0 0 24%;z-index:-4;background:linear-gradient(180deg,#07345F 0%,#08477C 56%,#367AA9 100%)}
+.landing-page .journey-stars{position:absolute;inset:8% 10% auto;height:28%;z-index:-2;pointer-events:none}
+.landing-page .journey-stars span{position:absolute;width:4px;height:4px;border-radius:50%;background:#D9F2FF;opacity:.7;box-shadow:0 0 14px rgba(173,224,255,.8);animation:journeyTwinkle 4s ease-in-out infinite}
+.landing-page .journey-stars span:nth-child(1){left:12%;top:36%}.landing-page .journey-stars span:nth-child(2){left:28%;top:14%;animation-delay:1s}.landing-page .journey-stars span:nth-child(3){left:71%;top:25%;animation-delay:2s}.landing-page .journey-stars span:nth-child(4){left:84%;top:54%;animation-delay:.5s}.landing-page .journey-stars span:nth-child(5){left:61%;top:8%;animation-delay:1.5s}
+.landing-page .journey-hero-nav-space{height:112px;flex:none}
+.landing-page .journey-hero-copy{position:relative;z-index:5;text-align:center;width:min(800px,calc(100% - 40px));margin:34px auto 0}
+.landing-page .journey-kicker{display:inline-flex;align-items:center;gap:9px;color:#B8E4FF;font-size:10px;font-weight:700;letter-spacing:.18em;margin-bottom:20px}
+.landing-page .journey-kicker-dot{height:6px;width:6px;background:#62C7FF;border-radius:50%;box-shadow:0 0 0 5px rgba(98,199,255,.12)}
+.landing-page .journey-hero-copy h1{font-size:clamp(42px,5.2vw,72px)!important;line-height:1.04!important;letter-spacing:-.055em!important;font-weight:600!important;color:#F8FCFF!important;margin:0 auto 22px!important}
+.landing-page .journey-hero-copy h1 em{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:italic;color:#63C4FF;letter-spacing:-.04em}
+.landing-page .journey-hero-copy p{max-width:610px;margin:0 auto;color:rgba(242,249,255,.88)!important;font-size:clamp(15px,1.5vw,19px)!important;line-height:1.65!important;font-weight:400}
+.landing-page .journey-actions{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:25px}
+.landing-page .journey-actions a{display:inline-flex;align-items:center;justify-content:center;gap:18px;min-height:48px;padding:0 21px;border-radius:999px;text-decoration:none;font-size:13px;font-weight:700;transition:transform .25s,background .25s,border-color .25s}
+.landing-page .journey-primary{background:#F5FAFF;color:#073865!important;box-shadow:0 8px 24px rgba(0,14,32,.12)}
+.landing-page .journey-primary:hover{transform:translateY(-2px);background:#D9F2FF}
+.landing-page .journey-secondary{color:#F5FAFF!important;border:1px solid rgba(224,243,255,.35);background:rgba(255,255,255,.045)}
+.landing-page .journey-secondary:hover{transform:translateY(-2px);border-color:rgba(224,243,255,.8);background:rgba(255,255,255,.1)}
+.landing-page .journey-mountain-scene{position:absolute;z-index:-1;left:0;right:0;bottom:0;height:58%;overflow:hidden;pointer-events:none}
+.landing-page .journey-mountains{position:absolute;left:0;width:100%;height:100%;display:block}
+.landing-page .journey-mountains-back{bottom:7%;opacity:.82;animation:journeyMountainDrift 32s ease-in-out infinite alternate}
+.landing-page .journey-mountains-front{bottom:-1%;filter:drop-shadow(0 -15px 35px rgba(221,241,255,.14))}
+.landing-page .journey-cloud{position:absolute;z-index:2;width:45%;height:20%;border-radius:50%;filter:blur(32px);background:rgba(205,230,247,.42);opacity:.5}
+.landing-page .journey-cloud-one{left:-10%;top:35%;animation:journeyCloud 24s ease-in-out infinite alternate}
+.landing-page .journey-cloud-two{right:-12%;top:23%;opacity:.4;animation:journeyCloud 31s ease-in-out infinite alternate-reverse}
+.landing-page .journey-trail{position:absolute;z-index:4;bottom:-4%;left:50%;width:120px;height:30%;transform:translateX(-50%);background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.88));clip-path:polygon(46% 0,54% 0,100% 100%,0 100%);opacity:.52}
+.landing-page .journey-student{position:absolute;z-index:6;bottom:16%;left:51.5%;width:22px;height:79px;transform:translateX(-50%);filter:drop-shadow(0 6px 6px rgba(5,30,48,.25));animation:journeyHiker 5s ease-in-out infinite}
+.landing-page .journey-student-head{position:absolute;top:0;left:7px;width:9px;height:10px;border-radius:50%;background:#1B3346}
+.landing-page .journey-student-body{position:absolute;top:10px;left:4px;width:15px;height:31px;border-radius:6px 6px 4px 4px;background:linear-gradient(90deg,#087CA3,#22B6D8 55%,#075B7E)}
+.landing-page .journey-student-pack{position:absolute;top:13px;left:0;width:8px;height:20px;border-radius:4px;background:#173D58;border:1px solid rgba(255,255,255,.22)}
+.landing-page .journey-student-leg{position:absolute;top:39px;width:6px;height:28px;background:#23394C;border-radius:3px;transform-origin:top center}
+.landing-page .journey-leg-left{left:5px;transform:rotate(5deg);animation:journeyStep 1.3s ease-in-out infinite alternate}
+.landing-page .journey-leg-right{right:4px;transform:rotate(-7deg);animation:journeyStep 1.3s ease-in-out infinite alternate-reverse}
+.landing-page .journey-side-marker{position:absolute;z-index:6;right:3.2%;top:36%;display:flex;flex-direction:column;align-items:center;gap:12px;color:rgba(230,246,255,.65)}
+.landing-page .journey-marker-line{width:1px;height:110px;background:linear-gradient(180deg,transparent,rgba(226,244,255,.6),transparent)}
+.landing-page .journey-marker-spark{font-size:16px;color:#B5E5FF}
+.landing-page .journey-marker-label{font-size:8px;letter-spacing:.18em;writing-mode:vertical-rl}
+.landing-page .journey-scroll{position:absolute;z-index:7;bottom:20px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;text-decoration:none;color:rgba(8,48,81,.68)!important;font-size:8px;letter-spacing:.17em;font-weight:700}
+.landing-page .journey-scroll i{font-style:normal;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.62);color:#16496E!important;font-size:20px;box-shadow:0 4px 20px rgba(13,54,83,.06);animation:journeyNudge 2s ease-in-out infinite}
+.landing-page .journey-student-proof{position:absolute;left:clamp(20px,4vw,58px);bottom:28px;z-index:7;display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:.02em;color:rgba(15,56,86,.68)}
+.landing-page .journey-proof-dot{width:6px;height:6px;border-radius:50%;background:#2B9BC6}
+.landing-page .landing-nav{background:rgba(5,48,86,.48)!important;border-bottom:1px solid rgba(220,243,255,.1)!important;box-shadow:none!important;backdrop-filter:blur(16px)!important}
+.landing-page .landing-nav a,.landing-page .landing-nav span{color:#F5FAFF!important}
+.landing-page .landing-nav a:hover{color:#78D1FF!important}
+.landing-page .landing-nav .logo-dot{background:#66C9FF!important}
+.landing-page .landing-nav a[href="/register"]{background:rgba(255,255,255,.1)!important;border:1px solid rgba(226,244,255,.22)!important;border-radius:999px!important}
+.landing-page .landing-nav a[href="/register"]:hover{background:rgba(255,255,255,.18)!important}
+@keyframes journeyTwinkle{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:.9;transform:scale(1.25)}}
+@keyframes journeyCloud{from{transform:translateX(-3%) translateY(0)}to{transform:translateX(5%) translateY(-10px)}}
+@keyframes journeyMountainDrift{from{transform:translateX(-1.2%)}to{transform:translateX(1.2%)}}
+@keyframes journeyHiker{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-4px)}}
+@keyframes journeyStep{from{rotate:-8deg}to{rotate:8deg}}
+@keyframes journeyNudge{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+@media(max-width:800px){.landing-page .journey-hero{min-height:860px!important;min-height:100svh!important}.landing-page .journey-hero-nav-space{height:96px}.landing-page .journey-hero-copy{margin-top:28px}.landing-page .journey-mountain-scene{height:47%;min-height:330px}.landing-page .journey-side-marker{right:15px;top:44%;transform:scale(.75);transform-origin:top right}.landing-page .journey-student-proof{bottom:19px;max-width:190px;font-size:9px}.landing-page .journey-scroll{bottom:16px}.landing-page .journey-trail{height:24%}.landing-page .journey-student{bottom:15%;left:51%}}
+@media(max-width:480px){.landing-page .journey-hero-copy{margin-top:20px}.landing-page .journey-hero-copy h1{font-size:clamp(42px,12vw,58px)!important}.landing-page .journey-hero-copy p{font-size:14px!important;max-width:330px}.landing-page .journey-desktop-break{display:none}.landing-page .journey-actions{gap:8px;flex-wrap:wrap}.landing-page .journey-actions a{font-size:12px;min-height:44px;padding:0 15px}.landing-page .journey-mountain-scene{height:41%;min-height:300px}.landing-page .journey-side-marker{display:none}.landing-page .journey-student-proof{max-width:150px}.landing-page .journey-scroll span{display:none}}
+@media(prefers-reduced-motion:reduce){.landing-page .journey-stars span,.landing-page .journey-mountains-back,.landing-page .journey-cloud,.landing-page .journey-student,.landing-page .journey-leg-left,.landing-page .journey-leg-right,.landing-page .journey-scroll i{animation:none!important}}
+
+
+/* Cinematic journey-inspired hero: deep alpine blue, luminous snow, editorial typography. */
+.landing-page .journey-hero{position:relative;isolation:isolate;min-height:100svh!important;overflow:hidden!important;padding:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;background:#073865!important;color:#fff!important}
+.landing-page .journey-hero-sky{position:absolute;inset:0 0 22%;z-index:-4;background:linear-gradient(180deg,#07345F 0%,#08477C 56%,#367AA9 100%)}
+.landing-page .journey-stars{position:absolute;inset:8% 10% auto;height:28%;z-index:-2;pointer-events:none}
+.landing-page .journey-stars span{position:absolute;width:4px;height:4px;border-radius:50%;background:#D9F2FF;opacity:.7;box-shadow:0 0 14px rgba(173,224,255,.8);animation:journeyTwinkle 4s ease-in-out infinite}
+.landing-page .journey-stars span:nth-child(1){left:12%;top:36%}.landing-page .journey-stars span:nth-child(2){left:28%;top:14%;animation-delay:1s}.landing-page .journey-stars span:nth-child(3){left:71%;top:25%;animation-delay:2s}.landing-page .journey-stars span:nth-child(4){left:84%;top:54%;animation-delay:.5s}.landing-page .journey-stars span:nth-child(5){left:61%;top:8%;animation-delay:1.5s}
+.landing-page .journey-hero-nav-space{height:112px;flex:none}
+.landing-page .journey-hero-copy{position:relative;z-index:5;text-align:center;width:min(800px,calc(100% - 40px));margin:34px auto 0}
+.landing-page .journey-kicker{display:inline-flex;align-items:center;gap:9px;color:#B8E4FF;font-size:10px;font-weight:700;letter-spacing:.18em;margin-bottom:20px}
+.landing-page .journey-kicker-dot{height:6px;width:6px;background:#62C7FF;border-radius:50%;box-shadow:0 0 0 5px rgba(98,199,255,.12)}
+.landing-page .journey-hero-copy h1{font-size:clamp(42px,5.2vw,72px)!important;line-height:1.04!important;letter-spacing:-.055em!important;font-weight:600!important;color:#F8FCFF!important;margin:0 auto 22px!important}
+.landing-page .journey-hero-copy h1 em{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:italic;color:#63C4FF;letter-spacing:-.04em}
+.landing-page .journey-hero-copy p{max-width:610px;margin:0 auto;color:rgba(242,249,255,.88)!important;font-size:clamp(15px,1.5vw,19px)!important;line-height:1.65!important}
+.landing-page .journey-actions{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:25px}
+.landing-page .journey-actions a{display:inline-flex;align-items:center;justify-content:center;gap:18px;min-height:48px;padding:0 21px;border-radius:999px;text-decoration:none;font-size:13px;font-weight:700;transition:transform .25s,background .25s,border-color .25s}
+.landing-page .journey-primary{background:#F5FAFF;color:#073865!important;box-shadow:0 8px 24px rgba(0,14,32,.12)}
+.landing-page .journey-primary:hover{transform:translateY(-2px);background:#D9F2FF}
+.landing-page .journey-secondary{color:#F5FAFF!important;border:1px solid rgba(224,243,255,.35);background:rgba(255,255,255,.045)}
+.landing-page .journey-secondary:hover{transform:translateY(-2px);border-color:rgba(224,243,255,.8);background:rgba(255,255,255,.1)}
+.landing-page .journey-mountain-scene{position:absolute;z-index:-1;left:0;right:0;bottom:0;height:58%;overflow:hidden;pointer-events:none}
+.landing-page .journey-mountains{position:absolute;left:0;width:100%;height:100%;display:block}
+.landing-page .journey-mountains-back{bottom:7%;opacity:.82;animation:journeyMountainDrift 32s ease-in-out infinite alternate}
+.landing-page .journey-mountains-front{bottom:-1%;filter:drop-shadow(0 -15px 35px rgba(221,241,255,.14))}
+.landing-page .journey-cloud{position:absolute;z-index:2;width:45%;height:20%;border-radius:50%;filter:blur(32px);background:rgba(205,230,247,.42);opacity:.5}
+.landing-page .journey-cloud-one{left:-10%;top:35%;animation:journeyCloud 24s ease-in-out infinite alternate}
+.landing-page .journey-cloud-two{right:-12%;top:23%;opacity:.4;animation:journeyCloud 31s ease-in-out infinite alternate-reverse}
+.landing-page .journey-trail{position:absolute;z-index:4;bottom:-4%;left:50%;width:120px;height:30%;transform:translateX(-50%);background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.88));clip-path:polygon(46% 0,54% 0,100% 100%,0 100%);opacity:.52}
+.landing-page .journey-student{position:absolute;z-index:6;bottom:16%;left:51.5%;width:22px;height:79px;transform:translateX(-50%);filter:drop-shadow(0 6px 6px rgba(5,30,48,.25));animation:journeyHiker 5s ease-in-out infinite}
+.landing-page .journey-student-head{position:absolute;top:0;left:7px;width:9px;height:10px;border-radius:50%;background:#1B3346}
+.landing-page .journey-student-body{position:absolute;top:10px;left:4px;width:15px;height:31px;border-radius:6px 6px 4px 4px;background:linear-gradient(90deg,#087CA3,#22B6D8 55%,#075B7E)}
+.landing-page .journey-student-pack{position:absolute;top:13px;left:0;width:8px;height:20px;border-radius:4px;background:#173D58;border:1px solid rgba(255,255,255,.22)}
+.landing-page .journey-student-leg{position:absolute;top:39px;width:6px;height:28px;background:#23394C;border-radius:3px;transform-origin:top center}
+.landing-page .journey-leg-left{left:5px;animation:journeyStep 1.3s ease-in-out infinite alternate}.landing-page .journey-leg-right{right:4px;animation:journeyStep 1.3s ease-in-out infinite alternate-reverse}
+.landing-page .journey-side-marker{position:absolute;z-index:6;right:3.2%;top:36%;display:flex;flex-direction:column;align-items:center;gap:12px;color:rgba(230,246,255,.65)}
+.landing-page .journey-marker-line{width:1px;height:110px;background:linear-gradient(180deg,transparent,rgba(226,244,255,.6),transparent)}
+.landing-page .journey-marker-spark{font-size:16px;color:#B5E5FF}.landing-page .journey-marker-label{font-size:8px;letter-spacing:.18em;writing-mode:vertical-rl}
+.landing-page .journey-scroll{position:absolute;z-index:7;bottom:20px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;text-decoration:none;color:rgba(8,48,81,.68)!important;font-size:8px;letter-spacing:.17em;font-weight:700}
+.landing-page .journey-scroll i{font-style:normal;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.62);color:#16496E!important;font-size:20px;box-shadow:0 4px 20px rgba(13,54,83,.06);animation:journeyNudge 2s ease-in-out infinite}
+.landing-page .journey-student-proof{position:absolute;left:clamp(20px,4vw,58px);bottom:28px;z-index:7;display:flex;align-items:center;gap:8px;font-size:10px;color:rgba(15,56,86,.68)}
+.landing-page .journey-proof-dot{width:6px;height:6px;border-radius:50%;background:#2B9BC6}
+.landing-page .landing-nav{background:rgba(5,48,86,.48)!important;border-bottom:1px solid rgba(220,243,255,.1)!important;box-shadow:none!important;backdrop-filter:blur(16px)!important}
+.landing-page .landing-nav a,.landing-page .landing-nav span{color:#F5FAFF!important}.landing-page .landing-nav a:hover{color:#78D1FF!important}.landing-page .landing-nav .logo-dot{background:#66C9FF!important}
+.landing-page .landing-nav a[href="/register"]{background:rgba(255,255,255,.1)!important;border:1px solid rgba(226,244,255,.22)!important;border-radius:999px!important}
+.landing-page .landing-nav a[href="/register"]:hover{background:rgba(255,255,255,.18)!important}
+@keyframes journeyTwinkle{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:.9;transform:scale(1.25)}}@keyframes journeyCloud{from{transform:translateX(-3%) translateY(0)}to{transform:translateX(5%) translateY(-10px)}}@keyframes journeyMountainDrift{from{transform:translateX(-1.2%)}to{transform:translateX(1.2%)}}@keyframes journeyHiker{0%,100%{translate:0 0}50%{translate:0 -4px}}@keyframes journeyStep{from{rotate:-8deg}to{rotate:8deg}}@keyframes journeyNudge{0%,100%{translate:0 0}50%{translate:0 5px}}
+@media(max-width:800px){.landing-page .journey-hero{min-height:100svh!important}.landing-page .journey-hero-nav-space{height:96px}.landing-page .journey-hero-copy{margin-top:28px}.landing-page .journey-mountain-scene{height:47%;min-height:330px}.landing-page .journey-side-marker{right:15px;top:44%;transform:scale(.75);transform-origin:top right}.landing-page .journey-student-proof{bottom:19px;max-width:190px;font-size:9px}.landing-page .journey-scroll{bottom:16px}.landing-page .journey-trail{height:24%}.landing-page .journey-student{bottom:15%;left:51%}}
+@media(max-width:480px){.landing-page .journey-hero-copy{margin-top:20px}.landing-page .journey-hero-copy h1{font-size:clamp(42px,12vw,58px)!important}.landing-page .journey-hero-copy p{font-size:14px!important;max-width:330px}.landing-page .journey-desktop-break{display:none}.landing-page .journey-actions{gap:8px;flex-wrap:wrap}.landing-page .journey-actions a{font-size:12px;min-height:44px;padding:0 15px}.landing-page .journey-mountain-scene{height:41%;min-height:300px}.landing-page .journey-side-marker{display:none}.landing-page .journey-student-proof{max-width:150px}.landing-page .journey-scroll span{display:none}}
+@media(prefers-reduced-motion:reduce){.landing-page .journey-stars span,.landing-page .journey-mountains-back,.landing-page .journey-cloud,.landing-page .journey-student,.landing-page .journey-leg-left,.landing-page .journey-leg-right,.landing-page .journey-scroll i{animation:none!important}}
+
+
+/* Hero refinement: improve message hierarchy, CTA contrast and keep the copy on clear sky. */
+.landing-page .journey-hero-copy{width:min(850px,calc(100% - 40px));margin-top:38px}
+.landing-page .journey-hero-copy h1{font-family:Inter,'Plus Jakarta Sans',ui-sans-serif,system-ui,sans-serif!important;font-size:clamp(44px,5.4vw,76px)!important;line-height:1.02!important;letter-spacing:-.06em!important;font-weight:650!important;text-wrap:balance}
+.landing-page .journey-hero-copy p{max-width:660px;font-size:clamp(15px,1.45vw,18px)!important;line-height:1.7!important;color:#E1F0FC!important;text-wrap:balance}
+.landing-page .journey-actions{margin-top:28px;gap:12px}
+.landing-page .journey-actions a{min-height:50px;padding:0 23px;font-size:13px;letter-spacing:-.01em;box-shadow:0 8px 22px rgba(0,20,44,.16)}
+.landing-page .journey-primary{background:#42D3F2!important;color:#052F50!important;border:1px solid #6DE2F7!important}
+.landing-page .journey-primary span{color:#052F50!important;font-size:17px}
+.landing-page .journey-primary:hover{background:#7BE7F8!important;border-color:#A2F0FC!important;transform:translateY(-2px);box-shadow:0 12px 28px rgba(1,25,48,.24)}
+.landing-page .journey-secondary{background:rgba(4,42,76,.5)!important;color:#F4FAFF!important;border:1px solid rgba(204,233,255,.58)!important;backdrop-filter:blur(12px);box-shadow:0 8px 24px rgba(0,20,44,.12)}
+.landing-page .journey-secondary:hover{background:rgba(4,42,76,.76)!important;border-color:#A8E8FF!important;transform:translateY(-2px)}
+.landing-page .journey-mountain-scene{height:50%}
+.landing-page .journey-mountains-back{bottom:4%}
+.landing-page .journey-mountains-front{bottom:-2%}
+.landing-page .journey-student-proof{color:#315C7A!important;background:rgba(246,250,253,.65);padding:8px 12px;border-radius:999px;backdrop-filter:blur(8px)}
+.landing-page .journey-scroll{bottom:16px}
+.landing-page .journey-scroll span{color:#315C7A!important}
+@media(max-width:800px){.landing-page .journey-hero-copy{margin-top:26px}.landing-page .journey-mountain-scene{height:46%}}
+@media(max-width:480px){.landing-page .journey-hero-copy{margin-top:22px}.landing-page .journey-hero-copy h1{font-size:clamp(41px,11.5vw,56px)!important}.landing-page .journey-hero-copy p{font-size:14px!important;line-height:1.6!important}.landing-page .journey-actions a{padding:0 16px}.landing-page .journey-mountain-scene{height:42%}.landing-page .journey-student-proof{background:rgba(246,250,253,.8);bottom:18px;max-width:none}}
+
+
+/* ==========================================================
+   MEDHA unified design system: alpine blue, ice, cyan, ink.
+   Shared section rhythm and animated ambient graphics.
+   ========================================================== */
+.landing-page{
+  --medha-ink:#102A43;--medha-navy:#073865;--medha-blue:#155E91;
+  --medha-cyan:#42D3F2;--medha-ice:#EAF6FD;--medha-muted:#58738A;
+  font-family:Inter,'Plus Jakarta Sans',ui-sans-serif,system-ui,sans-serif!important;
+}
+.landing-page .premium-section,
+.landing-page #features,
+.landing-page .landing-section{
+  position:relative;isolation:isolate;overflow:hidden;
+  padding:clamp(68px,8vw,112px) 0!important;
+  background:linear-gradient(180deg,#FFFFFF 0%,#F7FBFE 100%)!important;
+}
+.landing-page .premium-container,.landing-page .section-container{position:relative;z-index:2}
+.landing-page .premium-section-heading h2,
+.landing-page #features h2,
+.landing-page .identity-layout h2,
+.landing-page .why-layout h2{
+  color:var(--medha-ink)!important;font-family:Inter,'Plus Jakarta Sans',sans-serif!important;
+  font-weight:650!important;letter-spacing:-.045em!important;line-height:1.1!important;
+  text-wrap:balance;
+}
+.landing-page .premium-section-heading h2 span{color:#287FB0!important}
+.landing-page .premium-section-heading p,
+.landing-page .identity-layout p,
+.landing-page .why-layout p{color:var(--medha-muted)!important;line-height:1.75!important}
+.landing-page .premium-eyebrow{
+  color:#167AA6!important;background:#E7F7FC!important;border-color:#B9EAF7!important;
+  font-weight:750!important;letter-spacing:.14em!important;
+}
+.landing-page .premium-challenge-grid{gap:18px!important}
+.landing-page .premium-challenge-card{
+  border:1px solid #DDEBF4!important;border-radius:22px!important;
+  background:rgba(255,255,255,.86)!important;box-shadow:0 10px 34px rgba(13,55,87,.045)!important;
+  transition:border-color .3s,box-shadow .3s,transform .3s!important;
+}
+.landing-page .premium-challenge-card:hover{border-color:#91DDF0!important;box-shadow:0 18px 42px rgba(13,80,119,.1)!important}
+.landing-page .premium-card-topline,.landing-page .premium-card-foot{color:#58738A!important}
+.landing-page .premium-challenge-icon{background:#E5F7FC!important;color:#117EA7!important;border:1px solid #C7EEF8!important}
+.landing-page .premium-challenge-card h3{color:#102A43!important;letter-spacing:-.025em!important}
+.landing-page .premium-challenge-card p{color:#58738A!important;line-height:1.7!important}
+.landing-page .identity-layout,.landing-page .why-layout{gap:clamp(28px,5vw,72px)!important}
+.landing-page .identity-layout h2,.landing-page .why-layout h2{font-size:clamp(34px,4.2vw,54px)!important}
+.landing-page .identity-layout h2 span,.landing-page .why-layout h2 span{color:#138CB8!important}
+.landing-page #features{background:linear-gradient(180deg,#F4FAFE 0%,#EAF5FC 100%)!important}
+.landing-page #features .feature-card,
+.landing-page #features article{border-radius:24px!important;border:1px solid rgba(176,209,230,.65)!important;box-shadow:0 12px 34px rgba(10,51,83,.055)!important}
+.landing-page #features .feature-card:hover,
+.landing-page #features article:hover{box-shadow:0 22px 48px rgba(10,51,83,.11)!important}
+.landing-page .subjects-section,.landing-page section.subjects-section{background:#FFFFFF!important}
+.landing-page .subject-card{border:1px solid #DDEBF4!important;border-radius:20px!important;box-shadow:0 8px 26px rgba(10,51,83,.045)!important;transition:transform .3s,box-shadow .3s!important}
+.landing-page .subject-card:hover{transform:translateY(-5px)!important;box-shadow:0 16px 34px rgba(10,51,83,.1)!important}
+.landing-page .testimonials-section{background:linear-gradient(145deg,#EAF6FD,#F8FBFE)!important}
+.landing-page .testimonials-section .blob-green,.landing-page .testimonials-section .blob-purple{background:#65D8F0!important;filter:blur(65px)!important;opacity:.12!important}
+.landing-page .testimonial-card{background:rgba(255,255,255,.9)!important;border:1px solid #DDEBF4!important;border-radius:24px!important;box-shadow:0 12px 36px rgba(10,51,83,.06)!important}
+.landing-page .testimonial-card p{color:#34556E!important}
+.landing-page .landing-nav{font-family:Inter,'Plus Jakarta Sans',sans-serif!important}
+.landing-page .landing-nav a{transition:color .2s,background .2s,border-color .2s!important}
+.landing-page .landing-nav .nav-links-desktop{gap:clamp(18px,3vw,42px)!important}
+.landing-page .landing-nav a:focus-visible,.landing-page .journey-actions a:focus-visible{outline:3px solid #42D3F2!important;outline-offset:4px!important}
+
+/* Floating ambient orbs and a faint technical grid unify the otherwise flat sections. */
+.landing-page .premium-section::before,
+.landing-page #features::before,
+.landing-page .identity-layout::before,
+.landing-page .why-layout::before{
+  content:"";position:absolute;z-index:-1;width:360px;height:360px;border-radius:50%;
+  right:-180px;top:8%;pointer-events:none;
+  background:radial-gradient(circle,rgba(66,211,242,.16) 0%,rgba(66,211,242,.045) 42%,transparent 72%);
+  animation:medhaAmbientFloat 16s ease-in-out infinite alternate;
+}
+.landing-page .premium-section::after,
+.landing-page #features::after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.28;
+  background-image:radial-gradient(rgba(32,123,167,.18) .7px,transparent .7px);
+  background-size:24px 24px;mask-image:linear-gradient(110deg,transparent 15%,#000 100%);
+}
+.landing-page .dot-grid,.landing-page .line-grid,.landing-page .hatch{
+  opacity:.22!important;animation:medhaGridDrift 42s linear infinite;
+}
+.landing-page .blob{animation:medhaOrbFloat 18s ease-in-out infinite alternate;will-change:transform}
+.landing-page .blob-amber,.landing-page .blob-green,.landing-page .blob-purple{
+  background:#42D3F2!important;filter:blur(55px)!important;opacity:.09!important;
+}
+.landing-page .premium-challenge-card,.landing-page #features article,.landing-page .subject-card{
+  animation:medhaCardArrive .65s both;
+}
+.landing-page .premium-challenge-card:nth-child(2){animation-delay:.08s}
+.landing-page .premium-challenge-card:nth-child(3){animation-delay:.16s}
+.landing-page .journey-stars span{will-change:transform,opacity}
+@keyframes medhaAmbientFloat{0%{transform:translate3d(0,-12px,0) scale(.92)}100%{transform:translate3d(-45px,36px,0) scale(1.12)}}
+@keyframes medhaOrbFloat{0%{translate:0 0}100%{translate:18px -24px}}
+@keyframes medhaGridDrift{0%{background-position:0 0}100%{background-position:120px 80px}}
+@keyframes medhaCardArrive{from{opacity:.65;translate:0 12px}to{opacity:1;translate:0 0}}
+/* The closing CTA returns to the hero's deep-blue palette, not a different green/amber theme. */
+.landing-page section:has(.cta-buttons){background:linear-gradient(135deg,#062F53 0%,#084879 60%,#0B5B85 100%)!important}
+.landing-page section:has(.cta-buttons)::before{content:"";position:absolute;inset:-30%;pointer-events:none;background:radial-gradient(ellipse at 20% 50%,rgba(66,211,242,.2),transparent 38%),radial-gradient(ellipse at 82% 20%,rgba(119,195,255,.16),transparent 35%);animation:medhaAmbientFloat 18s ease-in-out infinite alternate}
+.landing-page section:has(.cta-buttons) h2{color:#F6FBFF!important}
+.landing-page section:has(.cta-buttons) p{color:#C4DDED!important}
+.landing-page section:has(.cta-buttons) .cta-buttons a:first-child{background:#42D3F2!important;color:#052F50!important;border:1px solid #7AE6F8!important;border-radius:999px!important;box-shadow:0 10px 30px rgba(0,20,44,.2)!important}
+.landing-page section:has(.cta-buttons) .cta-buttons a:last-child{background:rgba(255,255,255,.07)!important;color:#F4FAFF!important;border:1px solid rgba(219,241,255,.45)!important;border-radius:999px!important}
+.landing-page footer{background:#F7FBFE!important;border-top:1px solid #DDEBF4!important}
+.landing-page footer a:hover{color:#117EA7!important}
+@media(max-width:700px){
+ .landing-page .premium-section,.landing-page #features,.landing-page .landing-section{padding:68px 0!important}
+ .landing-page .section-container{padding-left:22px!important;padding-right:22px!important}
+ .landing-page .identity-layout,.landing-page .why-layout{flex-direction:column!important;align-items:stretch!important}
+ .landing-page .premium-challenge-grid{grid-template-columns:1fr!important}
+ .landing-page .premium-section-heading h2{font-size:clamp(32px,8vw,44px)!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .landing-page .premium-section::before,.landing-page #features::before,.landing-page .premium-section::after,.landing-page #features::after,
+ .landing-page .dot-grid,.landing-page .line-grid,.landing-page .hatch,.landing-page .blob,
+ .landing-page .premium-challenge-card,.landing-page #features article,.landing-page .subject-card,
+ .landing-page section:has(.cta-buttons)::before{animation:none!important;transition:none!important}
+}
+
+
+/* Target the actual JSX section wrappers so inline section styles share one visual language. */
+.landing-page section:has(.identity-layout),
+.landing-page section:has(.why-layout){background:linear-gradient(180deg,#FFFFFF 0%,#F4FAFE 100%)!important}
+.landing-page section:has(.identity-layout) .dot-grid,
+.landing-page section:has(.why-layout) .dot-grid{background-image:radial-gradient(rgba(24,129,174,.2) .8px,transparent .8px)!important;background-size:22px 22px!important;animation:medhaGridDrift 36s linear infinite;mask-image:linear-gradient(90deg,transparent,#000)}
+.landing-page section:has(.identity-layout) h2,
+.landing-page section:has(.why-layout) h2{color:#102A43!important;font-family:Inter,'Plus Jakarta Sans',sans-serif!important;font-weight:650!important;letter-spacing:-.045em!important}
+.landing-page section:has(.identity-layout) p,
+.landing-page section:has(.why-layout) p{color:#58738A!important}
+.landing-page section:has(.identity-layout) [style*="rgba(19,184,212"],
+.landing-page section:has(.why-layout) [style*="rgba(19,184,212"]{background:#E7F7FC!important;border-color:#B9EAF7!important;color:#167AA6!important}
+.landing-page section:has(.identity-layout) h2 span,
+.landing-page section:has(.why-layout) h2 span{color:#168AB5!important}
+.landing-page section:has(.identity-layout) .identity-visual,
+.landing-page section:has(.why-layout) .why-visual{border-radius:28px}
+.landing-page section:has(.feature-grid),
+.landing-page section:has(.feature-card){background:linear-gradient(180deg,#F1F8FD 0%,#FFFFFF 100%)!important}
+.landing-page section:has(.feature-grid) [style*="background"],
+.landing-page section:has(.feature-card) [style*="background"]{border-radius:24px}
+.landing-page section:has(.subject-tabs),
+.landing-page section:has(.subject-card){background:#FFFFFF!important}
+.landing-page section:has(.subject-card) [style*="background-color"]{border-color:#DDEBF4!important}
+.landing-page section:has(.testimonial-card),
+.landing-page section:has(.testimonials-track){background:linear-gradient(135deg,#EAF6FD 0%,#F8FBFE 100%)!important}
+.landing-page section:has(.testimonial-card) .blob,
+.landing-page section:has(.testimonials-track) .blob{background:#42D3F2!important;opacity:.12!important}
+.landing-page section:has(.testimonial-card) [style*="border-radius"],
+.landing-page section:has(.testimonials-track) [style*="border-radius"]{border-color:#DDEBF4}
+.landing-page section:has(.cta-buttons) .grain{opacity:.12!important}
+.landing-page footer .footer-grid{gap:clamp(22px,4vw,48px)!important}
+.landing-page footer .footer-grid>div:first-child{max-width:290px}
+
+
+/* Premium typography pass: clean geometric sans for UI, editorial serif only for emphasis. */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&display=swap');
+.landing-page{
+  --font-ui:'DM Sans',sans-serif;
+  --font-display:'Manrope',sans-serif;
+  font-family:var(--font-ui)!important;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.landing-page h1,.landing-page h2,.landing-page h3,.landing-page h4,
+.landing-page .journey-hero-copy h1{
+  font-family:var(--font-display)!important;
+  font-weight:700;
+  letter-spacing:-.045em;
+}
+.landing-page .journey-hero-copy h1{
+  font-size:clamp(46px,5.2vw,74px)!important;
+  line-height:1.06!important;
+  letter-spacing:-.058em!important;
+  font-weight:700!important;
+}
+.landing-page .journey-hero-copy h1 em{
+  font-family:'Playfair Display',Georgia,serif!important;
+  font-weight:500!important;
+  font-style:italic!important;
+  letter-spacing:-.045em!important;
+}
+.landing-page .journey-kicker,.landing-page .premium-eyebrow{
+  font-family:var(--font-ui)!important;
+  font-weight:700!important;
+  letter-spacing:.14em!important;
+}
+.landing-page p,.landing-page li,.landing-page label,
+.landing-page .journey-actions a,.landing-page button,
+.landing-page nav a,.landing-page footer a{
+  font-family:var(--font-ui)!important;
+}
+.landing-page .journey-hero-copy p{
+  font-size:clamp(15px,1.35vw,18px)!important;
+  font-weight:400!important;
+  letter-spacing:-.012em!important;
+}
+.landing-page .journey-actions a{
+  font-size:13px!important;
+  font-weight:700!important;
+  letter-spacing:-.01em!important;
+}
+.landing-page .premium-section-heading h2,
+.landing-page #features h2,
+.landing-page section:has(.identity-layout) h2,
+.landing-page section:has(.why-layout) h2{
+  font-family:var(--font-display)!important;
+  font-weight:700!important;
+  letter-spacing:-.05em!important;
+}
+@media(max-width:480px){
+  .landing-page .journey-hero-copy h1{font-size:clamp(40px,10.8vw,54px)!important;line-height:1.08!important}
 }

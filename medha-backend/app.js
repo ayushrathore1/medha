@@ -16,7 +16,7 @@
  *  9. Health routes (/, /health, /api/test-fix)
  * 10. API routes (auth limiter / AI limiter applied per mount)
  * 11. 404 handler
- * 12. Global error handler
+ * 12. Upload error handler, then global error handler
  */
 require("dotenv").config();
 const express = require("express");
@@ -201,6 +201,8 @@ function createApp() {
     });
   });
 
+  const { handleUploadError } = require("./middleware/upload");
+  app.use(handleUploadError);
   app.use((err, req, res, next) => {
     console.error(`[ERROR] ${err.message}`, err.stack);
 

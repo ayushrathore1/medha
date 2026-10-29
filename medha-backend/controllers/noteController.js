@@ -8,6 +8,15 @@ const path = require("path");
 const { uploadToCloudinary, CLOUDINARY_MAX_BYTES } = require("../utils/cloudinaryUpload");
 const { extractPdfText, moderateNote } = require("../utils/noteModerator");
 
+function removeLocalFile(filePath) {
+  if (!filePath) return;
+  fs.unlink(filePath, (err) => {
+    if (err && err.code !== "ENOENT") {
+      console.warn("[Upload] Failed to remove temp file:", err.message);
+    }
+  });
+}
+
 const AURA_PER_DOWNLOAD = 3;
 
 // List user's own notes (optionally filtered by subject)
@@ -167,6 +176,9 @@ exports.toggleVisibility = async (req, res) => {
 // Upload a note with file (PDF or Image)
 // Strategy: files ≤ 10MB → Cloudinary (CDN), files > 10MB → served from disk
 exports.uploadNote = async (req, res) => {
+  const localFilePath = req.file?.path;
+  let persistLocalFile = false;
+
   try {
     const { title, subject, subjectTag, isPublic, semester, noteType } = req.body;
     const owner = req.user._id;
@@ -185,10 +197,8 @@ exports.uploadNote = async (req, res) => {
       return res.status(400).json({ error: "No file uploaded." });
     }
 
-    const localFilePath = file.path; // multer saved to ./uploads/notes/
-    const extractedText = /pdf/i.test(file.mimetype)
-      ? await extractPdfText(localFilePath)
-      : "";
+    const isPdf = file.detectedType === "pdf" || /pdf/i.test(file.mimetype);
+    const extractedText = isPdf ? await extractPdfText(localFilePath) : "";
 
     let verdict;
     try {
@@ -201,12 +211,10 @@ exports.uploadNote = async (req, res) => {
       });
     } catch (modErr) {
       console.error("[Upload] Groq check failed:", modErr.message);
-      fs.unlink(localFilePath, () => {});
       return res.status(503).json({ error: "We could not check this file. Try again in a minute." });
     }
 
     if (!verdict.allowed) {
-      fs.unlink(localFilePath, () => {});
       return res.status(400).json({
         error: verdict.reason || "This file was not accepted as study material.",
         verificationStatus: "rejected",
@@ -214,6 +222,7 @@ exports.uploadNote = async (req, res) => {
     }
 
     let fileUrl;
+    let storedLocally = false;
 
     // Decide storage strategy based on file size
     if (file.size <= CLOUDINARY_MAX_BYTES) {
@@ -221,20 +230,16 @@ exports.uploadNote = async (req, res) => {
       try {
         const result = await uploadToCloudinary(localFilePath, file.originalname);
         fileUrl = result.url;
-        // Clean up local file after successful Cloudinary upload
-        fs.unlink(localFilePath, (err) => {
-          if (err) console.warn("[Upload] Failed to cleanup local file:", err.message);
-        });
       } catch (cloudErr) {
         console.warn("[Upload] Cloudinary upload failed, using local storage:", cloudErr.message);
-        // Fallback to local storage
         fileUrl = `/uploads/notes/${file.filename}`;
+        storedLocally = true;
       }
     } else {
-      // Large file → serve from disk (bypasses Cloudinary 10MB limit)
       const sizeMB = (file.size / 1024 / 1024).toFixed(1);
       console.log(`[Upload] Large file (${sizeMB}MB) — storing on disk: ${file.filename}`);
       fileUrl = `/uploads/notes/${file.filename}`;
+      storedLocally = true;
     }
 
     const noteData = {
@@ -265,6 +270,7 @@ exports.uploadNote = async (req, res) => {
 
     const note = new Note(noteData);
     await note.save();
+    persistLocalFile = storedLocally;
     
     // Populate owner info before returning
     await note.populate("owner", "name email avatar");
@@ -276,6 +282,10 @@ exports.uploadNote = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  } finally {
+    if (localFilePath && !persistLocalFile) {
+      removeLocalFile(localFilePath);
+    }
   }
 };
 

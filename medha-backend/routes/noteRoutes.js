@@ -10,8 +10,8 @@ router.get("/public", auth.optionalAuth, noteController.getPublicNotes);
 // List user's own notes (optionally by subject)
 router.get("/", auth, noteController.getNotes);
 
-// Upload a note (file upload)
-router.post("/", auth, upload.single("file"), noteController.uploadNote);
+// Upload a note (file upload). Size/type filter runs in multer; magic bytes next.
+router.post("/", auth, upload.single("file"), upload.validateFile, noteController.uploadNote);
 
 // Create a text-only note
 router.post("/text", auth, noteController.createTextNote);

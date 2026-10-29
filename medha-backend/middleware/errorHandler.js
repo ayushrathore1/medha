@@ -1,6 +1,17 @@
 // Centralized error handler middleware for Express
+const { mapUploadError, removeRequestUploads } = require("./upload");
 
 const errorHandler = (err, req, res, next) => {
+  const mapped = mapUploadError(err);
+  if (mapped) {
+    removeRequestUploads(req);
+    return res.status(mapped.status).json({
+      success: false,
+      error: mapped.message,
+      message: mapped.message,
+    });
+  }
+
   // Default status code and message
   let statusCode = err.statusCode || 500;
   let message = err.message || "Something went wrong.";

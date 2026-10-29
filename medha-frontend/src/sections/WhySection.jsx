@@ -4,10 +4,10 @@ import { fadeUp } from '../lib/motionPresets';
 
 const WhySection = ({ stats }) => {
   const timeline = [
-    { icon: '📋', title: 'Pick Your Subject', copy: 'Choose from 250+ RTU topics across all branches.' },
-    { icon: '🤖', title: 'AI Generates Your Plan', copy: 'Instant cheatsheets, PYQ analysis, and priority maps.' },
+    { icon: '📋', title: 'Pick Your Subject', copy: 'Start with the subject and unit you need to revise.' },
+    { icon: '🤖', title: 'AI Generates Your Plan', copy: 'Use available notes, past-paper insights and AI study tools.' },
     { icon: '📝', title: 'Study Smarter', copy: 'Focus on what repeats. Skip what doesn\'t.' },
-    { icon: '🎯', title: 'Walk Into the Exam Confident', copy: 'Cover 80% of likely questions in half the time.' },
+    { icon: '🎯', title: 'Walk Into the Exam Confident', copy: 'Go into your exam with a clearer plan and fewer last-minute guesses.' },
   ];
 
   return (
@@ -20,12 +20,12 @@ const WhySection = ({ stats }) => {
           <motion.div {...fadeUp}>
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'rgba(125,198,122,0.1)', border: '1px solid rgba(125,198,122,0.25)',
+              background: 'rgba(19,184,212,0.1)', border: '1px solid rgba(19,184,212,0.25)',
               borderRadius: 999, padding: '6px 16px', marginBottom: 20,
-              fontSize: 11, fontWeight: 600, color: '#7DC67A',
+              fontSize: 11, fontWeight: 600, color: '#2563EB',
               textTransform: 'uppercase', letterSpacing: '0.1em'
             }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#7DC67A' }} />
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#2563EB' }} />
               WHY IT WORKS
             </span>
           </motion.div>
@@ -34,7 +34,7 @@ const WhySection = ({ stats }) => {
             fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 800,
             color: '#1F1F1F', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20, marginBottom: 40
           }}>
-            How MEDHA saves<br />your semester<span style={{ color: '#F59E0B' }}>.</span>
+            From scattered material<br />to a focused plan<span style={{ color: '#2563EB' }}>.</span>
           </motion.h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
@@ -61,7 +61,7 @@ const WhySection = ({ stats }) => {
         <motion.div {...fadeUp} style={{ flex: 1 }}>
           {/* Green stat card */}
           <div style={{
-            background: '#7DC67A', borderRadius: 20, padding: 40,
+            background: '#13B8D4', borderRadius: 20, padding: 40,
             position: 'relative', overflow: 'hidden', marginBottom: 16
           }}>
             <div style={{
@@ -87,7 +87,7 @@ const WhySection = ({ stats }) => {
           {/* Secondary cards */}
           <div className="why-stats-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <div style={{ background: '#1F1F1F', borderRadius: 16, padding: 24 }}>
-              <div style={{ fontSize: 36, fontWeight: 900, color: '#F59E0B', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 8 }}>10</div>
+              <div style={{ fontSize: 36, fontWeight: 900, color: '#2563EB', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 8 }}>10</div>
               <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.4 }}>Years of RTU Past Papers</div>
             </div>
             <div style={{ background: '#FFFFFF', borderRadius: 16, padding: 24, border: '1px solid #E5E5E5' }}>

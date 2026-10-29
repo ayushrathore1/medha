@@ -41,12 +41,12 @@ const IdentitySection = ({ stats }) => {
           <motion.div {...fadeUp}>
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'rgba(125,198,122,0.1)', border: '1px solid rgba(125,198,122,0.25)',
+              background: 'rgba(19,184,212,0.1)', border: '1px solid rgba(19,184,212,0.25)',
               borderRadius: 999, padding: '6px 16px', marginBottom: 20,
-              fontSize: 11, fontWeight: 600, color: '#7DC67A',
+              fontSize: 11, fontWeight: 600, color: '#13B8D4',
               textTransform: 'uppercase', letterSpacing: '0.1em'
             }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#7DC67A' }} />
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#13B8D4' }} />
               WHAT IS MEDHA
             </span>
           </motion.div>
@@ -55,7 +55,7 @@ const IdentitySection = ({ stats }) => {
             fontSize: 'clamp(40px, 4.5vw, 56px)', fontWeight: 800,
             color: '#1F1F1F', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
           }}>
-            Your exam prep<br />co-pilot<span style={{ color: '#F59E0B' }}>.</span>
+            Your exam prep<br />co-pilot<span style={{ color: '#9ADFEA' }}>.</span>
           </motion.h2>
 
           <motion.p {...fadeUp} style={{
@@ -68,9 +68,9 @@ const IdentitySection = ({ stats }) => {
           {/* Stats Row */}
           <motion.div {...fadeUp} className="identity-stats-row" style={{ display: 'flex', alignItems: 'center', gap: 32, marginTop: 40 }}>
             {[
-              { value: stats.totalStudents, label: 'STUDENTS', color: '#7DC67A', live: true },
+              { value: stats.totalStudents, label: 'STUDENTS', color: '#13B8D4', live: true },
               { value: '250+', label: 'TOPICS COVERED', color: '#1F1F1F', live: false },
-              { value: '10', label: 'YEARS OF PYQs', color: '#F59E0B', live: false },
+              { value: '10', label: 'YEARS OF PYQs', color: '#9ADFEA', live: false },
             ].map((stat, i) => (
               <React.Fragment key={i}>
                 {i > 0 && <div className="identity-stats-separator" style={{ width: 1, height: 60, background: '#E5E5E5' }} />}
@@ -112,16 +112,16 @@ const IdentitySection = ({ stats }) => {
           >
             {/* Chat header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #7DC67A, #4A9E47)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: 'white', fontWeight: 700 }}>M</div>
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #13B8D4, #078DA8)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: 'white', fontWeight: 700 }}>M</div>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: 'white' }}>MEDHA AI</div>
-                <div style={{ fontSize: 11, color: '#7DC67A' }}>● Online</div>
+                <div style={{ fontSize: 11, color: '#13B8D4' }}>● Online</div>
               </div>
               <div style={{ marginLeft: 'auto', fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>3:14 AM</div>
             </div>
 
             {/* User message */}
-            <div style={{ background: 'rgba(125,198,122,0.15)', borderRadius: '12px 12px 4px 12px', padding: '8px 12px', marginBottom: 8, fontSize: 13, color: 'rgba(255,255,255,0.8)', maxWidth: '80%', marginLeft: 'auto' }}>
+            <div style={{ background: 'rgba(19,184,212,0.15)', borderRadius: '12px 12px 4px 12px', padding: '8px 12px', marginBottom: 8, fontSize: 13, color: 'rgba(255,255,255,0.8)', maxWidth: '80%', marginLeft: 'auto' }}>
               explain dijkstra's algorithm simply
             </div>
 
@@ -130,7 +130,7 @@ const IdentitySection = ({ stats }) => {
               <div style={{ fontWeight: 600, color: 'white', marginBottom: 6 }}>Dijkstra in 4 steps:</div>
               {['Start at source node, dist=0', 'All others = infinity', 'Visit nearest unvisited', 'Update shorter paths found'].map((step, si) => (
                 <div key={si} style={{ display: 'flex', gap: 6, marginBottom: 3 }}>
-                  <span style={{ width: 16, height: 16, borderRadius: '50%', background: '#7DC67A', fontSize: 9, fontWeight: 700, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>{si + 1}</span>
+                  <span style={{ width: 16, height: 16, borderRadius: '50%', background: '#13B8D4', fontSize: 9, fontWeight: 700, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>{si + 1}</span>
                   <span>{step}</span>
                 </div>
               ))}
@@ -139,7 +139,7 @@ const IdentitySection = ({ stats }) => {
             {/* Typing indicator */}
             <div style={{ display: 'flex', gap: 3, padding: '8px 12px' }}>
               {[0, 1, 2].map(di => (
-                <div key={di} style={{ width: 6, height: 6, borderRadius: '50%', background: '#7DC67A', animation: `dot-breathe 1.2s ease-in-out ${di * 0.2}s infinite` }} />
+                <div key={di} style={{ width: 6, height: 6, borderRadius: '50%', background: '#13B8D4', animation: `dot-breathe 1.2s ease-in-out ${di * 0.2}s infinite` }} />
               ))}
             </div>
           </div>
@@ -150,7 +150,7 @@ const IdentitySection = ({ stats }) => {
             background: 'white', borderRadius: 14, padding: '14px 18px',
             boxShadow: '0 8px 32px rgba(0,0,0,0.1)', border: '1px solid #E5E5E5', minWidth: 200
           }}>
-            <div style={{ fontSize: 12, color: '#7DC67A', fontWeight: 600, marginBottom: 4 }}>✓ Concept cleared</div>
+            <div style={{ fontSize: 12, color: '#13B8D4', fontWeight: 600, marginBottom: 4 }}>✓ Concept cleared</div>
             <div style={{ fontSize: 13, fontWeight: 600, color: '#1F1F1F' }}>Unit 3: SQL Joins</div>
             <div style={{ fontSize: 12, color: '#9A9A9A', marginTop: 2 }}>→ Next: Normalization</div>
           </div>
