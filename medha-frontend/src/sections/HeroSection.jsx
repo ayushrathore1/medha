@@ -10,17 +10,17 @@ const HeroSection = ({ totalStudents = '140+' }) => {
       <div className="journey-hero-nav-space" />
       <div className="journey-hero-copy">
         <motion.div className="journey-kicker" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .6 }}>
-          <span className="journey-kicker-dot" /> YOUR NEXT CHAPTER STARTS HERE
+          <span className="journey-kicker-dot" /> A CALMER WAY TO PREPARE FOR COLLEGE EXAMS
         </motion.div>
         <motion.h1 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .8, ease: [0.16, 1, 0.3, 1], delay: .08 }}>
-          Make room for<br />your <em>aha</em> moment.
+          Study smarter.<br />Walk in <em>confident.</em>
         </motion.h1>
         <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7, delay: .2 }}>
-          Exams are a destination. Learning is the journey.<br className="journey-desktop-break" />
-          MEDHA helps you find your route, one concept at a time.
+          Turn scattered notes and last-minute stress into a clear study plan.<br className="journey-desktop-break" />
+          Revise key concepts, practise previous-year questions, and prepare at your pace.
         </motion.p>
         <motion.div className="journey-actions" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .65, delay: .32 }}>
-          <Link className="journey-primary" to="/rtu-exams">Find your study path <span aria-hidden="true">↗</span></Link>
+          <Link className="journey-primary" to="/rtu-exams">Build my revision plan <span aria-hidden="true">↗</span></Link>
           <Link className="journey-secondary" to="/notes">Explore notes</Link>
         </motion.div>
       </div>
@@ -44,7 +44,7 @@ const HeroSection = ({ totalStudents = '140+' }) => {
       </div>
       <div className="journey-side-marker" aria-hidden="true"><span className="journey-marker-line" /><span className="journey-marker-spark">✦</span><span className="journey-marker-label">KEEP GOING</span></div>
       <a className="journey-scroll" href="#features" aria-label="Scroll to explore"><span>SCROLL TO EXPLORE</span><i>↓</i></a>
-      <div className="journey-student-proof"><span className="journey-proof-dot" /> Join {totalStudents} learners finding their way with MEDHA</div>
+      <div className="journey-student-proof"><span className="journey-proof-dot" /> Made for college students. Built for exam season.</div>
     </section>
   );
 };
