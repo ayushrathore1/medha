@@ -44,7 +44,7 @@ const TestimonialsSection = () => {
   const constraintsRef = useRef(null);
 
   return (
-    <section style={{ background: '#1F1F1F', padding: '96px 0', position: 'relative', overflow: 'hidden' }}>
+    <section style={{ background: '#F5F8FE', padding: '96px 0', position: 'relative', overflow: 'hidden' }}>
       {/* BG */}
       <div className="line-grid" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }} />
       <div className="blob blob-green" style={{ width: 400, height: 400, left: -80, top: -80, position: 'absolute' }} />
@@ -63,21 +63,21 @@ const TestimonialsSection = () => {
           <motion.div {...fadeUp}>
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'rgba(19,184,212,0.15)', border: '1px solid rgba(19,184,212,0.3)',
+              background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.18)',
               borderRadius: 999, padding: '6px 16px',
-              fontSize: 11, fontWeight: 600, color: '#13B8D4',
+              fontSize: 11, fontWeight: 600, color: '#2563EB',
               textTransform: 'uppercase', letterSpacing: '0.1em'
             }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#13B8D4' }} />
-              TESTIMONIALS
+              MADE FOR REAL STUDY SESSIONS
             </span>
           </motion.div>
 
           <motion.h2 {...fadeUp} style={{
             fontSize: 'clamp(40px, 4.5vw, 56px)', fontWeight: 800,
-            color: 'white', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
+            color: '#10233F', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
           }}>
-            What students say<span style={{ color: '#9ADFEA' }}>.</span>
+            A study flow that feels clearer<span style={{ color: '#2563EB' }}>.</span>
           </motion.h2>
         </div>
 
@@ -98,7 +98,7 @@ const TestimonialsSection = () => {
                 transition={{ duration: 0.6, delay: i * 0.1 }}
                 style={{
                   minWidth: 320, maxWidth: 340, flexShrink: 0,
-                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
+                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(16,35,63,0.10)',
                   borderRadius: 20, padding: 32
                 }}
               >
