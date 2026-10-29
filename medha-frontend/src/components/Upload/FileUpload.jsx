@@ -7,6 +7,12 @@ const FileUpload = ({ onFileSelect, accept = "image/*,application/pdf" }) => {
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (file.size > 25 * 1024 * 1024) {
+      setError("File too large. Maximum size is 25MB.");
+      inputRef.current.value = "";
+      return;
+    }
     
     setError(null);
     onFileSelect(file);
@@ -33,7 +39,7 @@ const FileUpload = ({ onFileSelect, accept = "image/*,application/pdf" }) => {
         <span className="text-sm text-red-500 mt-2 font-medium">{error}</span>
       ) : (
         <span className="text-sm text-blue-500 mt-2">
-          Supported: Images & PDFs — no size limit
+          Supported: Images & PDFs — max 25 MB
         </span>
       )}
     </div>

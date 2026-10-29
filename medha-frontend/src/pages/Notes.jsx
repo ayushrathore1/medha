@@ -5,6 +5,7 @@ import useAuthGuard from "../hooks/useAuthGuard";
 import { useTour } from "../context/TourContext";
 
 const API_BASE = `${import.meta.env.VITE_BACKEND_URL}`;
+const MAX_NOTE_UPLOAD_BYTES = 25 * 1024 * 1024;
 
 /* ── Resolve file URLs (local disk vs Cloudinary) ── */
 const resolveFileUrl = (url) => {
@@ -625,14 +626,26 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
   const [rights, setRights] = useState(false);
   const [edu, setEdu] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [fileError, setFileError] = useState("");
   const fileRef = useRef(null);
 
   if (!isOpen) return null;
 
+  const acceptFile = (nextFile) => {
+    if (!nextFile) return;
+    if (nextFile.size > MAX_NOTE_UPLOAD_BYTES) {
+      setFileError("File too large. Maximum size is 25MB.");
+      setFile(null);
+      return;
+    }
+    setFileError("");
+    setFile(nextFile);
+  };
+
   const handleDrop = (e) => {
     e.preventDefault();
     setDragOver(false);
-    if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+    acceptFile(e.dataTransfer.files[0]);
   };
 
   const handleSubmit = () => {
@@ -645,6 +658,7 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
     setSubject("");
     setNoteType("");
     setFile(null);
+    setFileError("");
     setDescription("");
     setRights(false);
     setEdu(false);
@@ -891,14 +905,14 @@ const UploadWizard = ({ isOpen, onClose, onUpload, uploading }) => {
                     Browse Files
                   </span>
                 )}
-                <div style={{ fontSize: 12, color: "#9A9A9A", marginTop: 12 }}>
-                  PDF, JPG, PNG · No size limit
+                <div style={{ fontSize: 12, color: fileError ? "#DC2626" : "#9A9A9A", marginTop: 12 }}>
+                  {fileError || "PDF, JPG, PNG · Max 25 MB"}
                 </div>
                 <input
                   ref={fileRef}
                   type="file"
                   accept=".pdf,.jpg,.jpeg,.png,.gif"
-                  onChange={(e) => setFile(e.target.files[0])}
+                  onChange={(e) => acceptFile(e.target.files[0])}
                   style={{ display: "none" }}
                 />
               </div>
@@ -1106,6 +1120,10 @@ const Notes = () => {
   }, [searchQuery, fetchPublicNotes]);
 
   const handleUpload = async ({ title, semester, subject, file, description, noteType }) => {
+    if (file?.size > MAX_NOTE_UPLOAD_BYTES) {
+      setErrorMsg("File too large. Maximum size is 25MB.");
+      return;
+    }
     setUploading(true);
     setErrorMsg("");
     const formData = new FormData();
@@ -1130,7 +1148,7 @@ const Notes = () => {
         setShowAuraAnimation(true);
         setTimeout(() => setShowAuraAnimation(false), 3000);
       } else {
-        setErrorMsg(data.error || "Failed to upload file.");
+        setErrorMsg(data.error || data.message || "Failed to upload file.");
       }
     } catch {
       setErrorMsg("Server error uploading file.");
