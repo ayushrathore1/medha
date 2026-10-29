@@ -1,5 +1,7 @@
 # MEDHA Backend 🎓
 
+**Canonical production API.** The copy at `medha-next/backend` is frozen and must not be patched. Contract: [docs/API_CONTRACT.md](../docs/API_CONTRACT.md). Owners and migration: [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md).
+
 > A comprehensive backend API service for the MEDHA learning platform, providing intelligent study tools, note management, flashcard generation, quiz functionality, and AI-powered chatbot assistance.
 
 ## 📖 Overview
