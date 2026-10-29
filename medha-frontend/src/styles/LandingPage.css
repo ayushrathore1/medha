@@ -1100,3 +1100,36 @@
  .landing-page .premium-challenge-card,.landing-page #features article,.landing-page .subject-card,
  .landing-page section:has(.cta-buttons)::before{animation:none!important;transition:none!important}
 }
+
+
+/* Target the actual JSX section wrappers so inline section styles share one visual language. */
+.landing-page section:has(.identity-layout),
+.landing-page section:has(.why-layout){background:linear-gradient(180deg,#FFFFFF 0%,#F4FAFE 100%)!important}
+.landing-page section:has(.identity-layout) .dot-grid,
+.landing-page section:has(.why-layout) .dot-grid{background-image:radial-gradient(rgba(24,129,174,.2) .8px,transparent .8px)!important;background-size:22px 22px!important;animation:medhaGridDrift 36s linear infinite;mask-image:linear-gradient(90deg,transparent,#000)}
+.landing-page section:has(.identity-layout) h2,
+.landing-page section:has(.why-layout) h2{color:#102A43!important;font-family:Inter,'Plus Jakarta Sans',sans-serif!important;font-weight:650!important;letter-spacing:-.045em!important}
+.landing-page section:has(.identity-layout) p,
+.landing-page section:has(.why-layout) p{color:#58738A!important}
+.landing-page section:has(.identity-layout) [style*="rgba(19,184,212"],
+.landing-page section:has(.why-layout) [style*="rgba(19,184,212"]{background:#E7F7FC!important;border-color:#B9EAF7!important;color:#167AA6!important}
+.landing-page section:has(.identity-layout) h2 span,
+.landing-page section:has(.why-layout) h2 span{color:#168AB5!important}
+.landing-page section:has(.identity-layout) .identity-visual,
+.landing-page section:has(.why-layout) .why-visual{border-radius:28px}
+.landing-page section:has(.feature-grid),
+.landing-page section:has(.feature-card){background:linear-gradient(180deg,#F1F8FD 0%,#FFFFFF 100%)!important}
+.landing-page section:has(.feature-grid) [style*="background"],
+.landing-page section:has(.feature-card) [style*="background"]{border-radius:24px}
+.landing-page section:has(.subject-tabs),
+.landing-page section:has(.subject-card){background:#FFFFFF!important}
+.landing-page section:has(.subject-card) [style*="background-color"]{border-color:#DDEBF4!important}
+.landing-page section:has(.testimonial-card),
+.landing-page section:has(.testimonials-track){background:linear-gradient(135deg,#EAF6FD 0%,#F8FBFE 100%)!important}
+.landing-page section:has(.testimonial-card) .blob,
+.landing-page section:has(.testimonials-track) .blob{background:#42D3F2!important;opacity:.12!important}
+.landing-page section:has(.testimonial-card) [style*="border-radius"],
+.landing-page section:has(.testimonials-track) [style*="border-radius"]{border-color:#DDEBF4}
+.landing-page section:has(.cta-buttons) .grain{opacity:.12!important}
+.landing-page footer .footer-grid{gap:clamp(22px,4vw,48px)!important}
+.landing-page footer .footer-grid>div:first-child{max-width:290px}
