@@ -2,61 +2,51 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { fadeUp } from '../lib/motionPresets';
 import { Link } from 'react-router-dom';
+import { lp, lpPill, lpDot } from '../lib/landingTheme';
 
 const CTASection = ({ totalStudents }) => {
   return (
-    <section style={{ background: '#2D2D3F', padding: '128px 0', position: 'relative', overflow: 'hidden' }}>
-      {/* BG */}
-      <div className="blob blob-green" style={{ width: 500, height: 500, left: -120, top: '50%', transform: 'translateY(-50%)', opacity: 0.12, position: 'absolute' }} />
-      <div className="blob blob-amber" style={{ width: 420, height: 420, right: -80, top: '50%', transform: 'translateY(-50%)', opacity: 0.10, position: 'absolute' }} />
-      <div className="grain" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
-      <div className="line-grid" style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.5 }} />
-
+    <section style={{ background: lp.ink, padding: '128px 0', position: 'relative', overflow: 'hidden' }}>
       <div className="section-container" style={{ maxWidth: 800, margin: '0 auto', padding: '0 32px', textAlign: 'center', position: 'relative', zIndex: 10 }}>
         <motion.div {...fadeUp}>
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            background: 'rgba(125,198,122,0.15)', border: '1px solid rgba(125,198,122,0.3)',
-            borderRadius: 999, padding: '6px 16px', marginBottom: 24,
-            fontSize: 11, fontWeight: 600, color: '#7DC67A',
-            textTransform: 'uppercase', letterSpacing: '0.1em'
-          }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#7DC67A' }} />
+          <span style={{ ...lpPill, background: 'transparent', borderColor: 'rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.7)', marginBottom: 24 }}>
+            <span style={{ ...lpDot, background: 'white' }} />
             START TODAY
           </span>
         </motion.div>
 
         <motion.h2 {...fadeUp} style={{
-          fontSize: 'clamp(48px, 5.5vw, 72px)', fontWeight: 800,
-          color: 'white', lineHeight: 1.1, letterSpacing: '-0.04em', marginTop: 16
+          fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: lp.heading,
+          color: 'white', lineHeight: 1.15, letterSpacing: '-0.03em', marginTop: 16,
+          fontFamily: lp.font,
         }}>
-          Exams don't wait.<br />Neither should you<span style={{ color: '#F59E0B' }}>.</span>
+          Exams don't wait.<br />Neither should you.
         </motion.h2>
 
-        <motion.p {...fadeUp} style={{ fontSize: 18, color: 'rgba(255,255,255,0.5)', marginTop: 20 }}>
-          Join <span style={{ color: '#F59E0B', fontWeight: 700 }}>{totalStudents}</span> students already using MEDHA
+        <motion.p {...fadeUp} style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', marginTop: 20, fontFamily: lp.font }}>
+          Join <span style={{ color: 'white', fontWeight: 600 }}>{totalStudents}</span> students already using MEDHA
         </motion.p>
 
-        <motion.div {...fadeUp} className="cta-buttons" style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 40 }}>
+        <motion.div {...fadeUp} className="cta-buttons" style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 40 }}>
           <Link to="/register" className="btn-shine" style={{
-            background: '#7DC67A', color: '#1F1F1F', padding: '16px 32px',
-            borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none',
-            cursor: 'pointer', textDecoration: 'none', boxShadow: '0 8px 32px rgba(125,198,122,0.3)',
-            transition: 'all 200ms', display: 'inline-block', fontFamily: "ui-sans-serif, system-ui, sans-serif"
+            background: 'white', color: lp.ink, padding: '10px 20px',
+            borderRadius: 0, fontWeight: 600, fontSize: 13, border: 'none',
+            cursor: 'pointer', textDecoration: 'none',
+            transition: 'all 200ms', display: 'inline-block', fontFamily: lp.font
           }}>
             Start Learning Free →
           </Link>
           <Link to="/login" style={{
-            border: '1px solid rgba(255,255,255,0.3)', color: 'white',
-            padding: '16px 32px', borderRadius: 12, fontWeight: 600, fontSize: 16,
+            border: '1px solid rgba(255,255,255,0.25)', color: 'white',
+            padding: '10px 20px', borderRadius: 0, fontWeight: 600, fontSize: 13,
             cursor: 'pointer', textDecoration: 'none', transition: 'all 200ms',
-            background: 'transparent', display: 'inline-block', fontFamily: "ui-sans-serif, system-ui, sans-serif"
+            background: 'transparent', display: 'inline-block', fontFamily: lp.font
           }}>
             Login
           </Link>
         </motion.div>
 
-        <motion.p {...fadeUp} style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', marginTop: 24 }}>
+        <motion.p {...fadeUp} style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginTop: 24, fontFamily: lp.font }}>
           No credit card. No commitment. Just better exam prep.
         </motion.p>
       </div>

@@ -31,7 +31,7 @@ export default function Dashboard() {
         <p className="text-[13px] text-[#5C5C5C]">
           {firstName ? `Hi ${firstName}.` : "RTU CSE / AIDS"}
         </p>
-        <h1 className="mt-1 max-w-md text-[28px] font-semibold leading-[1.2] tracking-[-0.03em] text-[#1F1F1F]">
+        <h1 className="mt-1 max-w-md text-[24px] font-semibold leading-[1.2] tracking-[-0.03em] text-[#1F1F1F] sm:text-[28px]">
           Notes for the unit you have tomorrow.
         </h1>
         <p className="mt-3 max-w-md text-[14px] leading-6 text-[#5C5C5C]">

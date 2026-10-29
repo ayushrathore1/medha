@@ -263,6 +263,35 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.revision-header {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.revision-header-inner {
+  padding-left: max(1rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1rem, env(safe-area-inset-right, 0px));
+}
+
+.revision-body {
+  padding-top: 1.5rem;
+  padding-left: max(1rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1rem, env(safe-area-inset-right, 0px));
+  padding-bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
+}
+
+.revision-bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  border-top: 1px solid #e5e5e5;
+  background: #ffffff;
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+}
+
 .revision-app h1,
 .revision-app h2,
 .revision-app h3 {

@@ -23,7 +23,7 @@ const MainLayout = ({ children }) => {
   const isProfileArea = location.pathname.startsWith("/profile");
 
   return (
-    <div className={`min-h-screen flex flex-col overflow-x-hidden relative ${isLandingPage ? '' : 'text-[var(--text-primary)]'}`}>
+    <div className={`min-h-dvh flex flex-col relative ${isLandingPage ? '' : 'text-[var(--text-primary)]'} ${isRevisionApp ? '' : 'overflow-x-hidden'}`}>
       {/* Tour Overlay */}
       <TourOverlay />
       <ThemeSetupPrompt />

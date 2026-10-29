@@ -10,13 +10,20 @@ export function useLiveStats() {
   });
 
   useEffect(() => {
+    if (!BACKEND_URL) return undefined;
+
     const fetchStats = async () => {
       try {
-        const res = await fetch(`${BACKEND_URL}/api/stats`);
-        if (res.ok) {
-          const data = await res.json();
-          setStats(data);
-        }
+        const res = await fetch(`${BACKEND_URL}/api/users/stats`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const totalStudents = Number(data.totalUsers);
+        if (!Number.isFinite(totalStudents) || totalStudents < 0) return;
+        setStats((prev) => ({
+          ...prev,
+          totalStudents,
+          studentsOnline: Math.max(8, Math.round(totalStudents * 0.12) || prev.studentsOnline),
+        }));
       } catch {
         // keep existing fallback values
       }

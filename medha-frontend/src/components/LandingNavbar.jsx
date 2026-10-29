@@ -45,13 +45,9 @@ const LandingNavbar = ({ studentsOnline }) => {
         }}>
           {/* Logo */}
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', zIndex: 200 }}>
-            <span style={{ fontFamily: "ui-sans-serif, system-ui, sans-serif", fontWeight: 800, fontSize: 22, letterSpacing: '-0.03em', color: '#1F1F1F' }}>
-              MEDHA
+            <span style={{ fontFamily: "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif", fontWeight: 600, fontSize: 15, letterSpacing: '-0.03em', color: '#1F1F1F' }}>
+              Medha
             </span>
-            <span className="logo-dot" style={{
-              display: 'inline-block', width: 8, height: 8, borderRadius: '50%',
-              background: '#F59E0B', marginBottom: 2, marginLeft: 2, verticalAlign: 'middle'
-            }} />
           </Link>
 
           {/* Desktop Nav Links */}
@@ -61,7 +57,7 @@ const LandingNavbar = ({ studentsOnline }) => {
                 fontSize: 15, fontWeight: 400, color: '#1F1F1F',
                 textDecoration: 'none', transition: 'color 150ms',
               }}
-              onMouseEnter={e => e.currentTarget.style.color = '#7DC67A'}
+              onMouseEnter={e => e.currentTarget.style.color = '#5C5C5C'}
               onMouseLeave={e => e.currentTarget.style.color = '#1F1F1F'}
               >
                 {link.label}
@@ -76,7 +72,7 @@ const LandingNavbar = ({ studentsOnline }) => {
               fontSize: 15, fontWeight: 400, color: '#1F1F1F',
               textDecoration: 'none', transition: 'color 150ms',
             }}
-            onMouseEnter={e => e.currentTarget.style.color = '#7DC67A'}
+            onMouseEnter={e => e.currentTarget.style.color = '#5C5C5C'}
             onMouseLeave={e => e.currentTarget.style.color = '#1F1F1F'}
             >
               Login
@@ -86,8 +82,8 @@ const LandingNavbar = ({ studentsOnline }) => {
             <Link to="/register" style={{
               display: 'flex', alignItems: 'center', gap: 8,
               background: '#1F1F1F', color: 'white',
-              borderRadius: 999, padding: '10px 20px',
-              fontSize: 14, fontWeight: 600, textDecoration: 'none',
+              borderRadius: 0, padding: '8px 16px',
+              fontSize: 13, fontWeight: 600, textDecoration: 'none',
               transition: 'transform 150ms',
             }}>
               Get Started

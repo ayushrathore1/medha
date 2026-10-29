@@ -9,9 +9,9 @@ export default function RevisionShell({ children, title, showBack = false, actio
   const { user } = useContext(AuthContext);
 
   return (
-    <div className="revision-app min-h-screen bg-white text-[#1F1F1F]">
-      <header className="sticky top-0 z-30 border-b border-[#E5E5E5] bg-white/90 backdrop-blur">
-        <div className="mx-auto flex h-12 max-w-[640px] items-center gap-3 px-4">
+    <div className="revision-app min-h-dvh bg-white text-[#1F1F1F]">
+      <header className="revision-header sticky top-0 z-30 border-b border-[#E5E5E5] bg-white/95 backdrop-blur">
+        <div className="revision-header-inner mx-auto flex h-12 max-w-[640px] items-center gap-3">
           {showBack ? (
             <button
               type="button"
@@ -35,7 +35,7 @@ export default function RevisionShell({ children, title, showBack = false, actio
           {!actions && user ? (
             <Link
               to="/uploads"
-              className="shrink-0 text-[12px] tabular-nums text-[#5C5C5C] no-underline"
+              className="shrink-0 whitespace-nowrap text-[12px] tabular-nums text-[#5C5C5C] no-underline"
               title="Aura from downloads of your notes"
             >
               Aura {user.auraPoints ?? 0}
@@ -44,7 +44,7 @@ export default function RevisionShell({ children, title, showBack = false, actio
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-[640px] px-4 pb-28 pt-6">
+      <div className="revision-body mx-auto w-full max-w-[640px]">
         <BottomNav />
         <main className="min-w-0">{children}</main>
       </div>

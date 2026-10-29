@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useMotionValue, useTransform, animate, useInView } from 'framer-motion';
 import { fadeUp } from '../lib/motionPresets';
+import { lp, lpPill, lpDot } from '../lib/landingTheme';
 
 const CountUp = ({ target }) => {
   const count = useMotionValue(0);
@@ -29,37 +30,26 @@ const CountUp = ({ target }) => {
 const IdentitySection = ({ stats }) => {
   return (
     <section style={{ background: 'white', padding: '96px 0', position: 'relative', overflow: 'hidden' }}>
-      {/* Half dot grid */}
-      <div className="dot-grid" style={{
-        position: 'absolute', right: 0, top: 0, bottom: 0, width: '50%',
-        pointerEvents: 'none', zIndex: 0, opacity: 0.4
-      }} />
-
       <div className="identity-layout section-container" style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px', display: 'flex', alignItems: 'center', gap: 80, position: 'relative', zIndex: 10 }}>
         {/* LEFT */}
         <div style={{ flex: 1 }}>
           <motion.div {...fadeUp}>
-            <span style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'rgba(125,198,122,0.1)', border: '1px solid rgba(125,198,122,0.25)',
-              borderRadius: 999, padding: '6px 16px', marginBottom: 20,
-              fontSize: 11, fontWeight: 600, color: '#7DC67A',
-              textTransform: 'uppercase', letterSpacing: '0.1em'
-            }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#7DC67A' }} />
+            <span style={{ ...lpPill, marginBottom: 20 }}>
+              <span style={lpDot} />
               WHAT IS MEDHA
             </span>
           </motion.div>
 
           <motion.h2 {...fadeUp} style={{
-            fontSize: 'clamp(40px, 4.5vw, 56px)', fontWeight: 800,
-            color: '#1F1F1F', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
+            fontSize: 'clamp(32px, 4.5vw, 48px)', fontWeight: lp.heading,
+            color: lp.ink, lineHeight: 1.15, letterSpacing: '-0.03em', marginTop: 20,
+            fontFamily: lp.font,
           }}>
-            Your exam prep<br />co-pilot<span style={{ color: '#F59E0B' }}>.</span>
+            Your exam prep<br />co-pilot.
           </motion.h2>
 
           <motion.p {...fadeUp} style={{
-            fontSize: 18, color: '#6B6B6B', lineHeight: 1.7, marginTop: 20, maxWidth: 500
+            fontSize: 15, color: lp.muted, lineHeight: 1.7, marginTop: 20, maxWidth: 500, fontFamily: lp.font,
           }}>
             MEDHA combines AI-powered notes, 10 years of RTU past papers, and smart exam strategies
             into one platform built specifically for RTU students.
@@ -68,17 +58,17 @@ const IdentitySection = ({ stats }) => {
           {/* Stats Row */}
           <motion.div {...fadeUp} className="identity-stats-row" style={{ display: 'flex', alignItems: 'center', gap: 32, marginTop: 40 }}>
             {[
-              { value: stats.totalStudents, label: 'STUDENTS', color: '#7DC67A', live: true },
-              { value: '250+', label: 'TOPICS COVERED', color: '#1F1F1F', live: false },
-              { value: '10', label: 'YEARS OF PYQs', color: '#F59E0B', live: false },
+              { value: stats.totalStudents, label: 'STUDENTS', color: lp.ink, live: true },
+              { value: '250+', label: 'TOPICS COVERED', color: lp.ink, live: false },
+              { value: '10', label: 'YEARS OF PYQs', color: lp.ink, live: false },
             ].map((stat, i) => (
               <React.Fragment key={i}>
                 {i > 0 && <div className="identity-stats-separator" style={{ width: 1, height: 60, background: '#E5E5E5' }} />}
                 <div>
-                  <div className="stat-number" style={{ fontSize: 48, fontWeight: 800, color: stat.color, letterSpacing: '-0.04em', lineHeight: 1 }}>
+                  <div className="stat-number" style={{ fontSize: 40, fontWeight: lp.heading, color: stat.color, letterSpacing: '-0.03em', lineHeight: 1, fontFamily: lp.font }}>
                     {stat.live ? <CountUp target={stat.value} /> : stat.value}
                   </div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#9A9A9A', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: lp.faint, letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 4, display: 'flex', alignItems: 'center', gap: 8, fontFamily: lp.font }}>
                     {stat.label}
                     {stat.live && <span className="pulse-dot" style={{ display: 'inline-block' }} />}
                   </div>
@@ -90,10 +80,10 @@ const IdentitySection = ({ stats }) => {
           {/* CTA */}
           <motion.div {...fadeUp}>
             <button className="btn-shine" style={{
-              marginTop: 40, background: '#1F1F1F', color: 'white',
-              padding: '16px 40px', borderRadius: 12, fontWeight: 600, fontSize: 16,
+              marginTop: 40, background: lp.ink, color: 'white',
+              padding: '10px 20px', borderRadius: 0, fontWeight: 600, fontSize: 13,
               border: 'none', cursor: 'pointer', transition: 'all 200ms',
-              fontFamily: "ui-sans-serif, system-ui, sans-serif"
+              fontFamily: lp.font
             }}>
               Start Prepping Free →
             </button>
@@ -103,7 +93,7 @@ const IdentitySection = ({ stats }) => {
         {/* RIGHT — AI Chat Mockup */}
         <motion.div {...fadeUp} style={{ flex: 1, position: 'relative' }}>
           <div className="float-slow" style={{
-            background: '#0f1520', borderRadius: 20, padding: 24,
+            background: lp.ink, borderRadius: 0, padding: 24,
             boxShadow: '0 24px 64px rgba(0,0,0,0.15)', transform: 'rotate(2deg)',
             border: '1px solid rgba(255,255,255,0.08)', transition: 'transform 400ms ease'
           }}
@@ -112,16 +102,16 @@ const IdentitySection = ({ stats }) => {
           >
             {/* Chat header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #7DC67A, #4A9E47)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: 'white', fontWeight: 700 }}>M</div>
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: lp.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: 'white', fontWeight: 600, fontFamily: lp.font }}>M</div>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: 'white' }}>MEDHA AI</div>
-                <div style={{ fontSize: 11, color: '#7DC67A' }}>● Online</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'white', fontFamily: lp.font }}>MEDHA AI</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', fontFamily: lp.font }}>● Online</div>
               </div>
               <div style={{ marginLeft: 'auto', fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>3:14 AM</div>
             </div>
 
             {/* User message */}
-            <div style={{ background: 'rgba(125,198,122,0.15)', borderRadius: '12px 12px 4px 12px', padding: '8px 12px', marginBottom: 8, fontSize: 13, color: 'rgba(255,255,255,0.8)', maxWidth: '80%', marginLeft: 'auto' }}>
+            <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: '12px 12px 4px 12px', padding: '8px 12px', marginBottom: 8, fontSize: 13, color: 'rgba(255,255,255,0.8)', maxWidth: '80%', marginLeft: 'auto', fontFamily: lp.font }}>
               explain dijkstra's algorithm simply
             </div>
 
@@ -130,7 +120,7 @@ const IdentitySection = ({ stats }) => {
               <div style={{ fontWeight: 600, color: 'white', marginBottom: 6 }}>Dijkstra in 4 steps:</div>
               {['Start at source node, dist=0', 'All others = infinity', 'Visit nearest unvisited', 'Update shorter paths found'].map((step, si) => (
                 <div key={si} style={{ display: 'flex', gap: 6, marginBottom: 3 }}>
-                  <span style={{ width: 16, height: 16, borderRadius: '50%', background: '#7DC67A', fontSize: 9, fontWeight: 700, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>{si + 1}</span>
+                  <span style={{ width: 16, height: 16, borderRadius: '50%', background: 'white', fontSize: 9, fontWeight: 700, color: lp.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 }}>{si + 1}</span>
                   <span>{step}</span>
                 </div>
               ))}
@@ -139,7 +129,7 @@ const IdentitySection = ({ stats }) => {
             {/* Typing indicator */}
             <div style={{ display: 'flex', gap: 3, padding: '8px 12px' }}>
               {[0, 1, 2].map(di => (
-                <div key={di} style={{ width: 6, height: 6, borderRadius: '50%', background: '#7DC67A', animation: `dot-breathe 1.2s ease-in-out ${di * 0.2}s infinite` }} />
+                <div key={di} style={{ width: 6, height: 6, borderRadius: '50%', background: 'white', animation: `dot-breathe 1.2s ease-in-out ${di * 0.2}s infinite` }} />
               ))}
             </div>
           </div>
@@ -150,9 +140,9 @@ const IdentitySection = ({ stats }) => {
             background: 'white', borderRadius: 14, padding: '14px 18px',
             boxShadow: '0 8px 32px rgba(0,0,0,0.1)', border: '1px solid #E5E5E5', minWidth: 200
           }}>
-            <div style={{ fontSize: 12, color: '#7DC67A', fontWeight: 600, marginBottom: 4 }}>✓ Concept cleared</div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#1F1F1F' }}>Unit 3: SQL Joins</div>
-            <div style={{ fontSize: 12, color: '#9A9A9A', marginTop: 2 }}>→ Next: Normalization</div>
+            <div style={{ fontSize: 12, color: lp.ink, fontWeight: 600, marginBottom: 4, fontFamily: lp.font }}>✓ Concept cleared</div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: lp.ink, fontFamily: lp.font }}>Unit 3: SQL Joins</div>
+            <div style={{ fontSize: 12, color: lp.faint, marginTop: 2, fontFamily: lp.font }}>→ Next: Normalization</div>
           </div>
         </motion.div>
       </div>

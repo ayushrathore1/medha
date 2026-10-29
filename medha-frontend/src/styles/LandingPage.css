@@ -2,7 +2,7 @@
    MEDHA Landing Page — Scoped Reset & Design Tokens
    ============================================= */
 .landing-page {
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   color: #1F1F1F;
   background: #FFFFFF;
   -webkit-font-smoothing: antialiased;
@@ -24,7 +24,8 @@
 .landing-page h5,
 .landing-page h6 {
   color: inherit;
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-family: inherit;
+  font-weight: 600;
 }
 
 /* Reset inherited link styles */
@@ -52,7 +53,14 @@
 
 /* Reset inherited body pseudo-element backgrounds */
 .landing-page button {
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-family: inherit;
+}
+
+.landing-page .pulse-on-dark {
+  background: #ffffff;
+}
+.landing-page .pulse-on-dark::before {
+  background: #ffffff;
 }
 
 /* Floating badge animation */
@@ -162,7 +170,7 @@
   }
 
   .nav-mobile-overlay a:hover {
-    color: #7DC67A;
+    color: #5C5C5C;
   }
 
   .nav-mobile-overlay .mobile-cta {
