@@ -16,12 +16,12 @@ const CTASection = ({ totalStudents }) => {
         <motion.div {...fadeUp}>
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
-            background: 'rgba(125,198,122,0.15)', border: '1px solid rgba(125,198,122,0.3)',
+            background: 'rgba(19,184,212,0.15)', border: '1px solid rgba(19,184,212,0.3)',
             borderRadius: 999, padding: '6px 16px', marginBottom: 24,
-            fontSize: 11, fontWeight: 600, color: '#7DC67A',
+            fontSize: 11, fontWeight: 600, color: '#13B8D4',
             textTransform: 'uppercase', letterSpacing: '0.1em'
           }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#7DC67A' }} />
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#13B8D4' }} />
             START TODAY
           </span>
         </motion.div>
@@ -30,18 +30,18 @@ const CTASection = ({ totalStudents }) => {
           fontSize: 'clamp(48px, 5.5vw, 72px)', fontWeight: 800,
           color: 'white', lineHeight: 1.1, letterSpacing: '-0.04em', marginTop: 16
         }}>
-          Exams don't wait.<br />Neither should you<span style={{ color: '#F59E0B' }}>.</span>
+          Exams don't wait.<br />Neither should you<span style={{ color: '#9ADFEA' }}>.</span>
         </motion.h2>
 
         <motion.p {...fadeUp} style={{ fontSize: 18, color: 'rgba(255,255,255,0.5)', marginTop: 20 }}>
-          Join <span style={{ color: '#F59E0B', fontWeight: 700 }}>{totalStudents}</span> students already using MEDHA
+          Join <span style={{ color: '#9ADFEA', fontWeight: 700 }}>{totalStudents}</span> students already using MEDHA
         </motion.p>
 
         <motion.div {...fadeUp} className="cta-buttons" style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 40 }}>
           <Link to="/register" className="btn-shine" style={{
-            background: '#7DC67A', color: '#1F1F1F', padding: '16px 32px',
+            background: '#13B8D4', color: '#1F1F1F', padding: '16px 32px',
             borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none',
-            cursor: 'pointer', textDecoration: 'none', boxShadow: '0 8px 32px rgba(125,198,122,0.3)',
+            cursor: 'pointer', textDecoration: 'none', boxShadow: '0 8px 32px rgba(19,184,212,0.3)',
             transition: 'all 200ms', display: 'inline-block', fontFamily: "ui-sans-serif, system-ui, sans-serif"
           }}>
             Start Learning Free →
