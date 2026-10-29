@@ -23,8 +23,8 @@ const SubjectIllustration = ({ shape }) => {
       return (
         <>
           <div style={{ ...commonStyle, width: 40, height: 40, background: 'rgba(31,31,31,0.1)', top: 20, left: 30 }} />
-          <div style={{ ...commonStyle, width: 24, height: 24, background: 'rgba(125,198,122,0.3)', top: 50, right: 30 }} />
-          <div style={{ ...commonStyle, width: 32, height: 32, background: 'rgba(245,158,11,0.2)', bottom: 30, left: '50%', transform: 'translateX(-50%)' }} />
+          <div style={{ ...commonStyle, width: 24, height: 24, background: 'rgba(19,184,212,0.3)', top: 50, right: 30 }} />
+          <div style={{ ...commonStyle, width: 32, height: 32, background: 'rgba(154,223,234,0.2)', bottom: 30, left: '50%', transform: 'translateX(-50%)' }} />
           <div style={{ position: 'absolute', top: 40, left: 50, width: 60, height: 1, background: 'rgba(31,31,31,0.1)', transform: 'rotate(30deg)' }} />
           <div style={{ position: 'absolute', top: 60, left: 80, width: 40, height: 1, background: 'rgba(31,31,31,0.1)', transform: 'rotate(-20deg)' }} />
         </>
@@ -34,7 +34,7 @@ const SubjectIllustration = ({ shape }) => {
         <>
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 50, height: 50, border: '2px solid rgba(31,31,31,0.15)', borderRadius: 8 }} />
           {Array(4).fill(null).map((_, i) => (
-            <div key={i} style={{ position: 'absolute', top: '50%', left: `${20 + i * 20}%`, width: 2, height: 20, background: 'rgba(125,198,122,0.3)', transform: 'translateY(-50%)' }} />
+            <div key={i} style={{ position: 'absolute', top: '50%', left: `${20 + i * 20}%`, width: 2, height: 20, background: 'rgba(19,184,212,0.3)', transform: 'translateY(-50%)' }} />
           ))}
         </>
       );
@@ -42,7 +42,7 @@ const SubjectIllustration = ({ shape }) => {
       return (
         <>
           {[0, 1, 2].map(i => (
-            <div key={i} style={{ position: 'absolute', left: '50%', top: 20 + i * 36, transform: 'translateX(-50%)', width: 60, height: 28, borderRadius: '50%', border: '2px solid rgba(31,31,31,0.12)', background: `rgba(125,198,122,${0.05 + i * 0.05})` }} />
+            <div key={i} style={{ position: 'absolute', left: '50%', top: 20 + i * 36, transform: 'translateX(-50%)', width: 60, height: 28, borderRadius: '50%', border: '2px solid rgba(31,31,31,0.12)', background: `rgba(19,184,212,${0.05 + i * 0.05})` }} />
           ))}
         </>
       );
@@ -59,7 +59,7 @@ const SubjectIllustration = ({ shape }) => {
       return (
         <>
           <div style={{ ...commonStyle, width: 50, height: 50, background: 'rgba(31,31,31,0.06)', top: '30%', left: '30%' }} />
-          <div style={{ position: 'absolute', bottom: 20, right: 20, width: 30, height: 30, background: 'rgba(125,198,122,0.15)', borderRadius: 6 }} />
+          <div style={{ position: 'absolute', bottom: 20, right: 20, width: 30, height: 30, background: 'rgba(19,184,212,0.15)', borderRadius: 6 }} />
         </>
       );
   }
@@ -77,12 +77,12 @@ const SubjectsSection = () => {
           <motion.div {...fadeUp}>
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'rgba(125,198,122,0.1)', border: '1px solid rgba(125,198,122,0.25)',
+              background: 'rgba(19,184,212,0.1)', border: '1px solid rgba(19,184,212,0.25)',
               borderRadius: 999, padding: '6px 16px',
-              fontSize: 11, fontWeight: 600, color: '#7DC67A',
+              fontSize: 11, fontWeight: 600, color: '#13B8D4',
               textTransform: 'uppercase', letterSpacing: '0.1em'
             }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#7DC67A' }} />
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#13B8D4' }} />
               SUBJECTS
             </span>
           </motion.div>
@@ -91,7 +91,7 @@ const SubjectsSection = () => {
             fontSize: 'clamp(40px, 4.5vw, 56px)', fontWeight: 800,
             color: '#1F1F1F', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
           }}>
-            Pick your battlefield<span style={{ color: '#F59E0B' }}>.</span>
+            Pick your battlefield<span style={{ color: '#9ADFEA' }}>.</span>
           </motion.h2>
         </div>
 
