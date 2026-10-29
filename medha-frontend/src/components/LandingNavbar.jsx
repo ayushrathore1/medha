@@ -50,7 +50,7 @@ const LandingNavbar = ({ studentsOnline }) => {
             </span>
             <span className="logo-dot" style={{
               display: 'inline-block', width: 8, height: 8, borderRadius: '50%',
-              background: '#F59E0B', marginBottom: 2, marginLeft: 2, verticalAlign: 'middle'
+              background: '#9ADFEA', marginBottom: 2, marginLeft: 2, verticalAlign: 'middle'
             }} />
           </Link>
 
@@ -61,7 +61,7 @@ const LandingNavbar = ({ studentsOnline }) => {
                 fontSize: 15, fontWeight: 400, color: '#1F1F1F',
                 textDecoration: 'none', transition: 'color 150ms',
               }}
-              onMouseEnter={e => e.currentTarget.style.color = '#7DC67A'}
+              onMouseEnter={e => e.currentTarget.style.color = '#13B8D4'}
               onMouseLeave={e => e.currentTarget.style.color = '#1F1F1F'}
               >
                 {link.label}
@@ -76,7 +76,7 @@ const LandingNavbar = ({ studentsOnline }) => {
               fontSize: 15, fontWeight: 400, color: '#1F1F1F',
               textDecoration: 'none', transition: 'color 150ms',
             }}
-            onMouseEnter={e => e.currentTarget.style.color = '#7DC67A'}
+            onMouseEnter={e => e.currentTarget.style.color = '#13B8D4'}
             onMouseLeave={e => e.currentTarget.style.color = '#1F1F1F'}
             >
               Login
