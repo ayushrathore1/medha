@@ -5,23 +5,23 @@ import { Link } from 'react-router-dom';
 import studentHeroImg from '../assets/landing/student-hero.png';
 
 const floatingBadges = [
-  { label: 'Games Done ✓', color: '#13B8D4', bg: 'rgba(19,184,212,0.15)', top: '8%', left: '-12%', delay: 0.4 },
-  { label: 'Exams Done ✓', color: '#9ADFEA', bg: 'rgba(154,223,234,0.15)', top: '22%', right: '-8%', delay: 0.55 },
-  { label: 'Party Done ✓', color: '#7ED5E4', bg: 'rgba(126,213,228,0.15)', top: '40%', left: '-16%', delay: 0.7 },
-  { label: 'Fun Done ✓', color: '#77C9E0', bg: 'rgba(119,201,224,0.15)', top: '55%', right: '-10%', delay: 0.85 },
-  { label: 'Skills Learnt ✓', color: '#29B9DD', bg: 'rgba(59,130,246,0.15)', top: '70%', left: '-10%', delay: 1.0 },
-  { label: 'MEDHA Helped ✓', color: '#13B8D4', bg: 'rgba(19,184,212,0.18)', top: '82%', right: '-6%', delay: 1.15 },
+  { label: 'Study plan ready', color: '#3857F6', bg: 'rgba(19,184,212,0.15)', top: '8%', left: '-12%', delay: 0.4 },
+  { label: 'Revision in focus', color: '#9ADFEA', bg: 'rgba(154,223,234,0.15)', top: '22%', right: '-8%', delay: 0.55 },
+  { label: 'One topic at a time', color: '#7ED5E4', bg: 'rgba(126,213,228,0.15)', top: '40%', left: '-16%', delay: 0.7 },
+  { label: 'Learn at your pace', color: '#77C9E0', bg: 'rgba(119,201,224,0.15)', top: '55%', right: '-10%', delay: 0.85 },
+  { label: 'Concepts made clearer', color: '#29B9DD', bg: 'rgba(59,130,246,0.15)', top: '70%', left: '-10%', delay: 1.0 },
+  { label: 'Your next step, sorted', color: '#13B8D4', bg: 'rgba(19,184,212,0.18)', top: '82%', right: '-6%', delay: 1.15 },
 ];
 
 const HeroSection = ({ totalStudents }) => {
-  const headlines = ["Make every", "study session", "count."];
+  const headlines = ["Less panic.", "More progress.", "That’s MEDHA."];
 
   return (
     <section className="hero-section" style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden', background: '#FFFFFF', paddingTop: 72 }}>
       {/* BG Layer 1 — Grain */}
       <div className="grain" style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.12 }} />
       <div className="hero-calm-orbit hero-calm-orbit-one" aria-hidden="true">
-        <svg viewBox="0 0 520 520" role="presentation"><circle cx="260" cy="260" r="190" fill="none" stroke="#B7EDF4" strokeWidth="1.5"/><circle cx="260" cy="260" r="145" fill="none" stroke="#D9F5F8" strokeWidth="1.5"/><circle cx="260" cy="260" r="92" fill="#EAFBFD" fillOpacity=".6"/><path d="M260 70 A190 190 0 0 1 450 260" fill="none" stroke="#25C2DC" strokeWidth="3" strokeLinecap="round"/><circle cx="450" cy="260" r="6" fill="#25C2DC"/></svg>
+        <svg viewBox="0 0 520 520" role="presentation"><circle cx="260" cy="260" r="190" fill="none" stroke="#D6D8E4" strokeWidth="1.5"/><circle cx="260" cy="260" r="145" fill="none" stroke="#E9E8F0" strokeWidth="1.5"/><circle cx="260" cy="260" r="92" fill="#EAFBFD" fillOpacity=".6"/><path d="M260 70 A190 190 0 0 1 450 260" fill="none" stroke="#3857F6" strokeWidth="3" strokeLinecap="round"/><circle cx="450" cy="260" r="6" fill="#3857F6"/></svg>
       </div>
       <div className="hero-calm-orbit hero-calm-orbit-two" aria-hidden="true">
         <svg viewBox="0 0 180 180" role="presentation"><path d="M90 10 C135 10 170 45 170 90 S135 170 90 170 S10 135 10 90 S45 10 90 10Z" fill="none" stroke="#B7EDF4" strokeWidth="1.5"/><path d="M90 32 C122 32 148 58 148 90 S122 148 90 148 S32 122 32 90 S58 32 90 32Z" fill="none" stroke="#D9F5F8" strokeWidth="1.5"/><circle cx="90" cy="10" r="4" fill="#25C2DC"/></svg>
@@ -64,8 +64,8 @@ const HeroSection = ({ totalStudents }) => {
               fontSize: 11, fontWeight: 600, color: '#13B8D4',
               textTransform: 'uppercase', letterSpacing: '0.1em'
             }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#13B8D4' }} />
-              A smarter way to prepare for university exams
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#3857F6' }} />
+              YOUR STUDY SEMESTER, WITH A PLAN
             </span>
           </motion.div>
 
@@ -98,7 +98,7 @@ const HeroSection = ({ totalStudents }) => {
             transition={{ delay: 0.55, duration: 0.6 }}
             style={{ marginTop: 24, fontSize: 17, color: '#6B6B6B', lineHeight: 1.7, maxWidth: 480 }}
           >
-            Turn scattered notes and past papers into a clear plan. Find important topics, revise with AI-powered study tools, and walk into your RTU exams feeling prepared.
+            Your syllabus is big. Your time is not. Find a starting point, make sense of difficult topics, and turn exam prep into a plan you can actually follow.
           </motion.p>
 
           {/* Search Bar */}
@@ -125,7 +125,7 @@ const HeroSection = ({ totalStudents }) => {
               </div>
             </div>
             <input
-              placeholder="Find your subject"
+              placeholder="Search a subject or topic"
               style={{
                 padding: '16px 12px', fontSize: 16, color: '#1F1F1F',
                 border: 'none', outline: 'none', background: 'transparent',
@@ -174,7 +174,7 @@ const HeroSection = ({ totalStudents }) => {
               <span style={{ color: 'white', fontSize: 11, fontWeight: 700 }}>✓</span>
             </div>
             <p style={{ fontSize: 14, color: '#6B6B6B', margin: 0 }}>
-              <span style={{ fontWeight: 700, color: '#1F1F1F' }}>{totalStudents}</span>{' '}students crushed their exams
+              <span style={{ fontWeight: 700, color: '#1F1F1F' }}>{totalStudents}</span>{' '}students exploring smarter study
             </p>
           </motion.div>
         </div>
