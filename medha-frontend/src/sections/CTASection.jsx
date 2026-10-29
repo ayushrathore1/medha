@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const CTASection = ({ totalStudents }) => {
   return (
-    <section style={{ background: '#2D2D3F', padding: '128px 0', position: 'relative', overflow: 'hidden' }}>
+    <section style={{ background: '#0B1F3A', padding: '128px 0', position: 'relative', overflow: 'hidden' }}>
       {/* BG */}
       <div className="blob blob-green" style={{ width: 500, height: 500, left: -120, top: '50%', transform: 'translateY(-50%)', opacity: 0.12, position: 'absolute' }} />
       <div className="blob blob-amber" style={{ width: 420, height: 420, right: -80, top: '50%', transform: 'translateY(-50%)', opacity: 0.10, position: 'absolute' }} />
@@ -16,9 +16,9 @@ const CTASection = ({ totalStudents }) => {
         <motion.div {...fadeUp}>
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
-            background: 'rgba(19,184,212,0.15)', border: '1px solid rgba(19,184,212,0.3)',
+            background: 'rgba(19,184,212,0.15)', border: '1px solid rgba(37,99,235,0.35)',
             borderRadius: 999, padding: '6px 16px', marginBottom: 24,
-            fontSize: 11, fontWeight: 600, color: '#13B8D4',
+            fontSize: 11, fontWeight: 600, color: '#93C5FD',
             textTransform: 'uppercase', letterSpacing: '0.1em'
           }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#13B8D4' }} />
@@ -30,16 +30,16 @@ const CTASection = ({ totalStudents }) => {
           fontSize: 'clamp(48px, 5.5vw, 72px)', fontWeight: 800,
           color: 'white', lineHeight: 1.1, letterSpacing: '-0.04em', marginTop: 16
         }}>
-          Exams don't wait.<br />Neither should you<span style={{ color: '#9ADFEA' }}>.</span>
+          Make your next study session count<span style={{ color: '#60A5FA' }}>.</span>
         </motion.h2>
 
         <motion.p {...fadeUp} style={{ fontSize: 18, color: 'rgba(255,255,255,0.5)', marginTop: 20 }}>
-          Join <span style={{ color: '#9ADFEA', fontWeight: 700 }}>{totalStudents}</span> students already using MEDHA
+          Join <span style={{ color: '#93C5FD', fontWeight: 700 }}>{totalStudents}</span> students already using MEDHA
         </motion.p>
 
         <motion.div {...fadeUp} className="cta-buttons" style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 40 }}>
           <Link to="/register" className="btn-shine" style={{
-            background: '#13B8D4', color: '#1F1F1F', padding: '16px 32px',
+            background: '#2563EB', color: '#FFFFFF', padding: '16px 32px',
             borderRadius: 12, fontWeight: 700, fontSize: 16, border: 'none',
             cursor: 'pointer', textDecoration: 'none', boxShadow: '0 8px 32px rgba(19,184,212,0.3)',
             transition: 'all 200ms', display: 'inline-block', fontFamily: "ui-sans-serif, system-ui, sans-serif"
