@@ -620,3 +620,24 @@
     transition-duration: .01ms !important;
   }
 }
+
+
+/* Final polish: keep text selection and mobile focus states on-brand. */
+.landing-page ::selection {
+  background: rgba(37, 194, 220, 0.22);
+  color: #153746;
+}
+
+@media (max-width: 480px) {
+  .landing-page .hero-calm-orbit-one {
+    right: -42%;
+    top: 10%;
+    opacity: 0.28;
+  }
+
+  .landing-page .hero-calm-orbit-two {
+    left: 2%;
+    bottom: 4%;
+    opacity: 0.48;
+  }
+}
