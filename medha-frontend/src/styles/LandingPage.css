@@ -1133,3 +1133,63 @@
 .landing-page section:has(.cta-buttons) .grain{opacity:.12!important}
 .landing-page footer .footer-grid{gap:clamp(22px,4vw,48px)!important}
 .landing-page footer .footer-grid>div:first-child{max-width:290px}
+
+
+/* Premium typography pass: clean geometric sans for UI, editorial serif only for emphasis. */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&display=swap');
+.landing-page{
+  --font-ui:'DM Sans',sans-serif;
+  --font-display:'Manrope',sans-serif;
+  font-family:var(--font-ui)!important;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.landing-page h1,.landing-page h2,.landing-page h3,.landing-page h4,
+.landing-page .journey-hero-copy h1{
+  font-family:var(--font-display)!important;
+  font-weight:700;
+  letter-spacing:-.045em;
+}
+.landing-page .journey-hero-copy h1{
+  font-size:clamp(46px,5.2vw,74px)!important;
+  line-height:1.06!important;
+  letter-spacing:-.058em!important;
+  font-weight:700!important;
+}
+.landing-page .journey-hero-copy h1 em{
+  font-family:'Playfair Display',Georgia,serif!important;
+  font-weight:500!important;
+  font-style:italic!important;
+  letter-spacing:-.045em!important;
+}
+.landing-page .journey-kicker,.landing-page .premium-eyebrow{
+  font-family:var(--font-ui)!important;
+  font-weight:700!important;
+  letter-spacing:.14em!important;
+}
+.landing-page p,.landing-page li,.landing-page label,
+.landing-page .journey-actions a,.landing-page button,
+.landing-page nav a,.landing-page footer a{
+  font-family:var(--font-ui)!important;
+}
+.landing-page .journey-hero-copy p{
+  font-size:clamp(15px,1.35vw,18px)!important;
+  font-weight:400!important;
+  letter-spacing:-.012em!important;
+}
+.landing-page .journey-actions a{
+  font-size:13px!important;
+  font-weight:700!important;
+  letter-spacing:-.01em!important;
+}
+.landing-page .premium-section-heading h2,
+.landing-page #features h2,
+.landing-page section:has(.identity-layout) h2,
+.landing-page section:has(.why-layout) h2{
+  font-family:var(--font-display)!important;
+  font-weight:700!important;
+  letter-spacing:-.05em!important;
+}
+@media(max-width:480px){
+  .landing-page .journey-hero-copy h1{font-size:clamp(40px,10.8vw,54px)!important;line-height:1.08!important}
+}
