@@ -49,7 +49,7 @@ export async function PUT(req: NextRequest) {
     await user.save();
 
     await notify(user._id.toString(), {
-      type: "system",
+      type: "info",
       title: "Verification updated",
       message: "Your account verification status has been updated by admin.",
       category: "system",

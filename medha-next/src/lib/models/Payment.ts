@@ -6,7 +6,7 @@ export interface IPayment extends Document {
   razorpayOrderId: string;
   razorpayPaymentId: string;
   amount: number;
-  status: "pending" | "paid" | "failed";
+  status: "pending" | "paid" | "failed" | "refunded";
   escrowStatus: "held" | "released" | "refunded";
   escrowReleasedAt?: Date;
   refundId?: string;
@@ -22,7 +22,7 @@ const paymentSchema = new Schema<IPayment>(
     razorpayOrderId: { type: String, required: true, index: true },
     razorpayPaymentId: { type: String, required: true, index: true },
     amount: { type: Number, required: true, min: 0 },
-    status: { type: String, enum: ["pending", "paid", "failed"], default: "paid" },
+    status: { type: String, enum: ["pending", "paid", "failed", "refunded"], default: "paid" },
     escrowStatus: { type: String, enum: ["held", "released", "refunded"], default: "held" },
     escrowReleasedAt: { type: Date },
     refundId: { type: String, default: "" },

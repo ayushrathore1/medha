@@ -19,9 +19,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!shipment) return apiError("Shipment not found.", 404);
 
     let updated = shipment;
-    if (body.status === "pickup_scheduled") updated = await schedulePickup(id, body.agentId);
-    else if (body.status === "picked_up") updated = await markPickedUp(id, body.note);
-    else if (body.status === "delivered") updated = await markDelivered(id, body.note, body.proofUrl);
+    if (body.status === "pickup_scheduled") updated = (await schedulePickup(id, body.agentId)) ?? shipment;
+    else if (body.status === "picked_up") updated = (await markPickedUp(id, body.note)) ?? shipment;
+    else if (body.status === "delivered") updated = (await markDelivered(id, body.note, body.proofUrl)) ?? shipment;
     else {
       shipment.status = body.status as typeof shipment.status;
       shipment.trackingEvents.push({ status: shipment.status, timestamp: new Date(), note: body.note || "Status updated" });
