@@ -8,35 +8,35 @@ const testimonials = [
     name: 'Rahul Sharma',
     role: 'CSE, 3rd Year',
     initials: 'RS',
-    gradient: ['#7DC67A', '#4A9E47'],
+    gradient: ['#13B8D4', '#078DA8'],
   },
   {
     quote: '"The AI notes literally saved me. Uploaded a blurry photo of my register and got clean, formatted notes in 2 minutes."',
     name: 'Priya Meena',
     role: 'ECE, 4th Year',
     initials: 'PM',
-    gradient: ['#F59E0B', '#D97706'],
+    gradient: ['#9ADFEA', '#168FA8'],
   },
   {
     quote: '"I used to panic the night before exams. Now I just open MEDHA and follow the priority map. It\'s like having a topper friend 24/7."',
     name: 'Ankit Kumar',
     role: 'ME, 2nd Year',
     initials: 'AK',
-    gradient: ['#8B5CF6', '#6D28D9'],
+    gradient: ['#77C9E0', '#197F9C'],
   },
   {
     quote: '"The PYQ analysis is insane. 3 topics actually came exactly as predicted. Never studying without MEDHA again."',
     name: 'Deepika Patel',
     role: 'CSE, 3rd Year',
     initials: 'DP',
-    gradient: ['#EF4444', '#DC2626'],
+    gradient: ['#66C8DC', '#168FA8'],
   },
   {
     quote: '"Started using it at 1 AM, covered 4 units by 7 AM. The AI breaks down everything so simply you actually understand."',
     name: 'Vikram Singh',
     role: 'Civil, 4th Year',
     initials: 'VS',
-    gradient: ['#3B82F6', '#2563EB'],
+    gradient: ['#29B9DD', '#2563EB'],
   },
 ];
 
@@ -63,12 +63,12 @@ const TestimonialsSection = () => {
           <motion.div {...fadeUp}>
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'rgba(125,198,122,0.15)', border: '1px solid rgba(125,198,122,0.3)',
+              background: 'rgba(19,184,212,0.15)', border: '1px solid rgba(19,184,212,0.3)',
               borderRadius: 999, padding: '6px 16px',
-              fontSize: 11, fontWeight: 600, color: '#7DC67A',
+              fontSize: 11, fontWeight: 600, color: '#13B8D4',
               textTransform: 'uppercase', letterSpacing: '0.1em'
             }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#7DC67A' }} />
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#13B8D4' }} />
               TESTIMONIALS
             </span>
           </motion.div>
@@ -77,7 +77,7 @@ const TestimonialsSection = () => {
             fontSize: 'clamp(40px, 4.5vw, 56px)', fontWeight: 800,
             color: 'white', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
           }}>
-            What students say<span style={{ color: '#F59E0B' }}>.</span>
+            What students say<span style={{ color: '#9ADFEA' }}>.</span>
           </motion.h2>
         </div>
 
@@ -114,7 +114,7 @@ const TestimonialsSection = () => {
                   }}>{t.initials}</div>
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>{t.name}</div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: '#7DC67A' }}>{t.role}</div>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: '#13B8D4' }}>{t.role}</div>
                   </div>
                 </div>
               </motion.div>
