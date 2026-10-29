@@ -641,3 +641,90 @@
     opacity: 0.48;
   }
 }
+
+
+/* Premium blue system: restrained accents, generous space, clear hierarchy. */
+.landing-page {
+  --medha-navy: #10233F;
+  --medha-blue: #2563EB;
+  --medha-blue-bright: #3B82F6;
+  --medha-sky: #93C5FD;
+  --medha-ice: #EFF6FF;
+  --medha-line: #DCE7F5;
+  font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  color: var(--medha-navy);
+  background: #fff;
+}
+
+.landing-page h1,
+.landing-page h2,
+.landing-page h3,
+.landing-page h4,
+.landing-page h5,
+.landing-page h6,
+.landing-page .brand-display {
+  font-family: 'Manrope', 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+.landing-page .hero-section {
+  background:
+    radial-gradient(ellipse at 82% 38%, rgba(59, 130, 246, .10), transparent 38%),
+    radial-gradient(ellipse at 12% 82%, rgba(147, 197, 253, .18), transparent 34%),
+    #fff !important;
+}
+
+.landing-page .hero-search-bar {
+  border-color: var(--medha-line) !important;
+  box-shadow: 0 16px 44px rgba(16, 35, 63, .08) !important;
+  transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+}
+.landing-page .hero-search-bar:focus-within {
+  border-color: var(--medha-blue) !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, .10), 0 18px 44px rgba(16, 35, 63, .10) !important;
+  transform: translateY(-2px);
+}
+
+.landing-page .nav-hamburger span { background: var(--medha-navy); }
+.landing-page .nav-mobile-overlay a:hover { color: var(--medha-blue); }
+.landing-page a:focus-visible,
+.landing-page button:focus-visible,
+.landing-page input:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .55);
+  outline-offset: 3px;
+}
+
+.landing-page .hero-calm-orbit-one {
+  animation: medhaOrbit 54s linear infinite;
+  transform-origin: center;
+}
+.landing-page .hero-calm-orbit-two {
+  animation: medhaFloat 8s ease-in-out infinite;
+}
+.landing-page .card-shine {
+  box-shadow: 0 10px 28px rgba(16, 35, 63, .045);
+  transition: box-shadow .3s ease, border-color .3s ease;
+}
+.landing-page .card-shine:hover {
+  box-shadow: 0 22px 54px rgba(37, 99, 235, .13);
+}
+@keyframes medhaOrbit { to { transform: rotate(360deg); } }
+@keyframes medhaFloat {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -9px, 0); }
+}
+.landing-page ::selection { background: rgba(59, 130, 246, .20); color: var(--medha-navy); }
+
+@media (max-width: 768px) {
+  .landing-page .hero-calm-orbit-one { right: -34%; top: 12%; opacity: .28; }
+  .landing-page .hero-calm-orbit-two { left: 3%; bottom: 5%; opacity: .42; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-page .hero-calm-orbit-one,
+  .landing-page .hero-calm-orbit-two { animation: none !important; }
+  .landing-page *, .landing-page *::before, .landing-page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
