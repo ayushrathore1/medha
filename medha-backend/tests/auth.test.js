@@ -21,7 +21,7 @@ beforeAll(async () => {
     await mongoose.connect(process.env.MONGO_URI);
   }
   // Import app after DB connection
-  app = require('../server');
+  app = require('../app');
 });
 
 afterEach(async () => {
