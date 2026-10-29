@@ -561,7 +561,19 @@ router.get("/admin/subjects", authMiddleware, async (req, res) => {
 
 const cloudinary = require("../utils/cloudinary");
 const multer = require("multer");
-const upload = multer({ storage: multer.memoryStorage() });
+const {
+  AUDIO_UPLOAD_MAX_BYTES,
+  IMAGE_UPLOAD_MAX_BYTES,
+} = require("../config/bodyLimits");
+
+const imageUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: IMAGE_UPLOAD_MAX_BYTES, files: 1 },
+});
+const audioUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: AUDIO_UPLOAD_MAX_BYTES, files: 1 },
+});
 
 // PATCH /api/learn/:id/slide/:step - Update slide data (notes, visibility, custom overrides)
 router.patch("/:id/slide/:step", authMiddleware, async (req, res) => {
@@ -656,7 +668,7 @@ router.post("/:id/view", async (req, res) => {
 router.post(
   "/:id/slide/:step/voice",
   authMiddleware,
-  upload.single("voiceNote"),
+  audioUpload.single("voiceNote"),
   async (req, res) => {
     try {
       // Fetch user to check admin/team status
@@ -740,7 +752,7 @@ router.post(
 router.post(
   "/:id/slide/:step/note-image",
   authMiddleware,
-  upload.single("image"),
+  imageUpload.single("image"),
   async (req, res) => {
     try {
       // Fetch user to check admin/team status
@@ -1938,7 +1950,7 @@ router.post(
     res.setTimeout(120000);
     next();
   },
-  upload.single("audioFile"),
+  audioUpload.single("audioFile"),
   async (req, res) => {
     console.log("[GLOBAL-VOICE] Request received for animation upload");
     try {
@@ -2098,7 +2110,7 @@ router.post(
 router.post(
   "/:id/global-voice",
   authMiddleware,
-  upload.single("audioFile"),
+  audioUpload.single("audioFile"),
   async (req, res) => {
     try {
       // Fetch user to check admin/team status

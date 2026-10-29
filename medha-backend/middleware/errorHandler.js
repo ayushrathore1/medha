@@ -1,7 +1,17 @@
 // Centralized error handler middleware for Express
 const { mapUploadError, removeRequestUploads } = require("./upload");
+const { mapPayloadTooLargeError } = require("../config/bodyLimits");
 
 const errorHandler = (err, req, res, next) => {
+  const oversized = mapPayloadTooLargeError(err);
+  if (oversized) {
+    return res.status(oversized.status).json({
+      success: false,
+      error: oversized.message,
+      message: oversized.message,
+    });
+  }
+
   const mapped = mapUploadError(err);
   if (mapped) {
     removeRequestUploads(req);

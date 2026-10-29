@@ -185,6 +185,8 @@ medha-backend/
 
 Middleware order in `app.js`: Helmet → compression → CORS → static `/uploads/notes` → body size validator → JSON/urlencoded → mongo-sanitize → HPP → security logger → suspicious-activity detector → request timeout → general rate limiter → routes → 404 → upload error handler → error handler.
 
+JSON and URL-encoded bodies default to **1MB**. File uploads use multipart routes with their own caps (notes 25MB, audio 25MB, learn images 5MB). Reverse proxies should set `client_max_body_size` (or equivalent) to at least 25MB.
+
 ## 🚀 API Endpoints
 
 ### Authentication

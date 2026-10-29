@@ -16,6 +16,8 @@ try {
   buildRAGContext = async () => ({ fullContext: "" });
 }
 
+const { AUDIO_UPLOAD_MAX_BYTES } = require("../config/bodyLimits");
+
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY; // Optional for TTS
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -23,7 +25,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 // Multer config for audio uploads (in memory)
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 25 * 1024 * 1024 }, // 25MB max
+  limits: { fileSize: AUDIO_UPLOAD_MAX_BYTES, files: 1 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = [
       "audio/webm",

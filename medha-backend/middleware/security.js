@@ -256,29 +256,27 @@ const suspiciousActivityDetector = (req, res, next) => {
 };
 
 /**
- * Body size validation for different content types
+ * Body size validation for JSON / urlencoded requests.
+ * Multipart uploads skip this and are capped by per-route Multer limits.
  */
+const {
+  JSON_LIMIT_BYTES,
+  sendPayloadTooLarge,
+} = require("../config/bodyLimits");
+
 const bodySizeValidator = (req, res, next) => {
   const contentLength = parseInt(req.get("content-length") || "0", 10);
   const contentType = req.get("content-type") || "";
 
-  // Skip size validation for file uploads (multipart/form-data)
-  // Large PDFs are stored on disk, not in memory
   if (contentType.includes("multipart/form-data")) {
     return next();
   }
 
-  // 70MB limit for JSON and other non-file requests
-  const maxSize = 70 * 1024 * 1024;
-
-  if (contentLength > maxSize) {
+  if (contentLength > JSON_LIMIT_BYTES) {
     console.warn(
       `[SECURITY] Request body too large: ${contentLength} bytes from IP: ${req.ip}`
     );
-    return res.status(413).json({
-      success: false,
-      message: "Request body too large.",
-    });
+    return sendPayloadTooLarge(res);
   }
 
   next();
