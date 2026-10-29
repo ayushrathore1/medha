@@ -4,36 +4,36 @@ import { fadeUp, staggerChild } from '../lib/motionPresets';
 
 const features = [
   {
-    bg: '#E8D2BF',
+    bg: '#E8F1FF',
     height: 480,
     badge: '2 min',
-    title: 'AI Note Intelligence',
-    sub: 'Blurry photo in → clean cheatsheet out',
+    title: 'Turn notes into revision',
+    sub: 'Organise key ideas into quick, clear revision sheets',
     category: 'AI Tools',
   },
   {
-    bg: '#C8DDB8',
+    bg: '#DCEAFF',
     height: 560,
     badge: 'RTU Focused',
-    title: 'PYQ Archive',
-    sub: 'See what repeats every year',
+    title: 'Find patterns in past papers',
+    sub: 'Spot recurring topics and prioritise your revision',
     category: 'PYQ Archive',
     popular: true,
   },
   {
-    bg: '#D2D8D8',
+    bg: '#E5F5FF',
     height: 480,
     badge: 'Instant',
-    title: '24/7 AI Tutor',
-    sub: 'No need to wake the topper',
+    title: 'Get unstuck with AI',
+    sub: 'Break down difficult concepts, step by step',
     category: 'AI Tools',
   },
   {
-    bg: '#E2D4ED',
+    bg: '#E9E8FF',
     height: 480,
     badge: 'RTU Syllabus',
-    title: 'Smart Exam Prep',
-    sub: 'High-weightage units, first',
+    title: 'Build a focused study plan',
+    sub: 'Start with important units and use your time well',
     category: 'Exam Prep',
   },
 ];
@@ -72,7 +72,7 @@ const FeaturesSection = () => {
             fontSize: 'clamp(40px, 4.5vw, 56px)', fontWeight: 800,
             color: '#1F1F1F', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
           }}>
-            Enter the MEDHA Era<span style={{ color: '#9ADFEA' }}>.</span>
+            A calmer way to prep<span style={{ color: '#2563EB' }}>.</span>
           </motion.h2>
         </div>
 
