@@ -1,0 +1,20 @@
+name: Image budget
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Enforce image asset budget
+        run: node scripts/check-image-budget.js
+      - name: Frontend image helper tests
+        working-directory: medha-frontend
+        run: npm ci && npx vitest run src/utils/imageUtils.test.js

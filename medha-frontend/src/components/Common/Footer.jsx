@@ -31,6 +31,10 @@ const Footer = () => (
               src="https://ik.imagekit.io/ayushrathore1/MEDHA%20Revision%20Logo%20(5)/6.svg?updatedAt=1767677218473"
               alt="MEDHA logo"
               className="w-10 h-10 object-contain"
+              width={40}
+              height={40}
+              loading="lazy"
+              decoding="async"
             />
             <span className="text-2xl font-bold bg-gradient-to-r from-[var(--action-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent tracking-tight">
               MEDHA

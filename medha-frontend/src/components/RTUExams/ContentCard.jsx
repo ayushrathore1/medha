@@ -1,4 +1,5 @@
 import React from 'react';
+import OptimizedImage from '../Common/OptimizedImage';
 import { motion } from 'framer-motion';
 import { 
   FaPlay, 
@@ -66,9 +67,12 @@ const ContentCard = ({
         {/* Thumbnail */}
         <div className="relative aspect-video bg-[var(--bg-tertiary)] overflow-hidden">
           {thumbnailUrl ? (
-            <img
+            <OptimizedImage
               src={thumbnailUrl}
               alt={title}
+              lazy
+              widths={[320, 480, 768]}
+              sizes="(max-width: 768px) 100vw, 33vw"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
