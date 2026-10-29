@@ -6,34 +6,34 @@ const features = [
   {
     bg: '#E8F1FF',
     height: 440,
-    badge: '2 min',
+    badge: 'STUDY TOOLS',
     title: 'Turn notes into revision',
-    sub: 'Organise key ideas into quick, clear revision sheets',
+    sub: 'Turn rough material into structured notes you can revisit.',
     category: 'AI Tools',
   },
   {
     bg: '#DCEAFF',
     height: 460,
-    badge: 'RTU Focused',
+    badge: 'PAST PAPERS',
     title: 'Find patterns in past papers',
-    sub: 'Spot recurring topics and prioritise your revision',
+    sub: 'Explore past-paper patterns to guide what you revise.',
     category: 'PYQ Archive',
     popular: true,
   },
   {
     bg: '#E5F5FF',
     height: 480,
-    badge: 'Instant',
+    badge: 'AI EXPLAINER',
     title: 'Get unstuck with AI',
-    sub: 'Break down difficult concepts, step by step',
+    sub: 'Ask questions and work through tricky concepts in simpler language.',
     category: 'AI Tools',
   },
   {
     bg: '#E9E8FF',
     height: 480,
-    badge: 'RTU Syllabus',
+    badge: 'REVISION PLAN',
     title: 'Build a focused study plan',
-    sub: 'Start with important units and use your time well',
+    sub: 'Break the syllabus into manageable steps for your next session.',
     category: 'Exam Prep',
   },
 ];
@@ -64,7 +64,7 @@ const FeaturesSection = () => {
               textTransform: 'uppercase', letterSpacing: '0.1em'
             }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#2563EB' }} />
-              FEATURES
+              YOUR STUDY TOOLKIT
             </span>
           </motion.div>
 
@@ -72,7 +72,7 @@ const FeaturesSection = () => {
             fontSize: 'clamp(40px, 4.5vw, 56px)', fontWeight: 800,
             color: '#1F1F1F', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
           }}>
-            A calmer way to prep<span style={{ color: '#2563EB' }}>.</span>
+            A better way to get started<span style={{ color: '#2563EB' }}>.</span>
           </motion.h2>
         </div>
 
@@ -117,7 +117,7 @@ const FeaturesSection = () => {
                   background: '#10233F', color: 'white',
                   fontSize: 10, fontWeight: 700, padding: '6px 14px',
                   borderRadius: '0 0 10px 0', letterSpacing: '0.06em', zIndex: 5
-                }}>MOST POPULAR</div>
+                }}>STUDENT FAVOURITE</div>
               )}
 
               {/* Visual area */}
@@ -170,7 +170,7 @@ const NoteIllustration = ({ bg }) => (
 
 const PYQIllustration = () => (
   <div style={{ background: 'rgba(31,31,31,0.06)', borderRadius: 12, padding: 16, height: '100%', paddingTop: 40 }}>
-    <div style={{ fontSize: 10, fontWeight: 600, color: '#078DA8', letterSpacing: '0.08em', marginBottom: 12 }}>RTU QUESTION FREQUENCY</div>
+    <div style={{ fontSize: 10, fontWeight: 600, color: '#078DA8', letterSpacing: '0.08em', marginBottom: 12 }}>PAST-PAPER EXPLORER</div>
     {[
       { label: 'Joins', pct: 85, highlighted: true },
       { label: 'Normalize', pct: 70, highlighted: true },
@@ -188,7 +188,7 @@ const PYQIllustration = () => (
       </div>
     ))}
     <div style={{ marginTop: 12, padding: '8px 10px', background: 'rgba(19,184,212,0.15)', borderRadius: 8, border: '1px solid rgba(19,184,212,0.3)' }}>
-      <div style={{ fontSize: 9, fontWeight: 700, color: '#078DA8' }}>🔥 3 topics repeat every year</div>
+      <div style={{ fontSize: 9, fontWeight: 700, color: '#078DA8' }}>Find topics worth revisiting</div>
     </div>
   </div>
 );
@@ -211,7 +211,7 @@ const TutorIllustration = () => (
 
 const ExamPrepIllustration = () => (
   <div style={{ background: 'rgba(31,31,31,0.08)', borderRadius: 12, padding: 14, height: '100%' }}>
-    <div style={{ fontSize: 9, fontWeight: 700, color: '#77C9E0', letterSpacing: '0.08em', marginBottom: 10 }}>UNIT PRIORITY MAP</div>
+    <div style={{ fontSize: 9, fontWeight: 700, color: '#77C9E0', letterSpacing: '0.08em', marginBottom: 10 }}>REVISION OVERVIEW</div>
     {[
       { unit: 'Unit 3', priority: 'HIGH', color: '#66C8DC', w: '90%' },
       { unit: 'Unit 1', priority: 'HIGH', color: '#9ADFEA', w: '80%' },
@@ -228,7 +228,7 @@ const ExamPrepIllustration = () => (
       </div>
     ))}
     <div style={{ marginTop: 10, padding: '6px 10px', background: 'rgba(119,201,224,0.15)', borderRadius: 6, border: '1px solid rgba(119,201,224,0.3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <span style={{ fontSize: 9, color: '#77C9E0', fontWeight: 600 }}>EXAM IN</span>
+      <span style={{ fontSize: 9, color: '#77C9E0', fontWeight: 600 }}>NEXT EXAM</span>
       <span style={{ fontSize: 13, fontWeight: 800, color: '#1F1F1F' }}>3d 14h</span>
     </div>
   </div>
