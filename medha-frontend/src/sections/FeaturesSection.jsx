@@ -48,7 +48,7 @@ const FeaturesSection = () => {
     : features.filter(f => f.category === activeTab);
 
   return (
-    <section style={{ background: '#FFFFFF', position: 'relative', padding: '96px 0', overflow: 'hidden' }}>
+    <section id="features" style={{ background: '#FFFFFF', position: 'relative', padding: '96px 0', overflow: 'hidden' }}>
       <div className="dot-grid" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }} />
       <div style={{ position: 'absolute', right: '-2%', bottom: '-5%', fontSize: 300, fontWeight: 900, color: 'rgba(31,31,31,0.025)', lineHeight: 1, pointerEvents: 'none', userSelect: 'none' }}>4</div>
 
