@@ -12,6 +12,16 @@ const { sendWelcomeEmail } = require("./authExtraRoutes");
 const { sendEmail } = require("../utils/sendEmail");
 const { OtpEmail } = require("../emails/OtpEmail");
 const { renderEmail } = require("../emails/renderEmail");
+const {
+  generateOAuthState,
+  oauthStateCookie,
+  clearOAuthStateCookie,
+  isSecureRequest,
+  validateOAuthState,
+  issueLoginCode,
+  consumeLoginCode,
+  frontendPath,
+} = require("../utils/oauthCallback");
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 const OTP_EXPIRY_MINUTES = 10;
@@ -506,6 +516,18 @@ router.get("/me", auth, async (req, res, next) => {
   }
 });
 
+function redirectOAuth(res, path, params) {
+  return res.redirect(frontendPath(path, params));
+}
+
+function setOAuthStateCookies(res, req, state) {
+  res.setHeader("Set-Cookie", oauthStateCookie(state, { secure: isSecureRequest(req) }));
+}
+
+function clearStateCookie(res, req) {
+  res.append("Set-Cookie", clearOAuthStateCookie({ secure: isSecureRequest(req) }));
+}
+
 // ═══════════════════════════════════════════════════════
 // @route   GET /api/auth/google
 // @desc    Redirect to Google OAuth2 consent screen
@@ -518,7 +540,7 @@ router.get("/google", (req, res) => {
 
   const redirectUri = `${process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5000}`}/api/auth/google/callback`;
   const scope = encodeURIComponent("openid email profile");
-  const state = crypto.randomBytes(16).toString("hex"); // CSRF protection
+  const state = generateOAuthState();
 
   const googleAuthUrl =
     `https://accounts.google.com/o/oauth2/v2/auth?` +
@@ -530,20 +552,45 @@ router.get("/google", (req, res) => {
     `&prompt=consent` +
     `&state=${state}`;
 
+  setOAuthStateCookies(res, req, state);
   res.redirect(googleAuthUrl);
 });
 
 // ═══════════════════════════════════════════════════════
+// @route   POST /api/auth/google/exchange
+// @desc    Exchange a one-time login code for the session JWT
+// ═══════════════════════════════════════════════════════
+router.post("/google/exchange", async (req, res) => {
+  try {
+    const code = req.body && req.body.code;
+    const login = await consumeLoginCode(code);
+    if (!login) {
+      return res.status(400).json({ message: "Invalid or expired login code" });
+    }
+
+    return res.json({ token: login.token, user: login.user });
+  } catch (err) {
+    console.error("Google login code exchange failed");
+    return res.status(500).json({ message: "Failed to complete Google sign-in" });
+  }
+});
+
+// ═══════════════════════════════════════════════════════
 // @route   GET /api/auth/google/callback
-// @desc    Google OAuth2 callback — exchange code, find/create user, redirect
+// @desc    Google OAuth2 callback — validate state, issue one-time code
 // ═══════════════════════════════════════════════════════
 router.get("/google/callback", async (req, res) => {
-  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-
   try {
+    if (!validateOAuthState(req)) {
+      clearStateCookie(res, req);
+      return redirectOAuth(res, "/auth/google/success", { error: "google_invalid_state" });
+    }
+
+    clearStateCookie(res, req);
+
     const { code } = req.query;
     if (!code) {
-      return res.redirect(`${frontendUrl}/login?error=google_no_code`);
+      return redirectOAuth(res, "/login", { error: "google_no_code" });
     }
 
     const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -565,8 +612,8 @@ router.get("/google/callback", async (req, res) => {
 
     const tokenData = await tokenRes.json();
     if (!tokenRes.ok || !tokenData.access_token) {
-      console.error("❌ Google token exchange failed:", tokenData);
-      return res.redirect(`${frontendUrl}/login?error=google_token_failed`);
+      console.error("Google token exchange failed");
+      return redirectOAuth(res, "/login", { error: "google_token_failed" });
     }
 
     // 2. Fetch user profile from Google
@@ -576,7 +623,7 @@ router.get("/google/callback", async (req, res) => {
 
     const profile = await profileRes.json();
     if (!profile.email) {
-      return res.redirect(`${frontendUrl}/login?error=google_no_email`);
+      return redirectOAuth(res, "/login", { error: "google_no_email" });
     }
 
     const normalizedEmail = profile.email.toLowerCase().trim();
@@ -613,7 +660,7 @@ router.get("/google/callback", async (req, res) => {
 
       // Send welcome email (fire-and-forget)
       sendWelcomeEmail(user).catch((err) => {
-        console.error("❌ Welcome email failed for Google user:", err.message);
+        console.error("Welcome email failed for Google user:", err.message);
       });
     }
 
@@ -650,33 +697,27 @@ router.get("/google/callback", async (req, res) => {
 
     await user.save();
 
-    // 5. Generate JWT
+    // 5. Generate JWT and a one-time code. Never put the JWT in the redirect URL.
     const payload = { userId: user._id, email: user.email };
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
+    const userPayload = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      university: user.university,
+      branch: user.branch,
+      gender: user.gender,
+      isAdmin: user.isAdmin,
+      streak: user.streak,
+      emailVerified: true,
+      avatar: user.avatar,
+    };
+    const loginCode = await issueLoginCode({ token, user: userPayload });
 
-    // 6. Redirect to frontend with token & user data
-    const userData = encodeURIComponent(
-      JSON.stringify({
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        university: user.university,
-        branch: user.branch,
-        gender: user.gender,
-        isAdmin: user.isAdmin,
-        streak: user.streak,
-        emailVerified: true,
-        avatar: user.avatar,
-      })
-    );
-
-    console.log(`✅ Google login successful for ${normalizedEmail}`);
-    const redirectUrl = `${frontendUrl}/auth/google/success?token=${token}` + String.fromCharCode(38) + `user=${userData}`;
-    console.log(`🔗 Redirecting to: ${redirectUrl.substring(0, 80)}...`);
-    res.redirect(redirectUrl);
+    return redirectOAuth(res, "/auth/google/success", { code: loginCode });
   } catch (err) {
-    console.error("❌ Google OAuth error:", err);
-    res.redirect(`${frontendUrl}/login?error=google_server_error`);
+    console.error("Google OAuth error:", err.message);
+    return redirectOAuth(res, "/login", { error: "google_server_error" });
   }
 });
 

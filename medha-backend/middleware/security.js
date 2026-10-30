@@ -215,6 +215,7 @@ const suspiciousActivityDetector = (req, res, next) => {
     // This is safe because passwords are bcrypt-compared, never used in queries
     "/api/auth/register",
     "/api/auth/login",
+    "/api/auth/google",
     "/api/auth/change-password",
     "/api/auth/reset-password",
     "/api/auth-extra/reset-password",
