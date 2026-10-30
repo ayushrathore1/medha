@@ -1,3 +1,9 @@
+# medha-frontend (production SPA)
+
+**Status:** production Vite + React app deployed at `https://medha-revision.vercel.app`.
+
+Calls the canonical Express API (`medha-backend`) through `VITE_BACKEND_URL`. Architecture and API contract: [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md), [docs/API_CONTRACT.md](../docs/API_CONTRACT.md). `medha-next` is an experimental rewrite — do not treat it as the live site.
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
