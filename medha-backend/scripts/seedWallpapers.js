@@ -7,6 +7,16 @@ const fs = require('fs');
 
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/medha";
 const WALLPAPERS_DIR = path.join(__dirname, '../../medha-frontend/src/assets/wallpapers');
+const IMAGE_EXTS = ['.webp', '.avif', '.png', '.jpg', '.jpeg'];
+
+const resolveWallpaperPath = (filename) => {
+  const stem = path.parse(filename).name;
+  for (const ext of IMAGE_EXTS) {
+    const candidate = path.join(WALLPAPERS_DIR, stem + ext);
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return path.join(WALLPAPERS_DIR, filename);
+};
 
 const WALLPAPER_MAPPING = [
   { filename: 'gradient-waves.png', id: 'waves', name: 'Gradient Waves', categories: ['light', 'theme-cognitive-clarity'] },
@@ -38,15 +48,15 @@ const seedWallpapers = async () => {
   await connectDB();
 
   for (const wp of WALLPAPER_MAPPING) {
-    const filePath = path.join(WALLPAPERS_DIR, wp.filename);
-    
+    const filePath = resolveWallpaperPath(wp.filename);
+
     if (!fs.existsSync(filePath)) {
       console.warn(`⚠️ File not found: ${wp.filename}`);
       continue;
     }
 
     try {
-      console.log(`📤 Uploading ${wp.filename} to Cloudinary...`);
+      console.log(`📤 Uploading ${path.basename(filePath)} to Cloudinary...`);
       const result = await cloudinary.uploader.upload(filePath, {
         folder: 'medha_wallpapers',
         public_id: wp.id, // Use ID as public_id to prefer overwrites and consistent URLs

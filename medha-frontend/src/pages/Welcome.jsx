@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle, Zap, MessageSquare, Brain, Rocket, Layers, Star } from "lucide-react";
 import { useTour } from "../context/TourContext";
 import SpotlightCard from "../components/UI/SpotlightCard";
+import OptimizedImage from "../components/Common/OptimizedImage";
 import axios from "axios";
 
 const Spline = React.lazy(() => import("@splinetool/react-spline"));
@@ -380,9 +381,12 @@ const FeatureShowcase = ({ title, subtitle, desc, image, tags, align }) => (
   <div className={`flex flex-col ${align === 'right' ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-16`}>
     <div className="flex-1 w-full relative group perspective-1000">
        <div className={`absolute -inset-4 bg-gradient-to-r from-[var(--action-primary)]/10 to-[var(--accent-secondary)]/10 rounded-[2rem] -rotate-3 group-hover:rotate-0 transition-transform duration-500`}></div>
-       <img 
-        src={image} 
-        alt={title} 
+       <OptimizedImage
+        src={image}
+        alt={title}
+        lazy
+        widths={[640, 960, 1280]}
+        sizes="(max-width: 1024px) 100vw, 50vw"
         className="relative w-full rounded-2xl shadow-2xl border border-[var(--glass-border)] transform group-hover:scale-[1.02] transition-transform duration-500"
        />
     </div>

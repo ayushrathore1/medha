@@ -1,3 +1,8 @@
+> **Frozen stale copy.** This directory is **not** the production API.
+> Land every Express change in [`medha-backend`](../../medha-backend).
+> Do not add features here. See [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md).
+> Drift check: `node scripts/check-backend-drift.js`.
+
 # MEDHA Backend 🎓
 
 > A comprehensive backend API service for the MEDHA learning platform, providing intelligent study tools, note management, flashcard generation, quiz functionality, and AI-powered chatbot assistance.

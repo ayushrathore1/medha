@@ -1,0 +1,174 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Placeholder values only. Tests use MongoMemoryServer and skip live AI/email.
+# See .github/CI.md for the full contract.
+env:
+  CI: true
+  NEXT_TELEMETRY_DISABLED: "1"
+  NODE_ENV: test
+  JWT_SECRET: ci-test-jwt-secret-not-for-production
+  FRONTEND_URL: http://localhost:3000
+  VITE_BACKEND_URL: http://localhost:5000
+  NEXT_PUBLIC_API_URL: http://localhost:5000
+  MONGO_URI: mongodb://127.0.0.1:27017/medha-ci
+  CLOUDINARY_CLOUD_NAME: ci-placeholder
+  CLOUDINARY_API_KEY: ci-placeholder
+  CLOUDINARY_API_SECRET: ci-placeholder
+  IMAGEKIT_PUBLIC_KEY: ci-placeholder
+  IMAGEKIT_PRIVATE_KEY: ci-placeholder
+  IMAGEKIT_URL_ENDPOINT: https://ik.imagekit.io/ci
+  OCRSPACE_API_KEY: ci-placeholder
+  GROQ_API_KEY: ci-placeholder
+  GEMINI_API_KEY: ci-placeholder
+  SERP_API_KEY: ci-placeholder
+  RESEND_API_KEY: ci-placeholder
+  SMTP_HOST: localhost
+  SMTP_PORT: "1025"
+  SMTP_USER: ci@example.com
+  SMTP_PASS: ci-placeholder
+
+jobs:
+  changes:
+    name: Detect changed apps
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+      next: ${{ steps.filter.outputs.next }}
+      sems: ${{ steps.filter.outputs.sems }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'medha-frontend/**'
+              - '.github/workflows/ci.yml'
+              - '.github/actions/**'
+            backend:
+              - 'medha-backend/**'
+              - '.github/workflows/ci.yml'
+              - '.github/actions/**'
+            next:
+              - 'medha-next/**'
+              - '.github/workflows/ci.yml'
+              - '.github/actions/**'
+            sems:
+              - 'Sems/**'
+              - '.github/workflows/ci.yml'
+              - '.github/actions/**'
+
+  frontend:
+    name: Frontend lint, test, build
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: medha-frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node-app
+        with:
+          working-directory: medha-frontend
+      - name: Lint
+        run: npm run lint
+      - name: Unit tests
+        run: npm run test:run
+      - name: Production build
+        run: npm run build
+
+  backend:
+    name: Backend auth, API, security tests
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: medha-backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node-app
+        with:
+          working-directory: medha-backend
+      - name: Cache MongoMemoryServer binaries
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/mongodb-binaries
+          key: ${{ runner.os }}-mongoms
+      - name: Auth tests
+        run: npm run test:auth
+      - name: API tests
+        run: npm run test:api
+      - name: Security tests
+        run: npm run test:security
+
+  next:
+    name: Next lint, type-check, build
+    needs: changes
+    if: needs.changes.outputs.next == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: medha-next
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node-app
+        with:
+          working-directory: medha-next
+      - name: Lint
+        run: npm run lint
+      - name: Production build
+        run: npm run build
+      - name: Type-check
+        run: npm run type-check
+
+  sems:
+    name: Sems lint and type-check
+    needs: changes
+    if: needs.changes.outputs.sems == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Sems/src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node-app
+        with:
+          working-directory: Sems/src
+      - name: Lint
+        run: npm run lint
+      - name: Type-check
+        run: npm run type-check
+      # TanStack Start currently resolves entries under src/src from this package
+      # root, so production build is not an applicable CI contract yet.
+
+  ci-result:
+    name: CI result
+    if: always()
+    needs: [frontend, backend, next, sems]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any app job failed
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          needs = json.loads(os.environ["RESULTS"])
+          failed = [name for name, job in needs.items() if job.get("result") in ("failure", "cancelled")]
+          if failed:
+              print("failed jobs:", ", ".join(failed))
+              sys.exit(1)
+          print("all required app jobs passed or were skipped")
+          PY

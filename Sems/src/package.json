@@ -9,6 +9,8 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
+    "type-check": "tsc --noEmit",
+    "ci": "npm run lint && npm run type-check",
     "format": "prettier --write ."
   },
   "dependencies": {

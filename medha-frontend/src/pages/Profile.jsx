@@ -481,9 +481,28 @@ const Profile = () => {
     }
   };
 
-  // ... (handleDeleteAccount remains same)
+  const resetDeleteModal = () => {
+    setShowDeleteModal(false);
+    setDeleteStep(1);
+    setDeleteReason("");
+    setOtherReason("");
+    setDeleteConfirmText("");
+  };
 
-  // ... (resetDeleteModal remains same)
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/users/me`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      logout?.();
+      navigate("/login");
+    } catch (error) {
+      console.error("Error deleting account:", error);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   // Get gender icon component - keep same
 

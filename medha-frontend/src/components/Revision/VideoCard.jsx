@@ -14,7 +14,7 @@ export default function VideoCard({ video }) {
     >
       <div className="relative h-16 w-28 shrink-0 overflow-hidden bg-[#1F1F1F]">
         {thumb ? (
-          <img src={thumb} alt="" className="h-full w-full object-cover" />
+          <img src={thumb} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" width={112} height={64} />
         ) : (
           <div className="flex h-full items-center justify-center text-white text-[11px]">Play</div>
         )}

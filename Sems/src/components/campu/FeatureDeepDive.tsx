@@ -1,4 +1,7 @@
-import flashcards from "@/assets/feature-flashcards.jpg";
+import flashcards640Avif from "@/assets/feature-flashcards-640.avif";
+import flashcards1024Avif from "@/assets/feature-flashcards-1024.avif";
+import flashcards640Webp from "@/assets/feature-flashcards-640.webp";
+import flashcards1024Webp from "@/assets/feature-flashcards-1024.webp";
 
 const features = [
   { title: "Semantic transcription", body: "Record any lecture — Campu writes structured notes as it listens." },
@@ -33,14 +36,27 @@ export function FeatureDeepDive() {
 
         <div className="relative">
           <div className="bg-card rounded-3xl p-3 ring-1 ring-border shadow-[var(--shadow-luxe)] rotate-1 hover:rotate-0 transition-transform duration-700">
-            <img
-              src={flashcards}
-              alt="Stack of AI-generated study cards for a chemistry course"
-              width={1024}
-              height={1280}
-              loading="lazy"
-              className="w-full h-auto rounded-2xl"
-            />
+            <picture>
+              <source
+                type="image/avif"
+                srcSet={`${flashcards640Avif} 640w, ${flashcards1024Avif} 1024w`}
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+              <source
+                type="image/webp"
+                srcSet={`${flashcards640Webp} 640w, ${flashcards1024Webp} 1024w`}
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+              <img
+                src={flashcards1024Webp}
+                alt="Stack of AI-generated study cards for a chemistry course"
+                width={1024}
+                height={1536}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-auto rounded-2xl"
+              />
+            </picture>
           </div>
           <div className="absolute -top-8 -right-4 sm:-right-8 bg-card ring-1 ring-border rounded-2xl px-4 py-3 shadow-lg rotate-3 hidden sm:block">
             <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Reviewed today</div>

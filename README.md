@@ -6,14 +6,19 @@
 
 ## 📁 Repository Structure
 
+**Source of truth:** [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) · **API contract:** [docs/API_CONTRACT.md](./docs/API_CONTRACT.md)
+
 ```
 MEDHA/
-├── medha-frontend/        # Modern React + Vite Single Page Application
-├── medha-backend/         # Express.js REST API with high-speed Search Engine & MongoDB
-├── medha-next/            # Next.js App Router services & Campus Cart
-├── Sems/                  # Semester syllabus & curriculum datasets
-└── src/                   # Shared visualization & application assets
+├── medha-frontend/        # PRODUCTION SPA (Vite) — https://medha-revision.vercel.app
+├── medha-backend/         # PRODUCTION API (Express + MongoDB search)
+├── medha-next/            # EXPERIMENTAL Next.js rewrite + Campus Cart
+│   └── backend/           # STALE copy of medha-backend — do not patch
+├── Sems/                  # EXPERIMENTAL Campu site (TanStack Start)
+└── src/                   # STRAY leftover Next fragment — not deployed
 ```
+
+Do not guess which tree is live. Production UI is Vite; production API is `medha-backend`. `medha-next` is a migration playground until cutover is explicitly approved. The Express copy under `medha-next/backend` is frozen (`node scripts/check-backend-drift.js`).
 
 ---
 

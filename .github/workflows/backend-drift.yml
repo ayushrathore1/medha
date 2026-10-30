@@ -1,0 +1,30 @@
+name: Backend copy drift
+
+on:
+  pull_request:
+    paths:
+      - "medha-backend/**"
+      - "medha-next/backend/**"
+      - "scripts/check-backend-drift.js"
+      - "scripts/backend-drift-baseline.json"
+      - ".github/workflows/backend-drift.yml"
+  push:
+    branches: [main]
+    paths:
+      - "medha-backend/**"
+      - "medha-next/backend/**"
+      - "scripts/check-backend-drift.js"
+      - "scripts/backend-drift-baseline.json"
+      - ".github/workflows/backend-drift.yml"
+
+jobs:
+  drift:
+    name: Freeze medha-next/backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Compare Express copy against freeze snapshot
+        run: node scripts/check-backend-drift.js
