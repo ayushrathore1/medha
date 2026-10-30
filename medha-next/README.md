@@ -1,3 +1,13 @@
+# medha-next (experimental)
+
+**Status:** migration / Campus Cart playground — **not** the production MEDHA site.
+
+Production frontend is `medha-frontend` (Vite) at `https://medha-revision.vercel.app`. Production API is `medha-backend`. Read [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) before editing.
+
+- Do **not** patch `backend/` here. That tree is a stale Express copy; land API fixes in `medha-backend`.
+- App Router handlers under `src/app/api` are an experimental rewrite, not the live contract ([docs/API_CONTRACT.md](../docs/API_CONTRACT.md)).
+- Prefer `NEXT_PUBLIC_API_URL` pointing at Express for revision features. Campus Cart extras that Express does not have may stay as Route Handlers until they are ported.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

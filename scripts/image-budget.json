@@ -1,0 +1,8 @@
+{
+  "maxFileBytes": 250000,
+  "maxSvgBytes": 50000,
+  "maxTotalRasterBytes": 2000000,
+  "baselineBeforeBytes": 24821518,
+  "rasterExtensions": [".png", ".jpg", ".jpeg", ".webp", ".avif", ".gif"],
+  "svgExtensions": [".svg"]
+}

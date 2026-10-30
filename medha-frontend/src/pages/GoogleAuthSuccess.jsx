@@ -3,9 +3,12 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import Loader from "../components/Common/Loader";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 /**
- * GoogleAuthSuccess — handles the redirect from backend after Google OAuth.
- * Reads token + user from URL params, stores in localStorage, and redirects to dashboard.
+ * GoogleAuthSuccess — completes Google OAuth after the backend redirect.
+ * The URL may contain a one-time `code` only. JWTs are fetched over POST
+ * and never read from the query string.
  */
 const GoogleAuthSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -14,32 +17,59 @@ const GoogleAuthSuccess = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const token = searchParams.get("token");
-    const userParam = searchParams.get("user");
+    let cancelled = false;
 
-    if (!token || !userParam) {
-      setError("Authentication failed. Please try again.");
-      setTimeout(() => navigate("/login"), 2000);
-      return;
-    }
+    const fail = (message) => {
+      if (cancelled) return;
+      setError(message);
+      setTimeout(() => navigate("/login", { replace: true }), 2000);
+    };
 
-    try {
-      const user = JSON.parse(decodeURIComponent(userParam));
+    const run = async () => {
+      if (searchParams.get("token") || searchParams.get("access_token")) {
+        fail("Sign-in link is invalid. Please try again.");
+        return;
+      }
 
-      // Store auth data
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      const oauthError = searchParams.get("error");
+      if (oauthError) {
+        fail("Authentication failed. Please try again.");
+        return;
+      }
 
-      // Update AuthContext
-      login(user);
+      const code = searchParams.get("code");
+      if (!code) {
+        fail("Authentication failed. Please try again.");
+        return;
+      }
 
-      // Redirect to dashboard
-      navigate("/dashboard", { replace: true });
-    } catch (err) {
-      console.error("Google auth callback error:", err);
-      setError("Something went wrong. Redirecting...");
-      setTimeout(() => navigate("/login"), 2000);
-    }
+      window.history.replaceState({}, document.title, "/auth/google/success");
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/auth/google/exchange`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.token || !data.user) {
+          fail(data.message || "Authentication failed. Please try again.");
+          return;
+        }
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        login(data.user);
+        navigate("/dashboard", { replace: true });
+      } catch {
+        fail("Something went wrong. Redirecting...");
+      }
+    };
+
+    run();
+    return () => {
+      cancelled = true;
+    };
   }, [searchParams, navigate, login]);
 
   if (error) {

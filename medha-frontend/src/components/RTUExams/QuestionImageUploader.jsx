@@ -23,15 +23,6 @@ const QuestionImageUploader = ({
   const [error, setError] = useState(null);
   const [isFocused, setIsFocused] = useState(false);
 
-  // Show config warning if ImageKit is not configured
-  if (!IMAGEKIT_PUBLIC_KEY) {
-    return (
-      <div className="mt-3 p-2 bg-amber-50 rounded-lg border border-amber-200">
-        <p className="text-xs font-medium text-amber-700">⚠️ ImageKit not configured</p>
-      </div>
-    );
-  }
-
   // Get auth params from backend for ImageKit upload
   const authenticator = async () => {
     const token = localStorage.getItem("token");
@@ -132,7 +123,14 @@ const QuestionImageUploader = ({
   const handleFocus = () => setIsFocused(true);
   const handleBlur = () => setIsFocused(false);
 
-  // Render: Premium UI with image preview
+  if (!IMAGEKIT_PUBLIC_KEY) {
+    return (
+      <div className="mt-3 p-2 bg-amber-50 rounded-lg border border-amber-200">
+        <p className="text-xs font-medium text-amber-700">⚠️ ImageKit not configured</p>
+      </div>
+    );
+  }
+
   return (
     <div
       tabIndex={0}

@@ -1,4 +1,7 @@
-import heroMockup from "@/assets/hero-mockup.jpg";
+import hero640Avif from "@/assets/hero-mockup-640.avif";
+import hero1024Avif from "@/assets/hero-mockup-1024.avif";
+import hero640Webp from "@/assets/hero-mockup-640.webp";
+import hero1024Webp from "@/assets/hero-mockup-1024.webp";
 
 export function Hero() {
   return (
@@ -33,13 +36,27 @@ export function Hero() {
 
         <div className="animate-fade-up [animation-delay:340ms] relative w-full max-w-sm sm:max-w-md">
           <div className="relative z-10 animate-float-y">
-            <img
-              src={heroMockup}
-              alt="Campu mobile app showing focus dashboard, AI lecture summary and study cards"
-              width={1024}
-              height={1280}
-              className="w-full h-auto rounded-[2.5rem] drop-shadow-[0_40px_60px_rgba(24,18,12,0.18)]"
-            />
+            <picture>
+              <source
+                type="image/avif"
+                srcSet={`${hero640Avif} 640w, ${hero1024Avif} 1024w`}
+                sizes="(max-width: 640px) 90vw, 28rem"
+              />
+              <source
+                type="image/webp"
+                srcSet={`${hero640Webp} 640w, ${hero1024Webp} 1024w`}
+                sizes="(max-width: 640px) 90vw, 28rem"
+              />
+              <img
+                src={hero1024Webp}
+                alt="Campu mobile app showing focus dashboard, AI lecture summary and study cards"
+                width={1024}
+                height={1536}
+                fetchPriority="high"
+                decoding="async"
+                className="w-full h-auto rounded-[2.5rem] drop-shadow-[0_40px_60px_rgba(24,18,12,0.18)]"
+              />
+            </picture>
           </div>
           <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[80%] h-20 bg-ink/20 blur-3xl rounded-full -z-10" />
         </div>

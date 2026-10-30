@@ -19,8 +19,16 @@ module.exports = async () => {
   // Store for use in tests and teardown
   global.__MONGOD__ = mongod;
   process.env.MONGO_URI = uri;
-  process.env.JWT_SECRET = 'test-jwt-secret-for-testing-only';
+  process.env.JWT_SECRET = process.env.JWT_SECRET || 'test-jwt-secret-for-testing-only';
   process.env.NODE_ENV = 'test';
+  process.env.CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || 'ci-placeholder';
+  process.env.CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY || 'ci-placeholder';
+  process.env.CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET || 'ci-placeholder';
+  process.env.OCRSPACE_API_KEY = process.env.OCRSPACE_API_KEY || 'ci-placeholder';
+  process.env.GROQ_API_KEY = process.env.GROQ_API_KEY || 'ci-placeholder';
+  process.env.GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'ci-placeholder';
+  process.env.SMTP_USER = process.env.SMTP_USER || 'ci@example.com';
+  process.env.SMTP_PASS = process.env.SMTP_PASS || 'ci-placeholder';
   
   console.log(`✅ Test MongoDB running at: ${uri}\n`);
 };

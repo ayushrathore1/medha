@@ -1,65 +1,97 @@
 /**
- * Image Optimization Utilities
- * Optimizes Cloudinary URLs for better performance
+ * Image delivery helpers for Cloudinary, ImageKit, and local URLs.
  */
 
+const DEFAULT_WIDTHS = [480, 768, 1200];
+
+const hasQuery = (url) => url.includes("?");
+
+const withQuery = (url, key, value) => {
+  const joiner = hasQuery(url) ? "&" : "?";
+  return `${url}${joiner}${key}=${value}`;
+};
+
 /**
- * Optimize a Cloudinary URL with automatic format and quality
- * @param {string} url - Original Cloudinary URL
- * @param {object} options - Optimization options
- * @returns {string} Optimized URL
+ * Optimize a Cloudinary URL with automatic format and quality.
  */
 export const optimizeCloudinaryUrl = (url, options = {}) => {
-  if (!url || !url.includes('cloudinary.com')) {
+  if (!url || !url.includes("cloudinary.com") || url.includes("/upload/f_")) {
     return url;
   }
 
   const {
     width = null,
-    quality = 'auto:good',
-    format = 'auto',
+    quality = "auto:good",
+    format = "auto",
   } = options;
 
-  // Build transformation string
   let transforms = `f_${format},q_${quality}`;
-  
   if (width) {
     transforms += `,w_${width}`;
   }
 
-  // Insert transformations after /upload/
-  return url.replace('/upload/', `/upload/${transforms}/`);
+  return url.replace("/upload/", `/upload/${transforms}/`);
 };
 
 /**
- * Get optimized wallpaper URL
- * @param {string} url - Original wallpaper URL
- * @returns {string} Optimized URL for wallpaper display
+ * Optimize an ImageKit URL with format/quality/width transforms.
  */
-export const getOptimizedWallpaperUrl = (url) => {
-  return optimizeCloudinaryUrl(url, {
+export const optimizeImageKitUrl = (url, options = {}) => {
+  if (!url || !url.includes("imagekit.io") || /[?&]tr=/.test(url)) {
+    return url;
+  }
+
+  const { width = null, format = "auto" } = options;
+  const quality = typeof options.quality === "number" ? options.quality : 75;
+  const parts = [`q-${quality}`, `f-${format}`];
+  if (width) {
+    parts.unshift(`w-${width}`);
+  }
+  return withQuery(url, "tr", parts.join(","));
+};
+
+/**
+ * Route a remote URL through the matching CDN optimizer.
+ */
+export const optimizeDeliveryUrl = (url, options = {}) => {
+  if (!url) return url;
+  if (url.includes("cloudinary.com")) return optimizeCloudinaryUrl(url, options);
+  if (url.includes("imagekit.io")) return optimizeImageKitUrl(url, options);
+  return url;
+};
+
+export const getOptimizedWallpaperUrl = (url) =>
+  optimizeDeliveryUrl(url, {
     width: 1920,
-    quality: 'auto:eco', // Lower quality for background images
-    format: 'auto', // WebP/AVIF where supported
+    quality: "auto:eco",
+    format: "auto",
   });
-};
+
+export const getOptimizedThumbnailUrl = (url, size = 200) =>
+  optimizeDeliveryUrl(url, {
+    width: size,
+    quality: "auto:good",
+    format: "auto",
+  });
 
 /**
- * Get optimized thumbnail URL
- * @param {string} url - Original image URL
- * @param {number} size - Thumbnail size
- * @returns {string} Optimized thumbnail URL
+ * Build a srcSet for CDN-hosted images. Local Vite imports should pass
+ * pre-generated width variants instead.
  */
-export const getOptimizedThumbnailUrl = (url, size = 200) => {
-  return optimizeCloudinaryUrl(url, {
-    width: size,
-    quality: 'auto:good',
-    format: 'auto',
-  });
+export const buildResponsiveSrcSet = (url, widths = DEFAULT_WIDTHS) => {
+  if (!url || (!url.includes("cloudinary.com") && !url.includes("imagekit.io"))) {
+    return undefined;
+  }
+  return widths
+    .map((width) => `${optimizeDeliveryUrl(url, { width })} ${width}w`)
+    .join(", ");
 };
 
 export default {
   optimizeCloudinaryUrl,
+  optimizeImageKitUrl,
+  optimizeDeliveryUrl,
   getOptimizedWallpaperUrl,
   getOptimizedThumbnailUrl,
+  buildResponsiveSrcSet,
 };

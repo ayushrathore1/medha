@@ -103,4 +103,10 @@ const NoteSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+NoteSchema.index({ owner: 1, createdAt: -1, _id: -1 });
+NoteSchema.index({ isPublic: 1, verificationStatus: 1, createdAt: -1, _id: -1 });
+NoteSchema.index({ isPublic: 1, subject: 1, createdAt: -1, _id: -1 });
+NoteSchema.index({ isPublic: 1, semester: 1, createdAt: -1, _id: -1 });
+NoteSchema.index({ isPublic: 1, subjectTag: 1, createdAt: -1, _id: -1 });
+
 module.exports = mongoose.model("Note", NoteSchema);

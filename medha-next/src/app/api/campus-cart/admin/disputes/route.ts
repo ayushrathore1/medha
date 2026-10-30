@@ -69,7 +69,7 @@ export async function PUT(req: NextRequest) {
     await order.save();
 
     await notify(order.user.toString(), {
-      type: "system",
+      type: "info",
       title: "Dispute updated",
       message: `Your order ${order.orderNumber} dispute was ${body.action}.`,
       category: "system",
