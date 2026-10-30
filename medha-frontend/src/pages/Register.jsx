@@ -1073,7 +1073,7 @@ const Register = () => {
                     <button
                       type="button"
                       onClick={handleSubmit}
-                      disabled={loading || !isLoaded}
+                      disabled={loading}
                       className="btn-shine"
                       style={{
                         width: "100%",

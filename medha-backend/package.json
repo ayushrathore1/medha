@@ -11,7 +11,8 @@
     "test:security": "cross-env NODE_ENV=test jest tests/security.test.js --detectOpenHandles --forceExit",
     "test:load": "node tests/load.test.js",
     "test:load:heavy": "node tests/load.test.js --users=500 --duration=60",
-    "test:coverage": "cross-env NODE_ENV=test jest --coverage --detectOpenHandles --forceExit"
+    "test:coverage": "cross-env NODE_ENV=test jest --coverage --detectOpenHandles --forceExit",
+    "ci": "npm run test:auth && npm run test:api && npm run test:security"
   },
   "dependencies": {
     "@ai-sdk/groq": "^3.0.29",

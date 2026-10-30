@@ -6,10 +6,6 @@ import { ChevronRight, X } from 'lucide-react';
 const TourOverlay = () => {
   const { isTourActive, currentStep, tourSteps, nextStep, skipTour, isTourEnabled } = useTour();
   const [highlightRect, setHighlightRect] = useState(null);
-
-  // Early return if tour feature is disabled
-  if (!isTourEnabled) return null;
-
   const step = tourSteps[currentStep];
 
   const findElement = useCallback(() => {
@@ -150,7 +146,7 @@ const TourOverlay = () => {
     }
   }, [isTourActive]);
 
-  if (!isTourActive || !step) return null;
+  if (!isTourEnabled || !isTourActive || !step) return null;
 
   // Default rect for initial render before element is found
   const rect = highlightRect || {

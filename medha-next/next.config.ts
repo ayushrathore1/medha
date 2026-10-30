@@ -21,8 +21,8 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
   },
 
-  // Enable Partial Prerendering for hybrid static/dynamic pages (Next.js 16+)
-  cacheComponents: true,
+  // PPR currently fails `next build` on client-auth layouts (e.g. /charcha).
+  cacheComponents: false,
 
   // Experimental performance features
   experimental: {

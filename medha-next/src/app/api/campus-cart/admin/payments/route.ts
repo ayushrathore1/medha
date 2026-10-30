@@ -66,7 +66,7 @@ export async function PUT(req: NextRequest) {
     await order.save();
 
     await notify(order.user.toString(), {
-      type: "system",
+      type: "info",
       title: "Payment updated",
       message: `Your order ${order.orderNumber} payment status changed to ${body.action}.`,
       category: "payment",
