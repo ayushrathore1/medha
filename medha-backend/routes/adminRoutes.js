@@ -4,12 +4,14 @@ const multer = require("multer");
 const adminController = require("../controllers/adminController");
 const auth = require("../middleware/auth");
 const adminAuth = require("../middleware/adminAuth");
+const { AUDIO_UPLOAD_MAX_BYTES } = require("../config/bodyLimits");
 
 // Memory storage for audio file uploads (no need to persist)
 const audioUpload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 25 * 1024 * 1024, // 25MB max (Groq Whisper limit)
+    fileSize: AUDIO_UPLOAD_MAX_BYTES,
+    files: 1,
   },
   fileFilter: (req, file, cb) => {
     // Accept common audio formats

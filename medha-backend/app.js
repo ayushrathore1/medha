@@ -110,9 +110,10 @@ function createApp() {
     express.static(path.join(__dirname, "uploads", "notes"))
   );
 
+  const { JSON_LIMIT_BYTES, mapPayloadTooLargeError } = require("./config/bodyLimits");
   app.use(bodySizeValidator);
-  app.use(express.json({ limit: "70mb" }));
-  app.use(express.urlencoded({ extended: true, limit: "70mb" }));
+  app.use(express.json({ limit: JSON_LIMIT_BYTES }));
+  app.use(express.urlencoded({ extended: true, limit: JSON_LIMIT_BYTES }));
 
   app.use(mongoSanitizeMiddleware);
   app.use(hppMiddleware);
@@ -204,6 +205,15 @@ function createApp() {
   const { handleUploadError } = require("./middleware/upload");
   app.use(handleUploadError);
   app.use((err, req, res, next) => {
+    const oversized = mapPayloadTooLargeError(err);
+    if (oversized) {
+      return res.status(oversized.status).json({
+        success: false,
+        error: oversized.message,
+        message: oversized.message,
+      });
+    }
+
     console.error(`[ERROR] ${err.message}`, err.stack);
 
     const isProduction = process.env.NODE_ENV === "production";

@@ -303,9 +303,9 @@ describe('Request Size Limits', () => {
   });
   
   test('should reject excessively large JSON body', async () => {
-    // Create a payload larger than 10KB
+    const { JSON_LIMIT_BYTES } = require('../config/bodyLimits');
     const largePayload = {
-      name: 'x'.repeat(20000), // 20KB
+      name: 'x'.repeat(JSON_LIMIT_BYTES + 1024),
       email: 'large@example.com',
       password: 'password123'
     };
@@ -314,9 +314,8 @@ describe('Request Size Limits', () => {
       .post('/api/auth/register')
       .send(largePayload);
     
-    // 201 remains valid until request-body limits land; 400/413/500 mean the
-    // payload was rejected. Either way the server must not crash.
-    expect([201, 400, 409, 413, 500]).toContain(res.status);
+    expect(res.status).toBe(413);
+    expect(res.body.message).toMatch(/too large/i);
   });
 });
 
