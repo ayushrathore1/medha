@@ -2,8 +2,15 @@
    MEDHA Landing Page — Scoped Reset & Design Tokens
    ============================================= */
 .landing-page {
-  font-family: ui-sans-serif, system-ui, sans-serif;
-  color: #1F1F1F;
+  --wama-ink: #111111;
+  --wama-muted: #5A5A5A;
+  --wama-line: #E8E8E8;
+  --wama-green: #1BA34A;
+  --wama-orange: #FF8A1A;
+  --wama-red: #E30613;
+  --wama-lime: #C6D93B;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: var(--wama-ink);
   background: #FFFFFF;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -1192,4 +1199,831 @@
 }
 @media(max-width:480px){
   .landing-page .journey-hero-copy h1{font-size:clamp(40px,10.8vw,54px)!important;line-height:1.08!important}
+}
+
+/* =============================================
+   Wama-inspired landing theme
+   ============================================= */
+.landing-page h1,
+.landing-page h2,
+.landing-page h3 {
+  font-family: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.wama-nav {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+  background: #fff;
+  transition: box-shadow 200ms ease, border-color 200ms ease;
+}
+.wama-nav.is-scrolled {
+  border-bottom: 1px solid var(--wama-line);
+  box-shadow: 0 8px 24px -20px rgba(0,0,0,0.35);
+}
+.wama-nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  min-height: 84px;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.wama-wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  line-height: 1;
+  text-decoration: none;
+  color: #111;
+}
+.wama-wordmark-name {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #111;
+}
+.wama-wordmark-by {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: #6B6B6B;
+}
+.wama-wordmark-ck {
+  display: inline-flex;
+  align-items: baseline;
+  font-family: Manrope, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  letter-spacing: -0.025em;
+  color: #14140f;
+}
+.wama-wordmark-ck-campus {
+  font-weight: 300;
+}
+.wama-wordmark-ck-kart {
+  font-weight: 400;
+}
+.wama-wordmark-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 0 0.15em 0.18em;
+  border-radius: 50%;
+  background: #3f6b52;
+}
+.wama-nav-links {
+  gap: 36px;
+}
+.wama-nav-links a,
+.wama-nav-login {
+  font-size: 16px;
+  font-weight: 400;
+  color: #111;
+  text-decoration: none;
+}
+.wama-nav-links a:hover,
+.wama-nav-login:hover {
+  opacity: 0.55;
+}
+.wama-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #111 !important;
+  color: #fff !important;
+  border-radius: 999px;
+  padding: 14px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.wama-pill-sm {
+  padding: 11px 18px;
+  font-size: 14px;
+}
+.wama-text-link {
+  color: #111;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.wama-hero {
+  height: 100svh;
+  max-height: 100svh;
+  min-height: 100svh;
+  padding: 88px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: #fff;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.wama-hero-copy {
+  flex: 0 0 auto;
+  max-width: 980px;
+  text-align: center;
+  padding: 20px 32px 0;
+}
+.wama-hero-copy h1 {
+  margin: 0;
+  font-size: clamp(28px, 3.6vw, 48px);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.05em;
+  color: #111;
+}
+.wama-hero-line {
+  display: block;
+}
+.wama-hero-copy p {
+  max-width: 560px;
+  margin: 18px auto 0;
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.55;
+  color: #5A5A5A;
+}
+.wama-hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 22px;
+}
+
+.wama-cards-band {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 300px;
+  margin-top: 36px;
+  background: #fff;
+  overflow: hidden;
+}
+.wama-fan {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  overflow: hidden;
+}
+.wama-fan-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  isolation: isolate;
+}
+.wama-fan-card {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  width: 210px;
+  margin: 0;
+  transform-origin: 100% 100%;
+}
+.wama-subject-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 360px;
+  min-height: 360px;
+  padding: 32px 20px 32px;
+  border-radius: 16px;
+  text-decoration: none;
+  box-shadow: 0 18px 40px -26px rgba(0, 0, 0, 0.28);
+}
+.wama-subject-short {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(28px, 2.8vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+  text-align: center;
+}
+.wama-subject-full,
+.wama-subject-also {
+  margin-top: 2px;
+  max-width: 11em;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  opacity: 0.8;
+}
+.wama-subject-also {
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+.wama-subject-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 132px;
+  height: 96px;
+  margin: 8px 0 6px;
+  flex: none;
+  pointer-events: none;
+}
+.wama-subject-art-draw {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.78;
+}
+.wama-subject-art-icon {
+  position: relative;
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+  opacity: 0.95;
+}
+.wama-subject-art-icon.is-logo {
+  width: 30px;
+  height: 30px;
+  fill: currentColor;
+}
+
+.landing-page .premium-eyebrow,
+.landing-page #features span[style],
+.landing-page .premium-section-heading h2 span {
+  color: #111 !important;
+}
+.landing-page .premium-section-heading h2 {
+  letter-spacing: -0.05em;
+}
+
+@media (max-width: 900px) {
+  .wama-cards-band,
+  .wama-fan {
+    min-height: 240px;
+  }
+  .wama-fan-card {
+    width: 172px;
+  }
+  .wama-subject-card {
+    height: 300px;
+    min-height: 300px;
+    padding-top: 36px;
+    border-radius: 14px;
+  }
+  .wama-subject-art {
+    width: 112px;
+    height: 82px;
+  }
+  .wama-subject-art-icon {
+    width: 28px;
+    height: 28px;
+  }
+  .wama-hero {
+    padding-top: 80px;
+  }
+}
+@media (max-width: 640px) {
+  .wama-nav-inner {
+    padding: 0 16px;
+    min-height: 72px;
+  }
+  .wama-wordmark-name {
+    font-size: 18px;
+  }
+  .wama-wordmark-by {
+    font-size: 11px;
+  }
+  .wama-wordmark-ck {
+    font-size: 12px;
+  }
+  .wama-cards-band,
+  .wama-fan {
+    min-height: 200px;
+  }
+  .wama-fan-card {
+    width: 154px;
+  }
+  .wama-subject-card {
+    height: 260px;
+    min-height: 260px;
+    padding-top: 32px;
+  }
+  .wama-subject-art {
+    width: 96px;
+    height: 70px;
+  }
+  .wama-subject-art-icon {
+    width: 24px;
+    height: 24px;
+  }
+  .wama-hero-copy h1 {
+    font-size: clamp(32px, 10vw, 44px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wama-fan-card {
+    transition: none !important;
+  }
+}
+
+/* Beat leftover alpine/paper layers so the Wama theme stays white. */
+.landing-page {
+  background: #ffffff !important;
+  color: #111111 !important;
+  font-family: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, sans-serif !important;
+}
+.landing-page h1,
+.landing-page h2,
+.landing-page h4,
+.landing-page .wama-hero-copy h1,
+.landing-page .wama-section-heading h2 {
+  font-family: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, sans-serif !important;
+  color: #111111 !important;
+}
+.landing-page .wama-color-card:not(.wama-ink-light) h2,
+.landing-page .wama-color-card:not(.wama-ink-light) h3,
+.landing-page .wama-color-card:not(.wama-ink-light) p,
+.landing-page .wama-color-card:not(.wama-ink-light) strong,
+.landing-page .wama-color-card:not(.wama-ink-light) span,
+.landing-page .wama-color-card:not(.wama-ink-light) li,
+.landing-page .wama-color-card:not(.wama-ink-light) em {
+  color: inherit !important;
+}
+.landing-page .wama-hero {
+  background: #ffffff !important;
+  height: 100svh !important;
+  max-height: 100svh !important;
+  min-height: 100svh !important;
+  padding: 88px 0 0 !important;
+  overflow: hidden !important;
+}
+.landing-page .wama-hero-copy h1 {
+  font-size: clamp(28px, 3.6vw, 48px) !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.055em !important;
+  font-weight: 800 !important;
+}
+.landing-page #features,
+.landing-page .pain-section,
+.landing-page .premium-section,
+.landing-page section:has(.identity-layout),
+.landing-page section:has(.why-layout),
+.landing-page section:has(.cta-buttons),
+.landing-page section:has(.testimonials-carousel),
+.landing-page footer {
+  background: #ffffff !important;
+}
+.landing-page section:has(.cta-buttons) h2 {
+  color: #111111 !important;
+}
+.landing-page section:has(.cta-buttons) p {
+  color: #5a5a5a !important;
+}
+.landing-page .premium-section-heading h2 span {
+  color: #111111 !important;
+}
+.landing-page .premium-challenge-card {
+  background: #ffffff !important;
+  border: 1px solid #e8e8e8 !important;
+  box-shadow: none !important;
+}
+.landing-page .premium-challenge-icon {
+  background: #c6d93b !important;
+  color: #111111 !important;
+  border: none !important;
+}
+.landing-page .premium-eyebrow {
+  background: #111111 !important;
+  color: #ffffff !important;
+  border-color: #111111 !important;
+}
+.landing-page #features::before,
+.landing-page #features::after,
+.landing-page .premium-section::before,
+.landing-page .premium-section::after,
+.landing-page section:has(.cta-buttons)::before {
+  display: none !important;
+}
+.landing-page .dot-grid,
+.landing-page .line-grid,
+.landing-page .blob,
+.landing-page .hatch {
+  opacity: 0.05 !important;
+  animation: none !important;
+}
+@media (max-width: 640px) {
+  .wama-hero-line {
+    white-space: normal;
+  }
+}
+
+.wama-section {
+  background: #fff;
+  padding: 96px 0;
+}
+.wama-section-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+.wama-section-heading {
+  max-width: 760px;
+  margin: 0 auto 48px;
+  text-align: center;
+}
+.wama-section-heading h2,
+.wama-split h2 {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(36px, 4.6vw, 56px);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1.08;
+  color: #111;
+}
+.wama-section-heading h2 span {
+  display: block;
+}
+.wama-section-heading p,
+.wama-lead {
+  max-width: 560px;
+  margin: 16px auto 0;
+  color: #5a5a5a;
+  font-size: 17px;
+  line-height: 1.7;
+}
+.wama-split .wama-lead {
+  margin-left: 0;
+}
+.wama-kicker {
+  margin: 0 0 16px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #111;
+}
+.wama-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+.wama-tabs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 40px;
+}
+.wama-tab {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid #e8e8e8;
+  background: #fff;
+  color: #555;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.wama-tab.is-on {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+.wama-pain-grid,
+.wama-feature-grid,
+.wama-subject-grid {
+  display: grid;
+  gap: 20px;
+}
+.wama-pain-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.wama-feature-grid,
+.wama-subject-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.wama-color-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+  padding: 28px 24px;
+  border-radius: 22px;
+  text-decoration: none;
+  box-shadow: 0 18px 40px -26px rgba(0, 0, 0, 0.28);
+}
+.wama-color-card h3 {
+  margin: 8px 0 10px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+.wama-color-card p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.88;
+}
+.landing-page .wama-ink-light,
+.landing-page .wama-ink-light h2,
+.landing-page .wama-ink-light h3,
+.landing-page .wama-ink-light p,
+.landing-page .wama-ink-light li,
+.landing-page .wama-ink-light span,
+.landing-page .wama-ink-light strong,
+.landing-page .wama-ink-light em {
+  color: #ffffff !important;
+}
+.wama-ink-light p,
+.wama-ink-light .wama-color-card-top,
+.wama-ink-light .wama-color-card-foot,
+.wama-ink-light .wama-color-card-badge,
+.wama-ink-light .wama-steps {
+  opacity: 0.92;
+}
+.wama-color-card-top,
+.wama-color-card-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+.wama-color-card-foot {
+  margin-top: auto;
+  padding-top: 20px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.wama-color-card-badge {
+  align-self: flex-start;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.wama-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 120px;
+  height: 86px;
+  margin: 12px 0 4px;
+}
+.wama-mark-draw {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+.wama-mark-icon {
+  position: relative;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+}
+.wama-stat-row {
+  display: flex;
+  gap: 32px;
+  margin: 36px 0 28px;
+}
+.wama-stat-num {
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+.wama-stat-label {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #888;
+}
+.wama-steps {
+  margin: 16px 0 0;
+  padding: 0 0 0 18px;
+  font-size: 15px;
+  line-height: 1.7;
+}
+.wama-identity-card {
+  min-height: 380px;
+}
+.wama-why-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-top: 36px;
+}
+.wama-why-item {
+  display: flex;
+  gap: 14px;
+}
+.wama-why-dot {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  flex: none;
+}
+.wama-why-item strong {
+  display: block;
+  font-size: 16px;
+}
+.wama-why-item p {
+  margin: 4px 0 0;
+  color: #5a5a5a;
+  font-size: 14px;
+}
+.wama-why-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.wama-why-mini {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.wama-why-mini .wama-color-card {
+  min-height: 160px;
+}
+.wama-subject-tile {
+  min-height: 260px;
+}
+.wama-subject-tile strong {
+  margin-top: 8px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+}
+.wama-quote-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+.wama-quote-card {
+  min-height: 340px;
+}
+.wama-quote-card strong {
+  margin-top: auto;
+  padding-top: 20px;
+  font-size: 14px;
+}
+.wama-quote-card span {
+  font-size: 12px;
+  opacity: 0.75;
+}
+.wama-cta-card {
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 0 !important;
+  padding: 56px 32px 52px;
+  background: #f6f1e6;
+  color: #111;
+}
+.wama-cta-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.wama-cta-drawings {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.wama-cta-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 0;
+}
+.wama-cta-card h2 {
+  max-width: 14em;
+  letter-spacing: -0.03em !important;
+  word-spacing: 0.08em;
+  line-height: 1.16 !important;
+  color: #111;
+}
+.wama-cta-card h2 span {
+  display: block;
+}
+.wama-cta-card .wama-cta-copy > p {
+  margin-top: 14px;
+  letter-spacing: 0.01em;
+  word-spacing: 0.06em;
+  color: #5a5a5a;
+  opacity: 1;
+}
+.wama-cta .wama-mark {
+  width: 72px;
+  height: 52px;
+  margin-bottom: 4px;
+}
+.wama-cta-actions {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 28px;
+}
+.wama-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #5a5a5a;
+}
+@media (max-width: 1100px) {
+  .wama-feature-grid,
+  .wama-subject-grid,
+  .wama-quote-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 800px) {
+  .wama-split,
+  .wama-pain-grid,
+  .wama-why-mini {
+    grid-template-columns: 1fr;
+  }
+  .wama-section-inner {
+    padding: 0 20px;
+  }
+}
+@media (max-width: 560px) {
+  .wama-feature-grid,
+  .wama-subject-grid,
+  .wama-quote-row {
+    grid-template-columns: 1fr;
+  }
+  .wama-cta-card {
+    min-height: 0;
+    padding: 40px 20px 36px;
+  }
+}
+
+/* Dark cards must keep light ink above leftover alpine/paper !important layers. */
+.landing-page .wama-ink-light,
+.landing-page .wama-ink-light h2,
+.landing-page .wama-ink-light h3,
+.landing-page .wama-ink-light p,
+.landing-page .wama-ink-light li,
+.landing-page .wama-ink-light ol,
+.landing-page .wama-ink-light span,
+.landing-page .wama-ink-light strong,
+.landing-page .wama-ink-light em {
+  color: #ffffff !important;
+}
+.landing-page .wama-ink-light .wama-stat-accent {
+  color: #c6d93b !important;
+}
+.landing-page .wama-ink-light .wama-pill-light,
+.landing-page .wama-ink-light .wama-pill-light span {
+  color: #111111 !important;
+}
+.landing-page .wama-cta-card {
+  background: #f6f1e6 !important;
+}
+.landing-page .wama-cta-card,
+.landing-page .wama-cta-card h2,
+.landing-page .wama-cta-card h2 span {
+  color: #111111 !important;
+  letter-spacing: -0.03em !important;
+}
+.landing-page .wama-cta-card .wama-cta-copy > p {
+  color: #5a5a5a !important;
+}
+.landing-page .wama-cta-card .wama-text-link {
+  color: #111111 !important;
 }

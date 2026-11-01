@@ -6,6 +6,8 @@ const { WelcomeEmail } = require('./WelcomeEmail');
 const { PasswordResetEmail } = require('./PasswordResetEmail');
 const { TeamInvitationEmail } = require('./TeamInvitationEmail');
 const { EarlyAccessEmail } = require('./EarlyAccessEmail');
+const { ReEngagementEmail } = require('./ReEngagementEmail');
+const { Sem4NotificationEmail } = require('./Sem4NotificationEmail');
 
 async function test() {
   const tests = [
@@ -15,6 +17,8 @@ async function test() {
     { name: 'Reset', el: h(PasswordResetEmail, { name: 'Ayush', resetUrl: 'https://medha.study/reset?token=abc123', ttlMinutes: 30 }) },
     { name: 'Team Invite', el: h(TeamInvitationEmail, { firstName: 'Priya', code: 'A7B3C1', joinLink: 'https://medha.study/join-team?email=test@test.com' }) },
     { name: 'Early Access', el: h(EarlyAccessEmail, { name: 'Rahul' }) },
+    { name: 'Re-engagement', el: h(ReEngagementEmail, { name: 'Neha' }) },
+    { name: 'Sem 4 notice', el: h(Sem4NotificationEmail, { name: 'Aman' }) },
   ];
 
   let passed = 0;

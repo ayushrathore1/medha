@@ -16,7 +16,7 @@ Path filters skip unchanged apps. The `CI result` job fails the workflow if any 
 CI does **not** need Atlas, Groq, Gemini, Resend, SMTP, Cloudinary, or ImageKit credentials.
 
 - Backend tests start [MongoMemoryServer](https://github.com/nodkz/mongodb-memory-server). Binaries are cached under `~/.cache/mongodb-binaries`.
-- `JWT_SECRET` and other keys in `.github/workflows/ci.yml` are placeholders so modules can import. Live AI/email/upload providers are not called by these suites (`sendEmail` skips SMTP verify when `NODE_ENV=test`).
+- `JWT_SECRET` and other keys in `.github/workflows/ci.yml` are placeholders so modules can import. Live AI/email/upload providers are not called by these suites (`sendEmail` skips Hostinger Mail API when `NODE_ENV=test`).
 - Frontend and Next builds only need public placeholders (`VITE_BACKEND_URL`, `NEXT_PUBLIC_API_URL`).
 - Sems has no required secrets.
 

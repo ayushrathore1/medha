@@ -1,11 +1,22 @@
 import SYLLABUS_DATA from "./syllabusData";
+import { ARYA_SEM3_SUBJECTS } from "./aryaSem3Syllabus";
+import { RTU_SEM5_SUBJECTS } from "./rtuSem5Syllabus";
 
 export function semesterLabel(sem) {
   const n = Number(sem);
-  if (n === 1) return "1st sem";
-  if (n === 2) return "2nd sem";
-  if (n === 3) return "3rd sem";
-  return `${n}th sem`;
+  if (n === 1) return "1st Semester";
+  if (n === 2) return "2nd Semester";
+  if (n === 3) return "3rd Semester";
+  return `${n}th Semester`;
+}
+
+export function yearLabel(sem) {
+  const n = Number(sem);
+  if (!n) return "";
+  if (n <= 2) return "I Year";
+  if (n <= 4) return "II Year";
+  if (n <= 6) return "III Year";
+  return "IV Year";
 }
 
 export function slugify(value = "") {
@@ -14,6 +25,26 @@ export function slugify(value = "") {
     .replace(/&/g, "and")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
+}
+
+export const SCHEME = {
+  rtu: { id: "rtu", label: "RTU" },
+  arya: { id: "arya", label: "RTU · Arya Autonomous" },
+};
+
+export function schemeTag(id, label) {
+  if (id && SCHEME[id]) return SCHEME[id];
+  const text = String(label || "").trim();
+  if (!text) return null;
+  return { id: "other-" + slugify(text), label: text, tone: "other" };
+}
+
+function normalizeTagKey(value = "") {
+  return String(value)
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
 }
 
 const PALETTE = [
@@ -40,6 +71,8 @@ const SHORT_NAMES = {
   "Digital Electronics": "DE",
   "Object Oriented Programming": "OOP",
   "Software Engineering": "SE",
+  "Python Programming": "PY",
+  ...Object.fromEntries(RTU_SEM5_SUBJECTS.map((s) => [s.name, s.short])),
 };
 
 const META = {
@@ -53,6 +86,8 @@ const META = {
   "Digital Electronics": { semester: 3, code: "3CS4-05" },
   "Object Oriented Programming": { semester: 3, code: "3CS4-06" },
   "Software Engineering": { semester: 3, code: "3CS4-07" },
+  "Python Programming": { semester: 3, code: "Python" },
+  ...Object.fromEntries(RTU_SEM5_SUBJECTS.map((s) => [s.name, { semester: 5, code: s.code }])),
 };
 
 const EXTRA_UNITS = {
@@ -81,6 +116,7 @@ const EXTRA_UNITS = {
     { unitNumber: 2, title: "Requirements & Design", topics: ["Software Requirements Specification", "Functional and non-functional requirements", "DFD and use case diagrams", "Cohesion and Coupling"], videos: [] },
     { unitNumber: 3, title: "Testing & Maintenance", topics: ["Verification and Validation", "Black-box and White-box testing", "Unit to Acceptance testing", "Maintenance and reverse engineering"], videos: [] },
   ],
+  ...Object.fromEntries(RTU_SEM5_SUBJECTS.map((s) => [s.name, s.units])),
 };
 
 function decorateUnits(units = []) {
@@ -97,16 +133,19 @@ function decorateUnits(units = []) {
   });
 }
 
-function buildSubject(name, units, index) {
+function buildSubject(name, units, index, extra = {}) {
   const palette = PALETTE[index % PALETTE.length];
   const meta = META[name] || { semester: 4, code: "" };
   const decorated = decorateUnits(units);
   return {
     name,
-    slug: slugify(name),
-    short: SHORT_NAMES[name] || name.split(" ").map((w) => w[0]).join("").slice(0, 4),
-    semester: meta.semester,
-    code: meta.code,
+    slug: extra.slug || slugify(name),
+    short: extra.short || SHORT_NAMES[name] || name.split(" ").map((w) => w[0]).join("").slice(0, 4),
+    semester: extra.semester ?? meta.semester,
+    code: extra.code || meta.code,
+    scheme: extra.scheme || "rtu",
+    course: extra.course || "B.Tech",
+    branch: extra.branch || "CSE",
     color: palette,
     units: decorated,
     topicCount: decorated.reduce((sum, unit) => sum + unit.topicCount, 0),
@@ -115,17 +154,61 @@ function buildSubject(name, units, index) {
 }
 
 const fromSyllabus = Object.entries(SYLLABUS_DATA).map(([name, units], i) =>
-  buildSubject(name, units, i)
+  buildSubject(name, units, i, { scheme: "rtu" })
 );
 
 const extraSubjects = Object.entries(EXTRA_UNITS)
   .filter(([name]) => !SYLLABUS_DATA[name])
-  .map(([name, units], i) => buildSubject(name, units, fromSyllabus.length + i));
+  .map(([name, units], i) => buildSubject(name, units, fromSyllabus.length + i, { scheme: "rtu" }));
 
-export const SUBJECTS = [...extraSubjects, ...fromSyllabus].sort((a, b) => {
+const aryaSubjects = ARYA_SEM3_SUBJECTS.map((subject, i) =>
+  buildSubject(subject.name, subject.units, fromSyllabus.length + extraSubjects.length + i, {
+    slug: slugify(`${subject.name}-${subject.code}`),
+    short: subject.short,
+    semester: 3,
+    code: subject.code,
+    scheme: "arya",
+  })
+);
+
+export const SUBJECTS = [...extraSubjects, ...fromSyllabus, ...aryaSubjects].sort((a, b) => {
   if (a.semester !== b.semester) return a.semester - b.semester;
-  return a.name.localeCompare(b.name);
+  if (a.name !== b.name) return a.name.localeCompare(b.name);
+  return String(a.code).localeCompare(String(b.code));
 });
+
+const SCHEME_INDEX = new Map();
+for (const subject of SUBJECTS) {
+  const tag = SCHEME[subject.scheme];
+  if (!tag) continue;
+  const add = (text) => {
+    const key = normalizeTagKey(text);
+    if (!key) return;
+    const current = SCHEME_INDEX.get(key) || [];
+    if (!current.some((item) => item.id === tag.id)) current.push(tag);
+    SCHEME_INDEX.set(key, current);
+  };
+  add(subject.name);
+  add(subject.short);
+  add(subject.code);
+  for (const unit of subject.units) {
+    add(unit.title);
+    for (const topic of unit.topics || []) add(topic);
+  }
+}
+
+export function tagsForText(text, fallbackScheme, extraLabel) {
+  const found = SCHEME_INDEX.get(normalizeTagKey(text));
+  if (found?.length) return found;
+  if (fallbackScheme && SCHEME[fallbackScheme]) return [SCHEME[fallbackScheme]];
+  const extra = schemeTag(null, extraLabel);
+  return extra ? [{ id: extra.id, label: extra.label }] : [];
+}
+
+export function tagsForSubject(subject, extraLabel) {
+  if (subject?.scheme && SCHEME[subject.scheme]) return [SCHEME[subject.scheme]];
+  return tagsForText(subject?.name, null, extraLabel);
+}
 
 export const POPULAR_TOPICS = [
   { label: "Binary Search", query: "Binary Search", subject: "Data Structures and Algorithms" },
@@ -134,10 +217,190 @@ export const POPULAR_TOPICS = [
   { label: "Trees", query: "Binary Search Tree", subject: "Data Structures and Algorithms" },
   { label: "Computer Networks", query: "TCP Handshake", subject: "Data Communication & Computer Networks" },
   { label: "OOP in C++", query: "Virtual Functions", subject: "Object Oriented Programming" },
-  { label: "OS Scheduling", query: "CPU Scheduling" },
+  { label: "OS Scheduling", query: "CPU Scheduling", subject: "Operating System" },
+  { label: "Huffman Coding", query: "Huffman code", subject: "Information Theory & Coding" },
+  { label: "LR Parsers", query: "LR parsers", subject: "Compiler Design" },
 ];
 
 export const RECENT_SEARCH_KEY = "medha_recent_searches_v3";
+export const RECENT_SUBJECTS_KEY = "medha_recent_subjects_v1";
+export const RECENT_TOPICS_KEY = "medha_recent_topics_v1";
+export const FAVOURITE_SUBJECTS_KEY = "medha_favourite_subjects_v1";
+export const SELECTED_UNIVERSITY_KEY = "medha-university";
+export const CUSTOM_UNIVERSITY_KEY = "medha-custom-university";
+
+export function getSelectedUniversity() {
+  try {
+    const stored = localStorage.getItem(SELECTED_UNIVERSITY_KEY) || "";
+    const custom = localStorage.getItem(CUSTOM_UNIVERSITY_KEY) || "";
+    return stored === "Other" ? custom.trim() : stored.trim();
+  } catch {
+    return "";
+  }
+}
+
+export const UNIVERSITY_OPTIONS = [
+  {
+    key: "Rajasthan Technical University, Kota",
+    label: "Rajasthan Technical University, Kota (RTU)",
+    scheme: "rtu",
+    year: "III",
+    semester: 5,
+    storageKey: "medha-rtu-sem5-subject",
+  },
+  {
+    key: "Rajasthan Technical University, Kota (Arya Autonomous)",
+    label: "RTU — Arya Autonomous (II Year / III Sem)",
+    scheme: "arya",
+    year: "II",
+    semester: 3,
+    storageKey: "medha-arya-sem3-subject",
+  },
+];
+
+export function getUniversityOption(key) {
+  return UNIVERSITY_OPTIONS.find((item) => item.key === key) || null;
+}
+
+export function getAcademicContext(user) {
+  let stored = "";
+  try {
+    stored = localStorage.getItem(SELECTED_UNIVERSITY_KEY) || "";
+  } catch {
+    stored = "";
+  }
+  const selected = getSelectedUniversity();
+  const option = getUniversityOption(stored);
+  const university = String(user?.university || "").trim() || selected;
+  const branch = String(user?.branch || "").trim() || (option ? "CSE" : "");
+  return {
+    university,
+    storedKey: stored,
+    branch,
+    course: branch || university ? "B.Tech" : "",
+    curriculum: option ? SCHEME[option.scheme]?.label || "" : "",
+    year: option?.year || "",
+    semester: option?.semester || "",
+    scheme: option?.scheme || "",
+    hasContext: Boolean(university || branch),
+  };
+}
+
+export function getCatalogSemesters() {
+  return [...new Set(SUBJECTS.map((subject) => Number(subject.semester)))].sort((a, b) => a - b);
+}
+
+export function getSubjectByCode(code) {
+  return SUBJECTS.find((subject) => subject.code === code) || null;
+}
+
+export function catalogStats(list = SUBJECTS) {
+  return {
+    subjects: list.length,
+    units: list.reduce((sum, subject) => sum + (subject.unitCount || 0), 0),
+    topics: list.reduce((sum, subject) => sum + (subject.topicCount || 0), 0),
+  };
+}
+
+export function getSharedTitlePairs() {
+  const groups = new Map();
+  for (const subject of SUBJECTS) {
+    const key = subject.name.toLowerCase();
+    const list = groups.get(key) || [];
+    list.push(subject);
+    groups.set(key, list);
+  }
+  return [...groups.values()].filter((group) => new Set(group.map((item) => item.scheme)).size > 1);
+}
+
+export function topicIsShared(text) {
+  const tags = SCHEME_INDEX.get(normalizeTagKey(text)) || [];
+  return tags.some((tag) => tag.id === "rtu") && tags.some((tag) => tag.id === "arya");
+}
+
+export function searchPath(query, context = {}) {
+  const params = new URLSearchParams();
+  if (query) params.set("q", query);
+  if (context.code) params.set("code", context.code);
+  if (context.unit) params.set("unit", context.unit);
+  if (context.scheme) params.set("scheme", context.scheme);
+  return `/search?${params.toString()}`;
+}
+
+function readSlugList(key, limit = 8) {
+  try {
+    const raw = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(raw) ? raw.slice(0, limit) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function getRecentSubjectSlugs() {
+  return readSlugList(RECENT_SUBJECTS_KEY, 6);
+}
+
+export function saveRecentSubject(slug) {
+  const next = [slug, ...getRecentSubjectSlugs().filter((item) => item !== slug)].slice(0, 6);
+  localStorage.setItem(RECENT_SUBJECTS_KEY, JSON.stringify(next));
+}
+
+export function getFavouriteSubjectSlugs() {
+  return readSlugList(FAVOURITE_SUBJECTS_KEY, 40);
+}
+
+export function toggleFavouriteSubject(slug) {
+  const current = getFavouriteSubjectSlugs();
+  const next = current.includes(slug) ? current.filter((item) => item !== slug) : [slug, ...current];
+  localStorage.setItem(FAVOURITE_SUBJECTS_KEY, JSON.stringify(next));
+  return next;
+}
+
+export function getRecentTopics() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(RECENT_TOPICS_KEY) || "[]");
+    return Array.isArray(raw) ? raw.slice(0, 6) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveRecentTopic(entry) {
+  if (!entry?.subjectSlug || !entry?.unitSlug) return;
+  const next = [
+    entry,
+    ...getRecentTopics().filter(
+      (item) => !(item.subjectSlug === entry.subjectSlug && item.unitSlug === entry.unitSlug)
+    ),
+  ].slice(0, 6);
+  localStorage.setItem(RECENT_TOPICS_KEY, JSON.stringify(next));
+}
+
+export function getSubjectsBySlugs(slugs = []) {
+  return slugs.map(getSubjectBySlug).filter(Boolean);
+}
+
+export function subjectMatchesQuery(subject, query) {
+  const q = String(query || "").toLowerCase().trim();
+  if (!q) return true;
+  const schemeLabel = SCHEME[subject.scheme]?.label || "";
+  const haystack = [
+    subject.name,
+    subject.short,
+    subject.code,
+    subject.course,
+    subject.branch,
+    semesterLabel(subject.semester),
+    yearLabel(subject.semester),
+    schemeLabel,
+    subject.scheme,
+    ...(subject.units || []).flatMap((unit) => [unit.title, ...(unit.topics || [])]),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  return haystack.includes(q);
+}
 
 export function getSubjectBySlug(slug) {
   return SUBJECTS.find((s) => s.slug === slug) || null;

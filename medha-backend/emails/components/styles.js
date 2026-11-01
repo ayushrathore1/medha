@@ -1,90 +1,124 @@
-/**
- * Shared Medha Email Design Tokens & Styles
- * ─────────────────────────────────────────
- * Centralized brand colors and reusable inline styles for all email templates.
- */
-
-// ── Brand Colors (Warm Theme) ──
 const colors = {
-  // Warm palette (Welcome, Feature, Reset emails)
-  warmBg: '#fffaf0',
-  warmCardBg: '#ffffff',
-  warmBorder: '#fde68a',
-  warmAccent: '#ea580c',
-  warmAccentAlt: '#c2410c',
-  warmAmber: '#b45309',
-  warmGold: '#d97706',
-  warmYellowBg: '#fffbeb',
-  warmYellowBorder: '#fbbf24',
-  warmFooterBg: '#fffcf2',
-  warmFooterBorder: '#fef3c7',
-  warmText: '#57534e',
-  warmTextDark: '#78350f',
-  warmTextMuted: '#78716c',
-  warmTextLight: '#a8a29e',
-
-  // Dark palette (OTP, Dark-themed emails)
-  darkBg: '#1A1A2E',
-  darkCardBg: '#F9F6F1',
-  darkBorder: '#E8E4DC',
-  darkAccent: '#7DC67A',
-  darkAccentAlt: '#8B5CF6',
-  darkText: '#1A1A2E',
-  darkTextMuted: '#6B6B6B',
-  darkTextLight: '#9A9A9A',
-  otpBg: '#F2EDE4',
-
-  // CodeLearnn palette
-  clDark: '#0a0a0f',
-  clCardBg: '#12121a',
-  clBorder: '#2a2a3e',
-  clLime: '#c8fa3c',
-  clText: '#ffffff',
-  clMuted: '#a0a0b0',
-  clTeal: '#2dd4bf',
-
-  // General
-  white: '#ffffff',
-  black: '#1a1a1a',
-  whatsappGreen: '#25D366',
+  ink: "#111111",
+  muted: "#5A5A5A",
+  faint: "#8A8A8A",
+  line: "#E8E8E8",
+  ice: "#F4F4F4",
+  paper: "#FFFFFF",
+  canvas: "#F6F6F6",
+  green: "#1BA34A",
+  lime: "#C6D93B",
+  orange: "#FF8A1A",
+  red: "#E30613",
+  sage: "#3F6B52",
+  white: "#FFFFFF",
+  black: "#111111",
 };
 
-// ── Shared Style Objects ──
-const fontFamily = "'Quicksand', 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', Geneva, sans-serif";
-const fontFamilyOutfit = "'Outfit', 'Quicksand', 'Georgia', 'Times New Roman', serif";
-const fontFamilySerif = "'Georgia', 'Times New Roman', serif";
-const fontFamilyMono = "'Courier New', monospace";
-const fontFamilySystem = "'Segoe UI', Roboto, Arial, sans-serif";
-const fontFamilyInter = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+const fontJakarta = "'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif";
+const fontManrope = "Manrope, 'Segoe UI', Arial, sans-serif";
+const fontMono = "'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace";
 
-// ── Medha Links ──
 const links = {
-  website: 'https://medha-revision.vercel.app/',
-  medhaStudy: 'https://medha.study',
-  whatsappGroup: 'https://chat.whatsapp.com/JmtlAAnbEiX59FWeMDAvsj',
-  logoUrl: 'https://ik.imagekit.io/ayushrathore1/MEDHA%20Revision%20Logo%20(5)/6.svg?updatedAt=1767677218473',
-  logoWhiteUrl: 'https://ik.imagekit.io/ayushrathore1/MEDHA%20Revision%20Logo%20(5)/8.svg?updatedAt=1767677218616',
+  website: "https://medha-revision.vercel.app/",
+  login: "https://medha-revision.vercel.app/login",
+  search: "https://medha-revision.vercel.app/search",
+  subjects: "https://medha-revision.vercel.app/subjects",
+  suggest: "https://medha-revision.vercel.app/suggest",
+  unsubscribe: "https://medha-revision.vercel.app/unsubscribe",
+  shop: "https://www.shopcampuskart.in",
+  authMail: "auth@medharevision.shopcampuskart.in",
+  supportMail: "support@shopcampuskart.in",
 };
 
-// ── CodeLearnn Links ──
 const clLinks = {
-  website: 'https://www.codelearnn.com',
-  waitlist: 'https://www.codelearnn.com',
-  vibeCodingGuide: 'https://www.codelearnn.com/learning-guides/vibe-coding',
-  twitter: 'https://twitter.com/codelearnnhq',
-  linkedin: 'https://linkedin.com/company/codelearnn',
-  feedbackEmail: 'weareteamclarity@gmail.com',
-  unsubscribe: 'https://www.codelearnn.com/unsubscribe',
+  website: "https://www.codelearnn.com",
+  waitlist: "https://www.codelearnn.com",
+  vibeCodingGuide: "https://www.codelearnn.com/learning-guides/vibe-coding",
+  twitter: "https://twitter.com/codelearnnhq",
+  linkedin: "https://linkedin.com/company/codelearnn",
+  feedbackEmail: "weareteamclarity@gmail.com",
+  unsubscribe: "https://www.codelearnn.com/unsubscribe",
+};
+
+const styles = {
+  kicker: {
+    margin: "0 0 10px 0",
+    fontFamily: fontJakarta,
+    fontSize: "12px",
+    fontWeight: "700",
+    letterSpacing: "0.12em",
+    textTransform: "uppercase",
+    color: colors.muted,
+  },
+  title: {
+    margin: "0 0 12px 0",
+    fontFamily: fontJakarta,
+    fontSize: "32px",
+    fontWeight: "800",
+    letterSpacing: "-0.04em",
+    lineHeight: "1.1",
+    color: colors.ink,
+  },
+  lead: {
+    margin: "0 0 24px 0",
+    fontFamily: fontJakarta,
+    fontSize: "16px",
+    lineHeight: "1.6",
+    color: colors.muted,
+  },
+  body: {
+    margin: "0 0 16px 0",
+    fontFamily: fontJakarta,
+    fontSize: "15px",
+    lineHeight: "1.65",
+    color: colors.muted,
+  },
+  note: {
+    margin: "0",
+    fontFamily: fontJakarta,
+    fontSize: "13px",
+    lineHeight: "1.55",
+    color: colors.faint,
+  },
+  button: {
+    backgroundColor: colors.ink,
+    color: colors.white,
+    padding: "14px 28px",
+    borderRadius: "999px",
+    fontFamily: fontJakarta,
+    fontSize: "15px",
+    fontWeight: "700",
+    textDecoration: "none",
+    display: "inline-block",
+    border: "none",
+  },
+  buttonLime: {
+    backgroundColor: colors.lime,
+    color: colors.ink,
+    padding: "14px 28px",
+    borderRadius: "999px",
+    fontFamily: fontJakarta,
+    fontSize: "15px",
+    fontWeight: "700",
+    textDecoration: "none",
+    display: "inline-block",
+    border: "none",
+  },
 };
 
 module.exports = {
   colors,
-  fontFamily,
-  fontFamilyOutfit,
-  fontFamilySerif,
-  fontFamilyMono,
-  fontFamilySystem,
-  fontFamilyInter,
+  fontJakarta,
+  fontManrope,
+  fontMono,
   links,
   clLinks,
+  styles,
+  fontFamily: fontJakarta,
+  fontFamilyOutfit: fontJakarta,
+  fontFamilySerif: fontJakarta,
+  fontFamilyMono: fontMono,
+  fontFamilySystem: fontJakarta,
+  fontFamilyInter: fontJakarta,
 };

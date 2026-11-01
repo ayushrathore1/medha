@@ -1,27 +1,31 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { semesterLabel } from "../../data/subjectCatalog";
+import { SCHEME } from "../../data/subjectCatalog";
+import ArrowButton from "./ArrowButton";
+import CodeChip from "./CodeChip";
+import CurriculumBadge from "./CurriculumBadge";
 
-export default function SubjectCard({ subject, compact = false }) {
+export default function SubjectCard({ subject }) {
+  const curriculum = SCHEME[subject.scheme]?.label || subject.scheme;
   return (
     <Link
       to={`/subjects/${subject.slug}`}
-      className="block border-b border-[#E5E5E5] py-4 no-underline last:border-b-0"
+      className="group flex items-center gap-3 rounded-[22px] border border-[var(--line)] bg-white p-4 text-inherit no-underline transition duration-200 hover:border-[#111] active:scale-[0.99]"
+      aria-label={`Open ${subject.name}, ${subject.code}`}
     >
-      <div className="flex items-baseline justify-between gap-4">
-        <div className="min-w-0">
-          <p className="text-[12px] text-[#8A8A8A]">
-            {semesterLabel(subject.semester)} · {subject.code}
-          </p>
-          <h2 className={`mt-1 font-semibold leading-snug text-[#1F1F1F] ${compact ? "text-[16px]" : "text-[17px]"}`}>
-            {subject.name}
-          </h2>
-          <p className="mt-1 text-[13px] text-[#5C5C5C]">
-            {compact ? `${subject.topicCount} topics` : `${subject.topicCount} topics, ${subject.unitCount} units`}
-          </p>
+      <div className="min-w-0 flex-1 space-y-2.5">
+        <div className="flex flex-wrap items-center gap-2">
+          <CodeChip code={subject.code} />
+          <CurriculumBadge label={curriculum} />
         </div>
-        <span className="shrink-0 text-[12px] text-[#8A8A8A]">{subject.short}</span>
+        <h2 className="line-clamp-2 font-[family-name:var(--font-display)] text-[19px] font-extrabold leading-[1.15] tracking-[-0.02em] text-[var(--navy)]">
+          {subject.name}
+        </h2>
+        <p className="text-[14px] text-[var(--slate-2)]">
+          {subject.unitCount} units · {subject.topicCount} topics
+        </p>
       </div>
+      <ArrowButton />
     </Link>
   );
 }

@@ -15,6 +15,8 @@ const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 const Profile = React.lazy(() => import("./pages/Profile"));
 const Login = React.lazy(() => import("./pages/Login"));
 const Register = React.lazy(() => import("./pages/Register"));
+const Terms = React.lazy(() => import("./pages/Terms"));
+const Privacy = React.lazy(() => import("./pages/Privacy"));
 const EmailVerification = React.lazy(() => import("./pages/EmailVerification"));
 const Subjects = React.lazy(() => import("./pages/Subjects"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
@@ -76,12 +78,14 @@ const AppContent = () => {
         <ChatbotProvider>
           <MainLayout>
         <AnimatePresence mode="wait">
-          <Suspense fallback={<div className="flex h-screen items-center justify-center"><Loader /></div>}>
+          <Suspense fallback={<Loader fullScreen />}>
             <Routes location={location} key={location.pathname}>
               {/* Public routes */}
               <Route path="/" element={<PageTransition><WelcomePage /></PageTransition>} />
                 <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
                 <Route path="/register" element={<PageTransition><Register /></PageTransition>} />
+                <Route path="/terms" element={<PageTransition><Terms /></PageTransition>} />
+                <Route path="/privacy" element={<PageTransition><Privacy /></PageTransition>} />
                 <Route path="/forgot-password" element={<PageTransition><ForgotPassword /></PageTransition>} />
                 <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
                 <Route path="/verify-email" element={<PageTransition><EmailVerification /></PageTransition>} />

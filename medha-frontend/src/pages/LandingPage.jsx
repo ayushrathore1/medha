@@ -24,8 +24,8 @@ const LandingPage = () => {
 
   return (
     <div className="landing-page">
-      <LandingNavbar studentsOnline={stats.studentsOnline} />
-      <HeroSection totalStudents={stats.totalStudents} />
+      <LandingNavbar />
+      <HeroSection />
       <PainSection />
       <IdentitySection stats={stats} />
       <FeaturesSection />

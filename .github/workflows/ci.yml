@@ -35,6 +35,9 @@ env:
   SMTP_PORT: "1025"
   SMTP_USER: ci@example.com
   SMTP_PASS: ci-placeholder
+  HOSTINGER_MAIL_API_TOKEN: ci-placeholder
+  MAIL_FROM_ADDRESS: auth@medharevision.shopcampuskart.in
+  MAIL_FROM_NAME: Medha Revision
 
 jobs:
   changes:

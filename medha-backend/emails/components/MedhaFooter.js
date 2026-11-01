@@ -1,54 +1,47 @@
-const React = require('react');
-const { Text, Link, Hr } = require('react-email');
-const { colors, fontFamilyOutfit, links } = require('./styles');
+const React = require("react");
+const { Text, Link } = require("react-email");
+const { colors, fontJakarta, links } = require("./styles");
 const h = React.createElement;
 
-/**
- * Shared Medha Footer Component
- * Shows "Made with ❤️" + website link + optional year.
- * @param {object} props
- * @param {string} [props.variant] - 'warm' (default) or 'dark'
- */
-function MedhaFooter({ variant = 'warm' }) {
-  const isDark = variant === 'dark';
+function MedhaFooter() {
   const year = new Date().getFullYear();
 
-  return h('div', {
+  return h("div", {
     style: {
-      textAlign: 'center',
-      padding: '28px 40px',
-      backgroundColor: isDark ? colors.darkCardBg : colors.warmFooterBg,
-      borderTop: `2px solid ${isDark ? colors.darkBorder : colors.warmFooterBorder}`,
-      borderBottomLeftRadius: '28px',
-      borderBottomRightRadius: '28px',
+      padding: "22px 32px 28px 32px",
+      borderTop: `1px solid ${colors.line}`,
+      backgroundColor: colors.ice,
+      textAlign: "center",
     },
   },
     h(Text, {
       style: {
-        margin: '0',
-        letterSpacing: '1.5px',
-        fontFamily: fontFamilyOutfit,
-        fontWeight: '600',
-        fontSize: '12px',
-        color: isDark ? colors.darkTextLight : colors.warmTextLight,
+        margin: "0 0 6px 0",
+        fontFamily: fontJakarta,
+        fontSize: "12px",
+        color: colors.muted,
       },
-    }, 'MADE WITH ❤️ BY ', h('strong', {
-      style: { color: isDark ? colors.darkText : colors.warmAccent },
-    }, 'MEDHA REVISION')),
+    }, "Managed by CampusKart and open source contributors"),
     h(Text, {
-      style: { margin: '12px 0 0 0' },
+      style: {
+        margin: "0 0 10px 0",
+        fontFamily: fontJakarta,
+        fontSize: "12px",
+        color: colors.faint,
+      },
     },
-      h(Link, {
-        href: links.website,
-        style: {
-          color: isDark ? colors.darkAccent : colors.warmAccent,
-          textDecoration: 'none',
-          fontWeight: '700',
-          fontFamily: fontFamilyOutfit,
-          fontSize: '13px',
-        },
-      }, '🌐 Visit Website')
-    )
+      h(Link, { href: `mailto:${links.authMail}`, style: { color: colors.ink, textDecoration: "none", fontWeight: "600" } }, links.authMail),
+      "  ·  ",
+      h(Link, { href: links.shop, style: { color: colors.ink, textDecoration: "none", fontWeight: "600" } }, "www.shopcampuskart.in")
+    ),
+    h(Text, {
+      style: {
+        margin: "0",
+        fontFamily: fontJakarta,
+        fontSize: "11px",
+        color: colors.faint,
+      },
+    }, `© ${year} CampusKart. All rights reserved.`)
   );
 }
 

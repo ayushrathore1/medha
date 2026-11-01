@@ -15,7 +15,7 @@ export default function ResourceBoard({ query, subject, extraTitles = [], emptyL
 
   return (
     <div>
-      <div className="flex gap-4 overflow-x-auto border-b border-[#E5E5E5] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex flex-wrap gap-2">
         {TABS.map((item) => {
           const count = counts[item.id] || 0;
           const active = tab === item.id;
@@ -24,8 +24,8 @@ export default function ResourceBoard({ query, subject, extraTitles = [], emptyL
               key={item.id}
               type="button"
               onClick={() => setTab(item.id)}
-              className={`whitespace-nowrap pb-2 text-[13px] ${
-                active ? "border-b border-[#1F1F1F] font-medium text-[#1F1F1F]" : "text-[#8A8A8A]"
+              className={`whitespace-nowrap rounded-full px-4 py-1.5 text-[13px] ${
+                active ? "bg-[#111] font-semibold text-white" : "border border-[#E8E8E8] text-[#5A5A5A]"
               }`}
             >
               {item.label}

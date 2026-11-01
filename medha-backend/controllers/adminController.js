@@ -593,9 +593,9 @@ exports.inviteTeamMember = async (req, res) => {
 
     // Attempt to send email
     await sendEmail({
-      to: email, 
-      from: `"Ayush Rathore | MEDHA" <${process.env.SMTP_USER}>`,
-      subject: "Ayush Rathore invited you to join the MEDHA Team! 🚀",
+      to: email,
+      displayName: "Ayush Rathore | MEDHA",
+      subject: "You're invited to the Medha Revision team",
       html: htmlBody,
     });
 

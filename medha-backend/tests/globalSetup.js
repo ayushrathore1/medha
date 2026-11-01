@@ -29,6 +29,8 @@ module.exports = async () => {
   process.env.GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'ci-placeholder';
   process.env.SMTP_USER = process.env.SMTP_USER || 'ci@example.com';
   process.env.SMTP_PASS = process.env.SMTP_PASS || 'ci-placeholder';
+  process.env.MAIL_FROM_ADDRESS = process.env.MAIL_FROM_ADDRESS || 'auth@medharevision.shopcampuskart.in';
+  process.env.HOSTINGER_MAIL_API_TOKEN = process.env.HOSTINGER_MAIL_API_TOKEN || 'ci-placeholder';
   
   console.log(`✅ Test MongoDB running at: ${uri}\n`);
 };

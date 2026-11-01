@@ -1,50 +1,136 @@
 require("dotenv").config();
-const nodemailer = require("nodemailer");
 
-const port = Number(process.env.SMTP_PORT || 465);
+const MAIL_API_BASE = process.env.HOSTINGER_MAIL_API_BASE || "https://api.mail.hostinger.com";
+const MAIL_FROM_ADDRESS = process.env.MAIL_FROM_ADDRESS || "auth@medharevision.shopcampuskart.in";
+const MAIL_FROM_NAME = process.env.MAIL_FROM_NAME || "Medha Revision";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: port,
-  secure: port === 465, // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+let cachedMailboxId = process.env.HOSTINGER_MAILBOX_RESOURCE_ID || "";
 
-// Verify transporter configuration on startup (skip in test mode)
-if (process.env.NODE_ENV !== 'test') {
-  transporter.verify((error, success) => {
-    if (error) {
-      console.error("❌ SMTP Configuration Error:", error);
-    } else {
-      console.log("✅ SMTP Server is ready to send emails");
-    }
-  });
+function htmlToText(html) {
+  return String(html || "")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
-async function sendEmail({ to, subject, html, from }) {
-  try {
-    // Generate plain text version for better deliverability
-    const text = html 
-      ? html.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, ' ').trim() 
-      : undefined;
+function displayNameFrom(from, displayName) {
+  if (displayName) return displayName;
+  if (typeof from === "string") {
+    const quoted = from.match(/^"([^"]+)"/);
+    if (quoted) return quoted[1];
+    const angle = from.match(/^(.*?)\s*</);
+    if (angle?.[1]?.trim()) return angle[1].trim();
+  }
+  return MAIL_FROM_NAME;
+}
 
-    const info = await transporter.sendMail({
-      from: from || `Medha <${process.env.SMTP_USER}>`,
-      to,
-      subject,
-      html,
-      text, // Required for better deliverability (avoids Spam folder)
-      replyTo: process.env.SMTP_USER,
-    });
-    console.log("✅ Email sent successfully. Message ID:", info.messageId);
-    return info;
+function recipientsOf(to) {
+  return (Array.isArray(to) ? to : [to])
+    .map((value) => String(value || "").trim())
+    .filter(Boolean);
+}
+
+async function readJson(response) {
+  const text = await response.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { error: text };
+  }
+}
+
+async function resolveMailboxId(token) {
+  if (cachedMailboxId) return cachedMailboxId;
+
+  const response = await fetch(`${MAIL_API_BASE}/api/v1/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const body = await readJson(response);
+  if (!response.ok) {
+    throw new Error(body.error || `Hostinger /me failed (${response.status})`);
+  }
+
+  const mailboxes = body?.data?.mailboxes || [];
+  const wanted = MAIL_FROM_ADDRESS.toLowerCase();
+  const match =
+    mailboxes.find((box) => String(box.address || "").toLowerCase() === wanted) ||
+    mailboxes[0];
+
+  if (!match?.resourceId) {
+    throw new Error(`No Hostinger mailbox found for ${MAIL_FROM_ADDRESS}`);
+  }
+
+  cachedMailboxId = match.resourceId;
+  return cachedMailboxId;
+}
+
+async function sendViaHostinger({ to, subject, html, text, from, displayName }) {
+  const token = process.env.HOSTINGER_MAIL_API_TOKEN;
+  if (!token) {
+    throw new Error("HOSTINGER_MAIL_API_TOKEN is not set");
+  }
+
+  const recipients = recipientsOf(to);
+  if (!recipients.length) {
+    throw new Error("Email recipient is required");
+  }
+
+  const mailboxId = await resolveMailboxId(token);
+  const payload = {
+    to: recipients,
+    displayName: displayNameFrom(from, displayName),
+    subject: subject || "",
+    html,
+    text: text || htmlToText(html),
+  };
+
+  const response = await fetch(
+    `${MAIL_API_BASE}/api/v1/mailboxes/${encodeURIComponent(mailboxId)}/send`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (response.status === 204 || response.ok) {
+    console.log(`✅ Email sent via Hostinger Mail API to ${recipients.join(", ")}`);
+    return { messageId: `hostinger:${mailboxId}` };
+  }
+
+  const body = await readJson(response);
+  const detail = body.error || body.code || `Hostinger send failed (${response.status})`;
+  throw new Error(detail);
+}
+
+async function sendEmail(options) {
+  if (process.env.NODE_ENV === "test") {
+    return { messageId: "test-skipped" };
+  }
+
+  try {
+    return await sendViaHostinger(options);
   } catch (error) {
-    console.error("❌ Error sending email:", error);
+    console.error("❌ Error sending email:", error.message || error);
     throw error;
   }
+}
+
+if (process.env.NODE_ENV !== "test" && process.env.HOSTINGER_MAIL_API_TOKEN) {
+  resolveMailboxId(process.env.HOSTINGER_MAIL_API_TOKEN)
+    .then((id) => {
+      console.log(`✅ Hostinger Mail API ready (${MAIL_FROM_ADDRESS}, ${id})`);
+    })
+    .catch((error) => {
+      console.error("❌ Hostinger Mail API:", error.message || error);
+    });
+} else if (process.env.NODE_ENV !== "test") {
+  console.warn("⚠️ HOSTINGER_MAIL_API_TOKEN is not set. Auth and reset emails will not send.");
 }
 
 module.exports = { sendEmail };
