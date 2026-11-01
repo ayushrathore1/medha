@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
 import RevisionShell from "../components/Revision/RevisionShell";
 import ResourceBoard from "../components/Revision/ResourceBoard";
-import { getUnitBySlug, saveRecentSearch } from "../data/subjectCatalog";
+import CodeChip from "../components/Revision/CodeChip";
+import CurriculumBadge from "../components/Revision/CurriculumBadge";
+import TopicChip from "../components/Revision/TopicChip";
+import { SCHEME, getUnitBySlug, saveRecentSearch, searchPath, topicIsShared } from "../data/subjectCatalog";
 
 const TABS = [
   { id: "overview", label: "Overview" },
@@ -19,23 +21,31 @@ export default function TopicDetail() {
   if (!subject || !unit) {
     return (
       <RevisionShell title="Unit" showBack>
-        <p className="text-[14px] text-[#5C5C5C]">This unit is not in the catalog.</p>
+        <p className="text-[15px] text-[var(--slate-2)]">Couldn’t load your syllabus.</p>
+        <Link to="/subjects" className="mt-4 inline-flex rounded-full bg-[var(--navy)] px-4 py-2.5 text-[14px] font-semibold text-white no-underline">
+          Try again
+        </Link>
       </RevisionShell>
     );
   }
 
   const query = unit.title;
+  const context = { code: subject.code, scheme: subject.scheme, unit: unit.title };
 
   return (
     <RevisionShell title={unit.title} showBack>
-      <p className="text-[12px] text-[#8A8A8A]">
-        {subject.name} · Unit {unit.unitNumber}
+      <div className="mb-3 flex flex-wrap gap-2">
+        <CodeChip code={subject.code} />
+        <CurriculumBadge label={SCHEME[subject.scheme]?.label} />
+      </div>
+      <p className="text-[14px] text-[var(--muted)]">
+        {subject.name} · Unit {String(unit.unitNumber).padStart(2, "0")}
       </p>
-      <h1 className="mt-1 break-words text-[24px] font-semibold leading-tight tracking-[-0.03em] text-[#1F1F1F]">
+      <h1 className="mt-1 font-[family-name:var(--font-display)] text-[clamp(26px,4vw,44px)] font-extrabold leading-none tracking-[-0.045em] text-[var(--navy)]">
         {unit.title}
       </h1>
 
-      <div className="mt-5 flex gap-4 border-b border-[#E5E5E5] text-[13px]">
+      <div className="mt-5 flex flex-wrap gap-2 text-[14px]">
         {TABS.map((item) => (
           <button
             key={item.id}
@@ -44,8 +54,8 @@ export default function TopicDetail() {
               setTab(item.id);
               if (item.id === "resources") saveRecentSearch(query);
             }}
-            className={`pb-2 ${
-              tab === item.id ? "border-b border-[#1F1F1F] font-medium text-[#1F1F1F]" : "text-[#8A8A8A]"
+            className={`rounded-full px-4 py-1.5 ${
+              tab === item.id ? "bg-[#111] font-semibold text-white" : "border border-[var(--line)] text-[#5A5A5A]"
             }`}
           >
             {item.label}
@@ -55,28 +65,27 @@ export default function TopicDetail() {
 
       {tab === "overview" && (
         <section className="mt-5">
-          <p className="text-[14px] leading-6 text-[#5C5C5C]">
+          <p className="text-[15px] leading-6 text-[var(--slate-2)]">
             {unit.topicCount} syllabus points
             {unit.videoCount ? `, ${unit.videoCount} lectures` : ""}. Use Topics for the list, or Resources for notes and videos.
           </p>
-          <button type="button" onClick={() => setTab("topics")} className="mt-4 text-[13px] text-[#1F1F1F] underline underline-offset-2">
+          <button type="button" onClick={() => setTab("topics")} className="mt-4 text-[14px] font-medium text-[var(--blue)]">
             Read the topic list
           </button>
         </section>
       )}
 
       {tab === "topics" && (
-        <section className="mt-2">
+        <section className="mt-4 flex flex-wrap gap-2.5">
           {unit.topics.map((topic) => (
-            <Link
+            <TopicChip
               key={topic}
-              to={`/search?q=${encodeURIComponent(topic)}`}
+              to={searchPath(topic, context)}
               onClick={() => saveRecentSearch(topic)}
-              className="flex items-center justify-between gap-3 border-b border-[#E5E5E5] py-3.5 no-underline"
+              sharedWithAutonomous={topicIsShared(topic)}
             >
-              <span className="min-w-0 flex-1 text-[14px] text-[#1F1F1F]">{topic}</span>
-              <ChevronRight size={16} className="text-[#1F1F1F]" />
-            </Link>
+              {topic}
+            </TopicChip>
           ))}
         </section>
       )}

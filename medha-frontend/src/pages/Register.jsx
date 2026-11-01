@@ -2,235 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { AuthContext } from "../AuthContext";
-
-// ─── Shared Left Column ─────────────────────────────────────
-const AuthLeftColumn = ({ preLabel, headline1, headline2, subText }) => (
-  <div
-    style={{
-      background: "#1F1F1F",
-      position: "relative",
-      overflow: "hidden",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between",
-      padding: "60px 48px",
-      minHeight: "100vh",
-    }}
-  >
-    {/* BG layers */}
-    <div
-      style={{
-        position: "absolute",
-        inset: 0,
-        backgroundImage:
-          "linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)",
-        backgroundSize: "48px 48px",
-        opacity: 0.5,
-      }}
-    />
-    <div
-      style={{
-        position: "absolute",
-        width: 400,
-        height: 400,
-        right: -80,
-        top: -80,
-        borderRadius: "50%",
-        background: "radial-gradient(circle, #7DC67A 0%, transparent 70%)",
-        opacity: 0.12,
-        filter: "blur(80px)",
-        pointerEvents: "none",
-      }}
-    />
-    <div
-      style={{
-        position: "absolute",
-        width: 300,
-        height: 300,
-        left: -60,
-        bottom: -60,
-        borderRadius: "50%",
-        background: "radial-gradient(circle, #F59E0B 0%, transparent 70%)",
-        opacity: 0.1,
-        filter: "blur(80px)",
-        pointerEvents: "none",
-      }}
-    />
-    <div
-      style={{
-        position: "absolute",
-        fontSize: 200,
-        fontWeight: 900,
-        color: "rgba(255,255,255,0.02)",
-        letterSpacing: "-0.05em",
-        lineHeight: 1,
-        bottom: "-5%",
-        left: "-2%",
-        userSelect: "none",
-        pointerEvents: "none",
-      }}
-    >
-      MEDHA
-    </div>
-
-    {/* Logo */}
-    <div style={{ position: "relative", zIndex: 10 }}>
-      <Link to="/" style={{ textDecoration: "none" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span
-            style={{
-              fontSize: 22,
-              fontWeight: 800,
-              color: "white",
-              letterSpacing: "-0.03em",
-              fontFamily: "ui-sans-serif, system-ui, sans-serif",
-            }}
-          >
-            MEDHA
-          </span>
-          <span
-            style={{
-              display: "inline-block",
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              background: "#F59E0B",
-            }}
-          />
-        </div>
-      </Link>
-    </div>
-
-    {/* Main message */}
-    <div style={{ position: "relative", zIndex: 10 }}>
-      <div
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 6,
-          background: "rgba(125,198,122,0.15)",
-          border: "1px solid rgba(125,198,122,0.3)",
-          borderRadius: 999,
-          padding: "6px 14px",
-          fontSize: 11,
-          fontWeight: 700,
-          color: "#7DC67A",
-          letterSpacing: "0.1em",
-          textTransform: "uppercase",
-          marginBottom: 24,
-        }}
-      >
-        <span
-          style={{
-            width: 5,
-            height: 5,
-            borderRadius: "50%",
-            background: "#7DC67A",
-          }}
-        />
-        {preLabel}
-      </div>
-
-      <h1
-        style={{
-          fontSize: 52,
-          fontWeight: 800,
-          color: "white",
-          letterSpacing: "-0.04em",
-          lineHeight: 1.0,
-          margin: 0,
-        }}
-      >
-        {headline1}
-        <br />
-        {headline2.replace(".", "")}
-        <span style={{ color: "#F59E0B" }}>.</span>
-      </h1>
-
-      <p
-        style={{
-          fontSize: 16,
-          color: "rgba(255,255,255,0.6)",
-          lineHeight: 1.7,
-          maxWidth: 360,
-          marginTop: 20,
-        }}
-      >
-        {subText}
-      </p>
-
-      {/* Feature pills */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 32 }}>
-        {[
-          { icon: "⚡", text: "AI Note Summaries" },
-          { icon: "📄", text: "RTU PYQ Archive" },
-          { icon: "🎯", text: "Syllabus-Matched Lectures" },
-        ].map((f, i) => (
-          <div
-            key={i}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              background: "rgba(255,255,255,0.07)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: 999,
-              padding: "8px 14px",
-              fontSize: 13,
-              color: "rgba(255,255,255,0.8)",
-            }}
-          >
-            <span>{f.icon}</span>
-            <span>{f.text}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    {/* Social proof */}
-    <div
-      style={{
-        position: "relative",
-        zIndex: 10,
-        display: "flex",
-        alignItems: "center",
-        gap: 10,
-      }}
-    >
-      <div style={{ display: "flex" }}>
-        {[
-          { from: "#7DC67A", to: "#4A9E47", text: "RS" },
-          { from: "#F59E0B", to: "#D97706", text: "PM" },
-          { from: "#8B5CF6", to: "#6D28D9", text: "AK" },
-        ].map((a, i) => (
-          <div
-            key={i}
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              border: "2px solid #1F1F1F",
-              background: `linear-gradient(135deg, ${a.from}, ${a.to})`,
-              marginLeft: i === 0 ? 0 : -8,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 11,
-              fontWeight: 700,
-              color: "white",
-            }}
-          >
-            {a.text}
-          </div>
-        ))}
-      </div>
-      <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
-        <span style={{ color: "white", fontWeight: 700 }}>149+ students</span>{" "}
-        already studying smarter
-      </div>
-    </div>
-  </div>
-);
+import AuthShell from "../components/Auth/AuthShell";
 
 // ─── Password Strength ─────────────────────────────────────
 function getStrength(pw) {
@@ -243,7 +15,7 @@ function getStrength(pw) {
 }
 
 const strengthLabels = ["", "Weak", "Fair", "Strong", "Very Strong"];
-const strengthColors = ["#E5E5E5", "#EF4444", "#F59E0B", "#7DC67A", "#7DC67A"];
+const strengthColors = ["#E8E8E8", "#E30613", "#FF8A1A", "#1BA34A", "#1BA34A"];
 
 // ─── Constants ──────────────────────────────────────────────
 const BRANCHES = ["CSE", "ECE", "ME", "Civil", "IT", "AIDS", "CSD", "CAI"];
@@ -283,15 +55,15 @@ const Register = () => {
     border: "1.5px solid #E5E5E5",
     borderRadius: 12,
     fontSize: 15,
-    color: "#1F1F1F",
+    color: "#111111",
     background: "#F6F6F6",
     outline: "none",
     transition: "border-color 200ms, box-shadow 200ms",
     fontFamily: "ui-sans-serif, system-ui, sans-serif",
   };
   const inputFocus = (e) => {
-    e.target.style.borderColor = "#7DC67A";
-    e.target.style.boxShadow = "0 0 0 3px rgba(125,198,122,0.1)";
+    e.target.style.borderColor = "#111111";
+    e.target.style.boxShadow = "0 0 0 3px rgba(17,17,17,0.08)";
     e.target.style.background = "white";
   };
   const inputBlur = (e) => {
@@ -469,108 +241,17 @@ const Register = () => {
   const firstName = formData.name.split(" ")[0] || "there";
 
   return (
-    <div
-      className="auth-grid-outer"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "55% 45%",
-        minHeight: "100vh",
-        fontFamily: "ui-sans-serif, system-ui, sans-serif",
-      }}
+    <AuthShell
+      kicker="Join students already on Medha"
+      titleLines={["We organize your syllabus.", "We unlock exam prep."]}
+      subtitle="Create a free account for notes, past papers, and lectures matched to your syllabus."
     >
-      <style>{`
-        @media (max-width: 900px) {
-          .auth-grid-outer { grid-template-columns: 1fr !important; }
-          .auth-left { display: none !important; }
-          .auth-mobile-logo { display: block !important; }
-          .auth-form-panel-reg { padding: 24px 16px !important; min-height: 100vh !important; }
-          .auth-form-card-reg { padding: 28px 20px !important; max-width: 100% !important; }
-        }
-        @media (max-width: 480px) {
-          .auth-form-panel-reg { padding: 16px 12px !important; }
-          .auth-form-card-reg { padding: 24px 16px !important; border-radius: 16px !important; }
-        }
-        .btn-shine { position: relative; overflow: hidden; }
-        .btn-shine::after {
-          content:''; position:absolute; top:-50%; left:-100%;
-          width:50%; height:200%;
-          background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);
-          transform:skewX(-20deg); transition:left 400ms ease;
-        }
-        .btn-shine:hover::after { left:160%; }
-        .chip-btn { transition: all 150ms; cursor: pointer; border: none; font-family: inherit; }
-        .chip-btn:hover { border-color: #7DC67A !important; }
-      `}</style>
-
-      {/* LEFT */}
-      <div className="auth-left">
-        <AuthLeftColumn
-          preLabel="JOIN 149+ STUDENTS"
-          headline1="Study smart."
-          headline2="Not hard."
-          subText="Create your free account and get access to AI notes, past papers, and lecture recommendations matched to your exact syllabus."
-        />
-      </div>
-
-      {/* RIGHT */}
-      <div
-        className="auth-form-panel-reg"
-        style={{
-          background: "#FFFFFF",
-          padding: "40px 48px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          position: "relative",
-          overflowY: "auto",
-        }}
-      >
-        {/* Dot grid */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage:
-              "radial-gradient(circle, rgba(31,31,31,0.12) 1px, transparent 1px)",
-            backgroundSize: "24px 24px",
-            opacity: 0.3,
-            pointerEvents: "none",
-          }}
-        />
-
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          style={{
-            background: "white",
-            borderRadius: 20,
-            padding: "36px 40px",
-            border: "1px solid #E5E5E5",
-            boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
-            position: "relative",
-            zIndex: 10,
-            maxWidth: 480,
-            width: "100%",
-            margin: "0 auto",
-          }}
+          transition={{ duration: 0.4 }}
           className="auth-form-card-reg"
         >
-          {/* Mobile logo */}
-          <div className="auth-mobile-logo" style={{ display: "none", marginBottom: 16 }}>
-            <span style={{ fontSize: 18, fontWeight: 800, color: "#1F1F1F" }}>MEDHA</span>
-            <span
-              style={{
-                display: "inline-block",
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                background: "#F59E0B",
-                marginLeft: 2,
-                verticalAlign: "middle",
-              }}
-            />
-          </div>
 
           {/* ── SUCCESS STATE ── */}
           {success ? (
@@ -585,13 +266,13 @@ const Register = () => {
                   height: 72,
                   borderRadius: "50%",
                   background: "#F0FAF0",
-                  border: "3px solid #7DC67A",
+                  border: "3px solid #1BA34A",
                   margin: "0 auto 20px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontSize: 28,
-                  color: "#7DC67A",
+                  color: "#1BA34A",
                   fontWeight: 700,
                 }}
               >
@@ -601,7 +282,7 @@ const Register = () => {
                 style={{
                   fontSize: 24,
                   fontWeight: 800,
-                  color: "#1F1F1F",
+                  color: "#111111",
                   marginBottom: 8,
                 }}
               >
@@ -633,7 +314,7 @@ const Register = () => {
                   transition={{ duration: 2, ease: "easeInOut" }}
                   style={{
                     height: "100%",
-                    background: "#7DC67A",
+                    background: "#1BA34A",
                     borderRadius: 2,
                   }}
                 />
@@ -646,7 +327,7 @@ const Register = () => {
                 style={{
                   fontSize: 24,
                   fontWeight: 800,
-                  color: "#1F1F1F",
+                  color: "#111111",
                   marginBottom: 4,
                 }}
               >
@@ -716,7 +397,7 @@ const Register = () => {
                   background:
                     loading || verificationCode.length !== 6
                       ? "#9A9A9A"
-                      : "#1F1F1F",
+                      : "#111111",
                   color: "white",
                   borderRadius: 12,
                   border: "none",
@@ -735,7 +416,7 @@ const Register = () => {
                   onClick={handleResendCode}
                   style={{
                     fontSize: 13,
-                    color: "#7DC67A",
+                    color: "#1BA34A",
                     background: "none",
                     border: "none",
                     cursor: "pointer",
@@ -768,7 +449,7 @@ const Register = () => {
                 style={{
                   fontSize: 28,
                   fontWeight: 800,
-                  color: "#1F1F1F",
+                  color: "#111111",
                   letterSpacing: "-0.03em",
                   margin: 0,
                 }}
@@ -783,7 +464,7 @@ const Register = () => {
                   marginBottom: 20,
                 }}
               >
-                <span style={{ color: "#7DC67A", fontWeight: 600 }}>Free</span>{" "}
+                <span style={{ color: "#1BA34A", fontWeight: 600 }}>Free</span>{" "}
                 forever. No credit card needed.
               </p>
 
@@ -802,7 +483,7 @@ const Register = () => {
                       flex: 1,
                       height: 4,
                       borderRadius: 2,
-                      background: step >= s ? "#7DC67A" : "#E5E5E5",
+                      background: step >= s ? "#1BA34A" : "#E5E5E5",
                       transition: "background 300ms",
                     }}
                   />
@@ -946,7 +627,7 @@ const Register = () => {
                       style={{
                         width: "100%",
                         padding: 16,
-                        background: "#1F1F1F",
+                        background: "#111111",
                         color: "white",
                         borderRadius: 12,
                         border: "none",
@@ -1005,10 +686,10 @@ const Register = () => {
                               fontSize: 13,
                               fontWeight: 600,
                               background:
-                                formData.branch === b ? "#1F1F1F" : "white",
+                                formData.branch === b ? "#111111" : "white",
                               color:
                                 formData.branch === b ? "white" : "#6B6B6B",
-                              border: `1.5px solid ${formData.branch === b ? "#1F1F1F" : "#E5E5E5"}`,
+                              border: `1.5px solid ${formData.branch === b ? "#111111" : "#E5E5E5"}`,
                             }}
                           >
                             {b}
@@ -1040,10 +721,10 @@ const Register = () => {
                               fontWeight: 600,
                               textAlign: "center",
                               background:
-                                formData.semester === s ? "#1F1F1F" : "white",
+                                formData.semester === s ? "#111111" : "white",
                               color:
                                 formData.semester === s ? "white" : "#6B6B6B",
-                              border: `1.5px solid ${formData.semester === s ? "#1F1F1F" : "#E5E5E5"}`,
+                              border: `1.5px solid ${formData.semester === s ? "#111111" : "#E5E5E5"}`,
                             }}
                           >
                             {s}
@@ -1078,8 +759,8 @@ const Register = () => {
                       style={{
                         width: "100%",
                         padding: 16,
-                        background: loading ? "#9A9A9A" : "#7DC67A",
-                        color: "#1F1F1F",
+                        background: loading ? "#9A9A9A" : "#111111",
+                        color: "#FFFFFF",
                         borderRadius: 12,
                         border: "none",
                         fontSize: 16,
@@ -1127,19 +808,13 @@ const Register = () => {
                 }}
               >
                 By creating an account, you agree to our{" "}
-                <a
-                  href="#"
-                  style={{ color: "#7DC67A", textDecoration: "none" }}
-                >
+                <Link to="/terms" style={{ color: "#1BA34A", textDecoration: "none" }}>
                   Terms
-                </a>{" "}
+                </Link>{" "}
                 and{" "}
-                <a
-                  href="#"
-                  style={{ color: "#7DC67A", textDecoration: "none" }}
-                >
+                <Link to="/privacy" style={{ color: "#1BA34A", textDecoration: "none" }}>
                   Privacy Policy
-                </a>
+                </Link>
                 .
               </p>
 
@@ -1156,7 +831,7 @@ const Register = () => {
                 <Link
                   to="/login"
                   style={{
-                    color: "#7DC67A",
+                    color: "#1BA34A",
                     fontWeight: 600,
                     textDecoration: "none",
                   }}
@@ -1167,8 +842,7 @@ const Register = () => {
             </>
           )}
         </motion.div>
-      </div>
-    </div>
+    </AuthShell>
   );
 };
 

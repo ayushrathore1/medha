@@ -3,15 +3,15 @@ const { Html, Head, Body, Container, Text, Button, Hr } = require('react-email')
 const h = React.createElement;
 
 // ── Design Tokens (same as ReEngagement) ──
-const cream = '#FAF8F3';
-const green = '#22C55E';
-const navy = '#0D0D2B';
-const bodyText = '#4A4A4A';
-const muted = '#8B8070';
-const promptBg = '#F5F0E8';
-const promptBorder = '#E0D9CC';
-const badgeBorder = '#E8E4DC';
-const doodleStroke = '#8B8070';
+const cream = '#F6F6F6';
+const green = '#1BA34A';
+const navy = '#111111';
+const bodyText = '#5A5A5A';
+const muted = '#5A5A5A';
+const promptBg = '#F4F4F4';
+const promptBorder = '#E8E8E8';
+const badgeBorder = '#E8E8E8';
+const doodleStroke = '#8A8A8A';
 
 // ── Colorful doodle strokes ──
 const pinkStroke = '#F472B6';
@@ -152,26 +152,38 @@ function Sem4NotificationEmail({ name }) {
                       style: { textAlign: 'center', paddingTop: '32px', paddingBottom: '8px' },
                       className: 'email-padding',
                     },
-                      h('span', {
+                      h('div', {
                         style: {
                           fontSize: '22px',
                           fontWeight: '800',
                           color: navy,
-                          letterSpacing: '-0.5px',
+                          letterSpacing: '-0.03em',
+                          fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
                         },
-                      }, 'MEDHA'),
-                      h('span', {
+                      }, 'Medha Revision'),
+                      h('div', {
                         style: {
-                          display: 'inline-block',
-                          width: '8px',
-                          height: '8px',
-                          borderRadius: '50%',
-                          backgroundColor: '#FF6B00',
-                          marginLeft: '2px',
-                          verticalAlign: 'middle',
-                          marginBottom: '2px',
+                          marginTop: '6px',
+                          fontSize: '12px',
+                          color: '#6B6B6B',
+                          fontFamily: "'Plus Jakarta Sans', Arial, sans-serif",
                         },
-                      })
+                      },
+                        'By ',
+                        h('span', { style: { fontFamily: 'Manrope, Arial, sans-serif', fontWeight: '300', color: '#14140f' } }, 'campus'),
+                        h('span', { style: { fontFamily: 'Manrope, Arial, sans-serif', fontWeight: '400', color: '#14140f' } }, 'kart'),
+                        h('span', {
+                          style: {
+                            display: 'inline-block',
+                            width: '6px',
+                            height: '6px',
+                            borderRadius: '50%',
+                            backgroundColor: '#3F6B52',
+                            marginLeft: '5px',
+                            verticalAlign: 'middle',
+                          },
+                        })
+                      )
                     )
                   ),
 
@@ -609,14 +621,14 @@ function Sem4NotificationEmail({ name }) {
                           margin: '0 0 4px 0',
                           lineHeight: '1.5',
                         },
-                      }, '— team medha'),
+                      }, '— Medha Revision · CampusKart'),
                       h(Text, {
                         style: {
                           fontSize: '13px',
                           color: '#B0B0B0',
                           margin: '0 0 10px 0',
                         },
-                      }, 'your study buddy, always ❤️'),
+                      }, 'auth@medharevision.shopcampuskart.in'),
                       h(Text, {
                         style: {
                           fontSize: '11px',

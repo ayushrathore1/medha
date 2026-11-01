@@ -1,129 +1,76 @@
-import React, { useRef } from 'react';
-import { motion } from 'framer-motion';
-import { fadeUp } from '../lib/motionPresets';
+import React from "react";
+import { motion } from "framer-motion";
+import { Quote } from "lucide-react";
+import { fadeUp } from "../lib/motionPresets";
+import SectionMark from "./SectionMark";
 
 const testimonials = [
   {
-    quote: '"I had 3 days before my DBMS exam. MEDHA showed me exactly which topics repeat every year. Got 42/50 on the ones I focused on."',
-    name: 'Rahul Sharma',
-    role: 'CSE, 3rd Year',
-    initials: 'RS',
-    gradient: ['#13B8D4', '#078DA8'],
+    quote: "I had 3 days before my DBMS exam. MEDHA showed me exactly which topics repeat every year.",
+    name: "Rahul Sharma",
+    role: "CSE, 3rd Year",
+    bg: "#1BA34A",
+    ink: "#FFFFFF",
   },
   {
-    quote: '"The AI notes literally saved me. Uploaded a blurry photo of my register and got clean, formatted notes in 2 minutes."',
-    name: 'Priya Meena',
-    role: 'ECE, 4th Year',
-    initials: 'PM',
-    gradient: ['#9ADFEA', '#168FA8'],
+    quote: "The notes saved me. I uploaded a photo of my register and got clean notes I could actually revise.",
+    name: "Priya Meena",
+    role: "ECE, 4th Year",
+    bg: "#FF8A1A",
+    ink: "#161616",
   },
   {
-    quote: '"I used to panic the night before exams. Now I just open MEDHA and follow the priority map. It\'s like having a topper friend 24/7."',
-    name: 'Ankit Kumar',
-    role: 'ME, 2nd Year',
-    initials: 'AK',
-    gradient: ['#77C9E0', '#197F9C'],
+    quote: "I used to panic the night before exams. Now I open MEDHA and follow a priority map.",
+    name: "Ankit Kumar",
+    role: "ME, 2nd Year",
+    bg: "#2563EB",
+    ink: "#FFFFFF",
   },
   {
-    quote: '"The PYQ analysis is insane. 3 topics actually came exactly as predicted. Never studying without MEDHA again."',
-    name: 'Deepika Patel',
-    role: 'CSE, 3rd Year',
-    initials: 'DP',
-    gradient: ['#66C8DC', '#168FA8'],
+    quote: "The PYQ analysis is the part I keep coming back to. It makes the syllabus feel smaller.",
+    name: "Deepika Patel",
+    role: "CSE, 3rd Year",
+    bg: "#C6D93B",
+    ink: "#161616",
   },
   {
-    quote: '"Started using it at 1 AM, covered 4 units by 7 AM. The AI breaks down everything so simply you actually understand."',
-    name: 'Vikram Singh',
-    role: 'Civil, 4th Year',
-    initials: 'VS',
-    gradient: ['#29B9DD', '#2563EB'],
+    quote: "I started late and still covered four units because the explanations stayed simple.",
+    name: "Vikram Singh",
+    role: "Civil, 4th Year",
+    bg: "#111827",
+    ink: "#FFFFFF",
   },
 ];
 
-const TestimonialsSection = () => {
-  const constraintsRef = useRef(null);
-
-  return (
-    <section style={{ background: '#F5F8FE', padding: '96px 0', position: 'relative', overflow: 'hidden' }}>
-      {/* BG */}
-      <div className="line-grid" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }} />
-      <div className="blob blob-green" style={{ width: 400, height: 400, left: -80, top: -80, position: 'absolute' }} />
-      <div className="blob blob-purple" style={{ width: 350, height: 350, right: -60, bottom: -60, position: 'absolute', opacity: 0.08 }} />
-
-      {/* Giant quotation mark */}
-      <div style={{
-        position: 'absolute', userSelect: 'none', pointerEvents: 'none', zIndex: 0,
-        fontSize: 400, fontWeight: 900, color: 'rgba(255,255,255,0.015)',
-        lineHeight: 1, top: '-10%', left: '5%', fontFamily: 'Georgia, serif'
-      }}>66</div>
-
-      <div className="section-container" style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px', position: 'relative', zIndex: 10 }}>
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 48 }}>
-          <motion.div {...fadeUp}>
-            <span style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.18)',
-              borderRadius: 999, padding: '6px 16px',
-              fontSize: 11, fontWeight: 600, color: '#2563EB',
-              textTransform: 'uppercase', letterSpacing: '0.1em'
-            }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#13B8D4' }} />
-              MADE FOR REAL STUDY SESSIONS
-            </span>
-          </motion.div>
-
-          <motion.h2 {...fadeUp} style={{
-            fontSize: 'clamp(40px, 4.5vw, 56px)', fontWeight: 800,
-            color: '#10233F', lineHeight: 1.1, letterSpacing: '-0.03em', marginTop: 20
-          }}>
-            A study flow that feels clearer<span style={{ color: '#2563EB' }}>.</span>
-          </motion.h2>
-        </div>
-
-        {/* Carousel */}
-        <div ref={constraintsRef} style={{ overflow: 'hidden', cursor: 'grab' }}>
-          <motion.div
-            className="testimonials-carousel"
-            drag="x"
-            dragConstraints={constraintsRef}
-            style={{ display: 'flex', gap: 24, paddingBottom: 8 }}
+const TestimonialsSection = () => (
+  <section className="wama-section">
+    <div className="wama-section-inner">
+      <motion.div {...fadeUp} className="wama-section-heading">
+        <p className="wama-kicker">Made for real study sessions</p>
+        <h2>A study flow that feels clearer.</h2>
+      </motion.div>
+      <div className="wama-quote-row">
+        {testimonials.map((item, index) => (
+          <motion.article
+            key={item.name}
+            className={`wama-color-card wama-quote-card${item.ink === "#FFFFFF" ? " wama-ink-light" : ""}`}
+            style={{ background: item.bg, color: item.ink }}
+            initial={{ y: 24, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.45, delay: index * 0.06 }}
           >
-            {testimonials.map((t, i) => (
-              <motion.div
-                key={i}
-                initial={{ y: 40, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                style={{
-                  minWidth: 320, maxWidth: 340, flexShrink: 0,
-                  background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(16,35,63,0.10)',
-                  borderRadius: 20, padding: 32
-                }}
-              >
-                <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)', fontWeight: 500, lineHeight: 1.7, marginBottom: 24, fontStyle: 'italic' }}>
-                  {t.quote}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{
-                    width: 40, height: 40, borderRadius: '50%',
-                    background: `linear-gradient(135deg, ${t.gradient[0]}, ${t.gradient[1]})`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 13, fontWeight: 700, color: 'white'
-                  }}>{t.initials}</div>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>{t.name}</div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: '#13B8D4' }}>{t.role}</div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
+            <SectionMark icon={Quote}>
+              <path d="M24 70c10 8 20 12 46 12s36-4 46-12" opacity="0.35" />
+            </SectionMark>
+            <p>“{item.quote}”</p>
+            <strong>{item.name}</strong>
+            <span>{item.role}</span>
+          </motion.article>
+        ))}
       </div>
-    </section>
-  );
-};
+    </div>
+  </section>
+);
 
 export default TestimonialsSection;

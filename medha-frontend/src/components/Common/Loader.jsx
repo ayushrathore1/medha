@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Skeleton } from "@/components/UI/skeleton";
+import "./Loader.css";
 
 const motivationalQuotes = [
   "Stay focused, you're one step closer!",
@@ -10,6 +11,39 @@ const motivationalQuotes = [
   "Small progress is still progress.",
   "Your potential is endless.",
 ];
+
+const LETTER_COLORS = [
+  "#1BA34A",
+  "#C6D93B",
+  "#FF8A1A",
+  "#E30613",
+  "#22D3EE",
+  "#D946EF",
+  "#34D399",
+  "#FACC15",
+  "#7C3AED",
+  "#FB7185",
+  "#60A5FA",
+  "#A3E635",
+  "#38BDF8",
+];
+
+const LetterRow = ({ text, start = 0 }) => (
+  <span className="medha-loader-row">
+    {[...text].map((character, index) => (
+      <span
+        key={`${text}-${index}`}
+        className="medha-loader-letter"
+        style={{
+          "--i": start + index,
+          "--c": LETTER_COLORS[(start + index) % LETTER_COLORS.length],
+        }}
+      >
+        {character}
+      </span>
+    ))}
+  </span>
+);
 
 const Loader = ({ fullScreen = false }) => {
   const [quoteIndex, setQuoteIndex] = useState(0);
@@ -21,68 +55,50 @@ const Loader = ({ fullScreen = false }) => {
     return () => clearInterval(interval);
   }, []);
 
-  const containerClasses = fullScreen
-    ? "fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm"
-    : "flex flex-col items-center justify-center py-12";
-
-  const letterVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.1,
-        repeat: Infinity,
-        repeatType: "reverse",
-        repeatDelay: 2,
-        duration: 0.6,
-      },
-    }),
-  };
-
-  const word = "MEDHA";
-
   return (
-    <div className={containerClasses}>
-      {/* Logo Animation */}
-      <div className="flex space-x-1 mb-8">
-        {word.split("").map((char, i) => (
-          <motion.span
-            key={i}
-            custom={i}
-            variants={letterVariants}
-            initial="hidden"
-            animate="visible"
-            className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--action-primary)] to-[var(--accent-secondary)]"
-          >
-            {char}
-          </motion.span>
-        ))}
+    <div className={`medha-loader${fullScreen ? " is-full" : ""}`} role="status" aria-live="polite">
+      <div className="medha-loader-mark" aria-hidden="true">
+        <span className="medha-loader-orb medha-loader-orb-a" />
+        <span className="medha-loader-orb medha-loader-orb-b" />
+        <span className="medha-loader-orb medha-loader-orb-c" />
+        <span className="medha-loader-orbit" />
+        <span className="medha-loader-name">
+          <LetterRow text="Medha" />
+          <LetterRow text="Revision" start={5} />
+        </span>
       </div>
 
-      {/* Motivational Quote */}
-      <div className="h-8 relative w-full max-w-md text-center px-4">
+      <p className="medha-loader-by">
+        By{" "}
+        <span className="medha-loader-ck">
+          <span className="medha-loader-campus">campus</span>
+          <span className="medha-loader-kart">kart</span>
+          <span className="medha-loader-dot" />
+        </span>
+      </p>
+
+      <div className="medha-loader-bar" aria-hidden="true">
+        <span />
+      </div>
+
+      <div className="medha-loader-quote">
         <AnimatePresence mode="wait">
           <motion.p
             key={quoteIndex}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.5 }}
-            className="text-muted-foreground font-medium italic text-sm md:text-base absolute w-full left-0"
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.4 }}
           >
-            "{motivationalQuotes[quoteIndex]}"
+            {motivationalQuotes[quoteIndex]}
           </motion.p>
         </AnimatePresence>
       </div>
+      <span className="sr-only">Loading Medha Revision</span>
     </div>
   );
 };
 
-/**
- * ContentSkeleton: A shadcn Skeleton-based placeholder for page content loading.
- * Use this for card/list loading states.
- */
 const ContentSkeleton = ({ rows = 3, className = "" }) => (
   <div className={`space-y-4 ${className}`}>
     <Skeleton className="h-8 w-3/4 bg-muted" />
@@ -93,9 +109,6 @@ const ContentSkeleton = ({ rows = 3, className = "" }) => (
   </div>
 );
 
-/**
- * CardSkeleton: A card-shaped loading placeholder.
- */
 const CardSkeleton = ({ className = "" }) => (
   <div className={`glass-card p-6 rounded-xl space-y-4 ${className}`}>
     <Skeleton className="h-6 w-1/2 bg-muted" />

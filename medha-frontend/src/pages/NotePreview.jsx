@@ -80,12 +80,12 @@ export default function NotePreview() {
           <button
             type="button"
             onClick={handleDownload}
-            className="mt-6 bg-[#1F1F1F] px-4 py-2.5 text-[13px] text-white"
+            className="mt-6 rounded-full bg-[#111] px-5 py-2.5 text-[13px] font-semibold text-white"
           >
             {user ? "Download" : "Sign in to download"}
           </button>
 
-          <div className="mt-8 min-h-[320px] border border-[#E5E5E5]">
+          <div className="mt-8 min-h-[320px] overflow-hidden rounded-[22px] border border-[#E8E8E8]">
             {previewUrl && /pdf/i.test(note.fileType || note.fileUrl || previewUrl) ? (
               <iframe title={note.title} src={previewUrl} className="h-[70vh] w-full" />
             ) : (

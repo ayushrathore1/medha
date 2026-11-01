@@ -4,6 +4,7 @@ import axios from "axios";
 import Card from "../components/Common/Card";
 import Button from "../components/Common/Button";
 import Loader from "../components/Common/Loader";
+import RevisionShell from "../components/Revision/RevisionShell";
 import { AuthContext } from "../AuthContext";
 import api from "../api/api";
 import { generateAvatarOptions, getAvatarByIndex } from "../utils/avatarUtils";
@@ -537,8 +538,9 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen w-full px-3 py-6 sm:px-8 sm:py-8 bg-transparent">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <RevisionShell title="You">
+    <div className="w-full bg-transparent">
+      <div className="mx-auto max-w-4xl space-y-6">
         
         {isEditing ? (
           /* ================= EDIT PROFILE FORM ================= */
@@ -1126,6 +1128,7 @@ const Profile = () => {
         )}
       </div>
     </div>
+    </RevisionShell>
   );
 };
 

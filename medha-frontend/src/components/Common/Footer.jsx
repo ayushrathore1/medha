@@ -132,8 +132,9 @@ const Footer = () => (
               { to: "/profile", label: "Profile" },
               { href: "#", label: "Help Center" },
               // Contact link conditionally points to Charcha or is generic
-              ...(CHARCHA_ENABLED ? [{ to: "/charcha", label: "Contact Us" }] : [{ href: "mailto:support@medha.app", label: "Contact Us" }]),
-              { href: "#", label: "Privacy Policy" },
+              ...(CHARCHA_ENABLED ? [{ to: "/charcha", label: "Contact Us" }] : [{ href: "mailto:support@shopcampuskart.in", label: "Contact Us" }]),
+              { to: "/privacy", label: "Privacy Policy" },
+              { to: "/terms", label: "Terms of Service" },
             ],
           },
         ].map(({ section, links }) => (
@@ -187,26 +188,29 @@ const Footer = () => (
       <div className="border-t border-[var(--accent-secondary)]/20 mt-10 pt-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[var(--text-secondary)] text-sm">
-            © 2025 <span className="text-[var(--action-primary)] font-semibold">MEDHA</span>.
-            All rights reserved.
+            © {new Date().getFullYear()}{" "}
+            <a
+              href="https://www.shopcampuskart.in"
+              className="text-[var(--action-primary)] font-semibold"
+            >
+              www.shopcampuskart.in
+            </a>
+            . All rights reserved. Managed by CampusKart and open source contributors.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            {["Terms of Service", "Privacy Policy", "Cookie Policy"].map(
-              (item) => (
-                <motion.a
-                  key={item}
-                  href="#"
-                  whileHover={{
-                    scale: 1.18,
-                    color: "var(--action-primary)",
-                    borderBottom: "2px solid var(--action-primary)",
-                  }}
+            {[
+              { to: "/terms", label: "Terms of Service" },
+              { to: "/privacy", label: "Privacy Policy" },
+              { to: "/privacy#cookies", label: "Cookie Policy" },
+            ].map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.to}
                   className="text-[var(--text-secondary)] hover:text-[var(--action-primary)] text-sm font-medium transition"
                 >
-                  {item}
-                </motion.a>
-              )
-            )}
+                  {item.label}
+                </Link>
+            ))}
           </div>
         </div>
       </div>

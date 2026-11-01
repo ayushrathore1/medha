@@ -11,8 +11,16 @@ const Footer = () => {
         <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 48, marginBottom: 48 }}>
           {/* Brand */}
           <div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: '#1F1F1F', letterSpacing: '-0.03em', marginBottom: 16 }}>
-              MEDHA<span style={{ color: '#9ADFEA', fontSize: 28 }}>.</span>
+            <div className="wama-wordmark" style={{ marginBottom: 16 }}>
+              <span className="wama-wordmark-name">Medha Revision</span>
+              <span className="wama-wordmark-by">
+                By{" "}
+                <span className="wama-wordmark-ck">
+                  <span className="wama-wordmark-ck-campus">campus</span>
+                  <span className="wama-wordmark-ck-kart">kart</span>
+                  <span className="wama-wordmark-dot" aria-hidden="true" />
+                </span>
+              </span>
             </div>
             <p style={{ fontSize: 14, color: '#6B6B6B', lineHeight: 1.6, marginBottom: 20 }}>
               The last-minute exam prep tool built by RTU students, for RTU students.
@@ -27,7 +35,7 @@ const Footer = () => {
                   fontSize: 12, fontWeight: 700, color: '#1F1F1F',
                   cursor: 'pointer', transition: 'border-color 200ms'
                 }}
-                onMouseEnter={e => e.currentTarget.style.borderColor = '#13B8D4'}
+                onMouseEnter={e => e.currentTarget.style.borderColor = '#111'}
                 onMouseLeave={e => e.currentTarget.style.borderColor = '#E5E5E5'}
                 >{icon}</div>
               ))}
@@ -37,9 +45,9 @@ const Footer = () => {
           {/* Product */}
           <div>
             <div style={{ fontSize: 12, fontWeight: 700, color: '#1F1F1F', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 16 }}>Product</div>
-            {['Dashboard', 'AI Notes', 'PYQ Analysis', 'Exam Prep', 'Visualizations'].map(item => (
+            {['Dashboard', 'Notes', 'PYQ Analysis', 'Exam Prep', 'Visualizations'].map(item => (
               <Link key={item} to="/dashboard" style={{ display: 'block', fontSize: 14, color: '#6B6B6B', textDecoration: 'none', marginBottom: 10, transition: 'color 150ms' }}
-                onMouseEnter={e => e.currentTarget.style.color = '#13B8D4'}
+                onMouseEnter={e => e.currentTarget.style.color = '#111'}
                 onMouseLeave={e => e.currentTarget.style.color = '#6B6B6B'}
               >{item}</Link>
             ))}
@@ -50,7 +58,7 @@ const Footer = () => {
             <div style={{ fontSize: 12, fontWeight: 700, color: '#1F1F1F', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 16 }}>Resources</div>
             {['RTU Syllabus', 'Past Papers', 'Study Guides', 'Blog', 'Help Center'].map(item => (
               <Link key={item} to="/rtu-exams" style={{ display: 'block', fontSize: 14, color: '#6B6B6B', textDecoration: 'none', marginBottom: 10, transition: 'color 150ms' }}
-                onMouseEnter={e => e.currentTarget.style.color = '#13B8D4'}
+                onMouseEnter={e => e.currentTarget.style.color = '#111'}
                 onMouseLeave={e => e.currentTarget.style.color = '#6B6B6B'}
               >{item}</Link>
             ))}
@@ -82,8 +90,18 @@ const Footer = () => {
           borderTop: '1px solid #E5E5E5', paddingTop: 24,
           display: 'flex', justifyContent: 'space-between', alignItems: 'center'
         }}>
-          <span style={{ fontSize: 13, color: '#9A9A9A' }}>© 2025 MEDHA. All rights reserved.</span>
-          <span style={{ fontSize: 13, color: '#9A9A9A' }}>Made with ❤️ in Jaipur, Rajasthan</span>
+          <span style={{ fontSize: 13, color: '#9A9A9A' }}>
+            © {new Date().getFullYear()}{" "}
+            <a href="https://www.shopcampuskart.in" style={{ color: '#6B6B6B', textDecoration: 'none' }}>
+              www.shopcampuskart.in
+            </a>
+            . All rights reserved.
+          </span>
+          <span style={{ fontSize: 13, color: '#9A9A9A', display: 'flex', gap: 16 }}>
+            <Link to="/terms" style={{ color: '#6B6B6B', textDecoration: 'none' }}>Terms</Link>
+            <Link to="/privacy" style={{ color: '#6B6B6B', textDecoration: 'none' }}>Privacy</Link>
+            <span>Made in Jaipur, Rajasthan</span>
+          </span>
         </div>
       </div>
     </footer>

@@ -8,7 +8,7 @@ import api from "../api/api";
 
 const SEMESTERS = ["3rd", "4th", "5th", "6th"];
 const FIELD =
-  "w-full border-b border-[#E5E5E5] bg-transparent py-2 text-[15px] text-[#1F1F1F] shadow-none outline-none focus:border-[#1F1F1F] disabled:opacity-50";
+  "w-full rounded-none border-0 border-b border-[#E8E8E8] bg-transparent py-2 text-[15px] text-[#111] shadow-none outline-none focus:border-[#111] disabled:opacity-50";
 
 export default function UploadNotes() {
   const { user } = useContext(AuthContext);
@@ -64,7 +64,7 @@ export default function UploadNotes() {
       {user && (
         <div className="mb-6 flex items-baseline justify-between text-[13px]">
           <p className="text-[#5C5C5C]">Aura {user.auraPoints ?? 0} · earned when people download your notes</p>
-          <button type="button" onClick={() => navigate("/uploads")} className="text-[#1F1F1F] underline underline-offset-2">
+          <button type="button" onClick={() => navigate("/uploads")} className="border-b border-[#111] text-[#111]">
             Your uploads
           </button>
         </div>
@@ -88,7 +88,7 @@ export default function UploadNotes() {
           <button
             type="button"
             onClick={() => navigate("/uploads")}
-            className="mt-6 bg-[#1F1F1F] px-4 py-2.5 text-[13px] text-white"
+            className="mt-6 rounded-full bg-[#111] px-5 py-2.5 text-[13px] font-semibold text-white"
           >
             See your uploads
           </button>
@@ -99,7 +99,7 @@ export default function UploadNotes() {
             PDF or a scan of class notes. We read the file before it goes live. Comics, memes, and anything that isn’t course material is rejected.
           </p>
 
-          <label className="block cursor-pointer border border-dashed border-[#E5E5E5] px-4 py-8 text-center">
+          <label className="block cursor-pointer rounded-[22px] border border-dashed border-[#E8E8E8] px-4 py-8 text-center transition-colors hover:border-[#111]">
             <input
               type="file"
               accept="application/pdf,image/*"
@@ -154,7 +154,7 @@ export default function UploadNotes() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-[#1F1F1F] px-4 py-3 text-[14px] text-white disabled:opacity-50"
+            className="w-full rounded-full bg-[#111] px-4 py-3.5 text-[14px] font-semibold text-white disabled:opacity-50"
           >
             {submitting ? "Checking the file…" : "Upload notes"}
           </button>

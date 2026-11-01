@@ -21,7 +21,7 @@ async function sendWelcomeEmail(user) {
   );
   await sendEmail({
     to: user.email,
-    subject: "Welcome to Medha! 🎉",
+    subject: "Welcome to Medha Revision",
     html,
   });
   console.log("✅ Email sent successfully");
@@ -33,7 +33,7 @@ router.post("/forgot-password", async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email required" });
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: String(email).toLowerCase().trim() });
     if (!user) {
       console.log(`⚠️ Password reset requested for non-existent email: ${email}`);
       return res
@@ -73,7 +73,7 @@ router.post("/forgot-password", async (req, res) => {
       })
     );
 
-    await sendEmail({ to: user.email, subject: "Medha password reset", html });
+    await sendEmail({ to: user.email, subject: "Reset your Medha Revision password", html });
 
     res
       .status(200)
@@ -179,7 +179,7 @@ router.post("/admin/trigger-reset", auth, adminAuth, async (req, res) => {
 
     await sendEmail({ 
       to: user.email, 
-      subject: "Reset Your Medha Password 🔐", 
+      subject: "Reset your Medha Revision password", 
       html 
     });
 

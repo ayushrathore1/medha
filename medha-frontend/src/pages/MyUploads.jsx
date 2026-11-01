@@ -49,14 +49,14 @@ export default function MyUploads() {
         Aura {user?.auraPoints ?? 0} · {downloads} downloads across your notes.
       </p>
 
-      <div className="mt-5 flex gap-4 text-[13px]">
+      <div className="mt-5 flex flex-wrap gap-2 text-[13px]">
         {FILTERS.map((item) => (
           <button
             key={item.id}
             type="button"
             onClick={() => setFilter(item.id)}
-            className={`pb-1 ${
-              filter === item.id ? "border-b border-[#1F1F1F] font-medium text-[#1F1F1F]" : "text-[#8A8A8A]"
+            className={`rounded-full px-4 py-1.5 ${
+              filter === item.id ? "bg-[#111] font-semibold text-white" : "border border-[#E8E8E8] text-[#5A5A5A]"
             }`}
           >
             {item.label}

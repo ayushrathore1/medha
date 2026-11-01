@@ -4,6 +4,7 @@ import axios from "axios";
 import Card from "../components/Common/Card";
 import Button from "../components/Common/Button";
 import Loader from "../components/Common/Loader";
+import RevisionShell from "../components/Revision/RevisionShell";
 import { AuthContext } from "../AuthContext"; // Assuming this exists for auth state
 import { generateAvatarOptions, getAvatarByIndex } from "../utils/avatarUtils";
 import { 
@@ -108,7 +109,13 @@ const PublicProfile = () => {
   };
 
   if (loading) return <Loader fullScreen />;
-  if (!profileData) return <div className="text-center py-20 text-xl font-bold text-[var(--text-tertiary)]">User not found</div>;
+  if (!profileData) {
+    return (
+      <RevisionShell title="Profile" showBack>
+        <p className="py-20 text-center text-xl font-bold text-[#5A5A5A]">User not found</p>
+      </RevisionShell>
+    );
+  }
 
   const { user, stats } = profileData;
   const isMe = currentUser && currentUser._id === user._id;
@@ -120,8 +127,9 @@ const PublicProfile = () => {
   };
 
   return (
-    <div className="min-h-screen w-full px-4 py-8 sm:px-8 bg-transparent">
-        <div className="max-w-4xl mx-auto space-y-6">
+    <RevisionShell title="Profile" showBack>
+    <div className="w-full bg-transparent">
+        <div className="mx-auto max-w-4xl space-y-6">
             <Card className="shadow-xl border-t-4 border-[var(--action-primary)] bg-[var(--bg-secondary)] overflow-hidden">
                 <div className="relative pt-6 px-6 pb-8 text-center sm:text-left sm:flex sm:items-end sm:justify-between">
                     
@@ -293,6 +301,7 @@ const PublicProfile = () => {
             </div>
         </div>
     </div>
+    </RevisionShell>
   );
 };
 
