@@ -1,0 +1,43 @@
+name: Regenerate backend dependency lockfile
+
+on:
+  push:
+    branches:
+      - security/fix-medha-backend-dependencies
+    paths:
+      - "medha-backend/package.json"
+      - ".github/workflows/regenerate-backend-lockfile.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: medha-backend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: security/fix-medha-backend-dependencies
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: medha-backend/package-lock.json
+      - name: Regenerate lockfile from patched dependency manifest
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Commit regenerated lockfile
+        working-directory: .
+        run: |
+          if git diff --quiet -- medha-backend/package-lock.json; then
+            echo "Lockfile already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add medha-backend/package-lock.json
+          git commit -m "security: regenerate backend dependency lockfile"
+          git push origin HEAD:security/fix-medha-backend-dependencies
