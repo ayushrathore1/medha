@@ -104,6 +104,7 @@ jobs:
       - uses: ./.github/actions/setup-node-app
         with:
           working-directory: medha-backend
+          node-version: "22"
       - name: Cache MongoMemoryServer binaries
         uses: actions/cache@v4
         with:
