@@ -60,7 +60,7 @@ const GoogleAuthSuccess = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         login(data.user);
-        navigate("/dashboard", { replace: true });
+        navigate("/inside", { replace: true });
       } catch {
         fail("Something went wrong. Redirecting...");
       }

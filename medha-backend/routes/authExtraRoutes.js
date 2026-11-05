@@ -9,13 +9,26 @@ const PasswordResetToken = require("../models/PasswordResetToken");
 const { sendEmail } = require("../utils/sendEmail");
 const { WelcomeEmail } = require("../emails/WelcomeEmail");
 const { PasswordResetEmail } = require("../emails/PasswordResetEmail");
+const { CredentialsEmail } = require("../emails/CredentialsEmail");
 const { renderEmail } = require("../emails/renderEmail");
 
 const router = express.Router();
 
+const APP_BASE = (process.env.APP_BASE_URL || "https://medharevision.shopcampuskart.in").replace(/\/$/, "");
+
+function generateAccessiblePassword(length = 8) {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+  const bytes = crypto.randomBytes(length);
+  let out = "";
+  for (let i = 0; i < length; i += 1) {
+    out += chars[bytes[i] % chars.length];
+  }
+  return out;
+}
+
 // Welcome email helper using React Email component
 async function sendWelcomeEmail(user) {
-  console.log("📧 Attempting to send welcome email to:", user.email);
+  console.log("📧 Attempting to send welcome email via Hostinger to:", user.email);
   const html = await renderEmail(
     React.createElement(WelcomeEmail, { name: user.name })
   );
@@ -23,8 +36,29 @@ async function sendWelcomeEmail(user) {
     to: user.email,
     subject: "Welcome to Medha Revision",
     html,
+    displayName: "Medha Revision",
   });
-  console.log("✅ Email sent successfully");
+  console.log("✅ Welcome email sent via Hostinger Mail API");
+}
+
+async function sendCredentialsEmail(user, password, { generated = false } = {}) {
+  console.log("📧 Sending credentials email via Hostinger to:", user.email);
+  const html = await renderEmail(
+    React.createElement(CredentialsEmail, {
+      name: user.name,
+      email: user.email,
+      password,
+      generated,
+      forgotPasswordUrl: `${APP_BASE}/forgot-password`,
+    })
+  );
+  await sendEmail({
+    to: user.email,
+    subject: "Your Medha Revision login details",
+    html,
+    displayName: "Medha Revision",
+  });
+  console.log("✅ Credentials email sent via Hostinger Mail API");
 }
 
 // Forgot password endpoint
@@ -194,5 +228,10 @@ router.post("/admin/trigger-reset", auth, adminAuth, async (req, res) => {
   }
 });
 
-module.exports = { router, sendWelcomeEmail };
+module.exports = {
+  router,
+  sendWelcomeEmail,
+  sendCredentialsEmail,
+  generateAccessiblePassword,
+};
 

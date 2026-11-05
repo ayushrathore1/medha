@@ -251,9 +251,9 @@ describe('CORS Policy', () => {
   test('should allow requests from allowed origins', async () => {
     const res = await request(app)
       .get('/')
-      .set('Origin', 'https://medha-revision.vercel.app');
+      .set('Origin', 'https://medharevision.shopcampuskart.in');
     
-    expect(res.headers['access-control-allow-origin']).toBe('https://medha-revision.vercel.app');
+    expect(res.headers['access-control-allow-origin']).toBe('https://medharevision.shopcampuskart.in');
   });
   
   test('should allow localhost origins for development', async () => {

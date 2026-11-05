@@ -122,8 +122,8 @@ describe("OAuth frontend origin allowlist", () => {
   });
 
   test("allows the configured production origin", () => {
-    process.env.FRONTEND_URL = "https://medha-revision.vercel.app";
-    expect(resolveFrontendUrl()).toBe("https://medha-revision.vercel.app");
+    process.env.FRONTEND_URL = "https://medharevision.shopcampuskart.in";
+    expect(resolveFrontendUrl()).toBe("https://medharevision.shopcampuskart.in");
   });
 
   test("allows extra origins from OAUTH_ALLOWED_ORIGINS", () => {

@@ -69,6 +69,8 @@ const charchaRoutes = CHARCHA_ENABLED
   : null;
 
 const allowedOrigins = [
+  "https://medharevision.shopcampuskart.in",
+  "http://medharevision.shopcampuskart.in",
   "https://medha-revision.vercel.app",
   "https://medha-revision.pages.dev",
   "https://medha.codelearnn.com",

@@ -579,7 +579,7 @@ exports.inviteTeamMember = async (req, res) => {
     });
 
     // Send email
-    const joinLink = `https://medha-revision.vercel.app/join-team?email=${encodeURIComponent(email)}`;
+    const joinLink = `${(process.env.APP_BASE_URL || "https://medharevision.shopcampuskart.in").replace(/\/$/, "")}/join-team?email=${encodeURIComponent(email)}`;
 
     // Get first name or default
     const firstName = existingUser

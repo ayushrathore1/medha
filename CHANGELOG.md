@@ -5,7 +5,9 @@ All notable changes to MEDHA Revision are recorded here.
 ## [Unreleased]
 
 ### Changed
-- Site gate: every frontend route redirects to a premium Medha Revision coming-soon page (logo lockup, “Medha got a new home”, Diwali work copy, soft background motion, no CTAs).
+- Public coming-soon home with Medha-color full-field fluid motion, signup CTA, and sign-in enabled.
+- Signed-in users land on `/inside` with a separate coming-soon experience.
+- New accounts receive a credentials email (login + password). OTP sign-in without a password gets an 8-character generated password; copy notes forgot-password can change it anytime.
 
 ### Fixed
 - Frontend `package.json` declares Node `>=20.19.0` (and `.nvmrc` = 22) so Hostinger / Vite 7 builds do not run on Node 18.

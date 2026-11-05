@@ -8,7 +8,11 @@ const React = require("react");
 const User = require("../models/User");
 const Otp = require("../models/Otp");
 const auth = require("../middleware/auth");
-const { sendWelcomeEmail } = require("./authExtraRoutes");
+const {
+  sendWelcomeEmail,
+  sendCredentialsEmail,
+  generateAccessiblePassword,
+} = require("./authExtraRoutes");
 const { sendEmail } = require("../utils/sendEmail");
 const { OtpEmail } = require("../emails/OtpEmail");
 const { renderEmail } = require("../emails/renderEmail");
@@ -99,6 +103,7 @@ router.post("/send-otp", async (req, res) => {
         ? "Your Medha Revision login code"
         : "Verify your email — Medha Revision",
       html,
+      displayName: "Medha Revision",
     });
 
     console.log(`✅ OTP sent to ${normalizedEmail} (type: ${type})`);
@@ -207,7 +212,7 @@ router.post("/login-otp", async (req, res) => {
     await otp.save();
 
     // Find user
-    const user = await User.findOne({ email: normalizedEmail });
+    const user = await User.findOne({ email: normalizedEmail }).select("+password");
     if (!user) {
       return res.status(404).json({ message: "Account not found" });
     }
@@ -215,6 +220,20 @@ router.post("/login-otp", async (req, res) => {
     // Mark email verified if not already
     if (!user.emailVerified) {
       user.emailVerified = true;
+    }
+
+    // OTP sign-in with no password yet → create a unique 8-char password and email it
+    if (!user.password) {
+      const generatedPassword = generateAccessiblePassword(8);
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(generatedPassword, salt);
+      if (user.authProvider === "google") user.authProvider = "both";
+      else if (!user.authProvider) user.authProvider = "local";
+
+      sendCredentialsEmail(user, generatedPassword, { generated: true }).catch((emailError) => {
+        console.error("❌ FAILED to send credentials email to:", user.email);
+        console.error("Email error details:", emailError.message);
+      });
     }
 
     // Streak logic (same as password login)
@@ -279,13 +298,32 @@ router.post("/login-otp", async (req, res) => {
 // @desc      Register a new user (alias of /signup)
 router.post("/register", async (req, res, next) => {
   try {
-    const { name, email, password, emailVerified } = req.body;
+    const {
+      name,
+      email,
+      password,
+      emailVerified,
+      college,
+      branch,
+      semester,
+      year,
+    } = req.body;
+
+    const collegeValue = String(college || "").trim();
+    const branchValue = String(branch || "").trim();
+    const yearValue = String(year || semester || "").trim();
 
     // Validate required fields
     if (!name || !email || !password) {
       return res
         .status(400)
         .json({ message: "Name, email, and password are required" });
+    }
+
+    if (!collegeValue || !branchValue || !yearValue) {
+      return res.status(400).json({
+        message: "College, branch, and year/semester are required",
+      });
     }
 
     let user = await User.findOne({ email }).select("+password");
@@ -297,6 +335,11 @@ router.post("/register", async (req, res, next) => {
         user.authProvider = "both";
         if (name) user.name = name;
         await user.save();
+
+        sendCredentialsEmail(user, password, { generated: false }).catch((emailError) => {
+          console.error("❌ FAILED to send credentials email to:", user.email);
+          console.error("Email error details:", emailError.message);
+        });
 
         const payload = { userId: user._id, email: user.email };
         const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
@@ -325,12 +368,16 @@ router.post("/register", async (req, res, next) => {
       password: hashedPassword,
       authProvider: "local",
       emailVerified: emailVerified === true,
+      college: collegeValue,
+      university: collegeValue,
+      branch: branchValue,
+      year: yearValue,
     });
 
     await user.save();
     console.log("✅ User saved to database:", user.email, emailVerified ? "(email verified)" : "");
 
-    // Send welcome email - improved error handling
+    // Welcome + credentials (login email + password they chose)
     sendWelcomeEmail(user)
       .then(() => {
         console.log("✅ Welcome email sent successfully to:", user.email);
@@ -340,6 +387,11 @@ router.post("/register", async (req, res, next) => {
         console.error("Email error details:", emailError.message);
         console.error("Full error:", emailError);
       });
+
+    sendCredentialsEmail(user, password, { generated: false }).catch((emailError) => {
+      console.error("❌ FAILED to send credentials email to:", user.email);
+      console.error("Email error details:", emailError.message);
+    });
 
     const payload = { userId: user._id, email: user.email };
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });

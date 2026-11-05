@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const MAIL_API_BASE = process.env.HOSTINGER_MAIL_API_BASE || "https://api.mail.hostinger.com";
-const MAIL_FROM_ADDRESS = process.env.MAIL_FROM_ADDRESS || "auth@medharevision.shopcampuskart.in";
+const MAIL_FROM_ADDRESS = process.env.MAIL_FROM_ADDRESS || "medharevision@codelearnn.com";
 const MAIL_FROM_NAME = process.env.MAIL_FROM_NAME || "Medha Revision";
 
 let cachedMailboxId = process.env.HOSTINGER_MAILBOX_RESOURCE_ID || "";

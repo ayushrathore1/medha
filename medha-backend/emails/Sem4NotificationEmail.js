@@ -482,7 +482,7 @@ function Sem4NotificationEmail({ name }) {
                           h('tr', null,
                             h('td', { align: 'center', style: { padding: '8px 0 16px 0' } },
                               h(Button, {
-                                href: 'https://medha-revision.vercel.app/exams?sem=4',
+                                href: 'https://medharevision.shopcampuskart.in/exams?sem=4',
                                 style: {
                                   backgroundColor: green,
                                   color: '#FFFFFF',
@@ -628,7 +628,7 @@ function Sem4NotificationEmail({ name }) {
                           color: '#B0B0B0',
                           margin: '0 0 10px 0',
                         },
-                      }, 'auth@medharevision.shopcampuskart.in'),
+                      }, 'medharevision@codelearnn.com'),
                       h(Text, {
                         style: {
                           fontSize: '11px',
@@ -638,7 +638,7 @@ function Sem4NotificationEmail({ name }) {
                       },
                         "you signed up on medha — that's why you got this. ",
                         h('a', {
-                          href: 'https://medha-revision.vercel.app/unsubscribe',
+                          href: 'https://medharevision.shopcampuskart.in/unsubscribe',
                           style: { color: '#AAAAAA', textDecoration: 'underline' },
                         }, 'unsubscribe')
                       )

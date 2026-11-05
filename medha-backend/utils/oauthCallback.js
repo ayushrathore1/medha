@@ -21,6 +21,8 @@ const LOGIN_CODE_TTL_MS = 60 * 1000;
 const DEFAULT_FRONTEND = "http://localhost:5173";
 
 const ALLOWED_FRONTEND_ORIGINS = [
+  "https://medharevision.shopcampuskart.in",
+  "http://medharevision.shopcampuskart.in",
   "https://medha-revision.vercel.app",
   "https://medha-revision.pages.dev",
   "https://medha.codelearnn.com",

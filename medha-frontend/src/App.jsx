@@ -5,13 +5,19 @@ import { Analytics } from "@vercel/analytics/react";
 import PageTransition from "./components/Common/PageTransition";
 import Loader from "./components/Common/Loader";
 import { ThemeProvider } from "./context/ThemeContext";
+import { AuthProvider } from "./AuthProvider";
 
 const ComingSoon = React.lazy(() => import("./pages/ComingSoon"));
+const MemberComingSoon = React.lazy(() => import("./pages/MemberComingSoon"));
+const Login = React.lazy(() => import("./pages/Login"));
+const Register = React.lazy(() => import("./pages/Register"));
+const ForgotPassword = React.lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = React.lazy(() => import("./pages/ResetPassword"));
+const GoogleAuthSuccess = React.lazy(() => import("./pages/GoogleAuthSuccess"));
+const Terms = React.lazy(() => import("./pages/Terms"));
+const Privacy = React.lazy(() => import("./pages/Privacy"));
+const EmailVerification = React.lazy(() => import("./pages/EmailVerification"));
 
-/**
- * Temporary site gate: every URL loads the Diwali coming-soon page.
- * Restore the full route tree from git history when the relaunch ships.
- */
 const AppContent = () => {
   const location = useLocation();
 
@@ -29,6 +35,82 @@ const AppContent = () => {
                 </PageTransition>
               }
             />
+            <Route
+              path="/inside"
+              element={
+                <PageTransition>
+                  <MemberComingSoon />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <PageTransition>
+                  <Login />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PageTransition>
+                  <Register />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/signup"
+              element={<Navigate to="/register" replace />}
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <PageTransition>
+                  <ForgotPassword />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/reset-password"
+              element={
+                <PageTransition>
+                  <ResetPassword />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/auth/google/success"
+              element={
+                <PageTransition>
+                  <GoogleAuthSuccess />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/verify-email"
+              element={
+                <PageTransition>
+                  <EmailVerification />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/terms"
+              element={
+                <PageTransition>
+                  <Terms />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/privacy"
+              element={
+                <PageTransition>
+                  <Privacy />
+                </PageTransition>
+              }
+            />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
@@ -39,7 +121,9 @@ const AppContent = () => {
 
 const App = () => (
   <ThemeProvider>
-    <AppContent />
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   </ThemeProvider>
 );
 

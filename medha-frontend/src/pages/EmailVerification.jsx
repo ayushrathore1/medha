@@ -32,7 +32,7 @@ const EmailVerification = () => {
       return;
     }
     if (userData.emailVerified === true) {
-      navigate("/dashboard");
+      navigate("/inside");
     }
   }, [userData, navigate]);
 
@@ -108,7 +108,7 @@ const EmailVerification = () => {
     localStorage.setItem("user", JSON.stringify(updatedUser));
     login(updatedUser);
     setVerificationStep("complete");
-    setTimeout(() => navigate("/dashboard"), 2000);
+    setTimeout(() => navigate("/inside"), 2000);
   };
 
   // Resend code

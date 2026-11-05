@@ -1483,7 +1483,7 @@ const MedhaAnimationViewer = ({
           <button
             onClick={async () => {
               // Always use production URL for sharing
-              const baseUrl = "https://medha-revision.vercel.app";
+              const baseUrl = "https://medharevision.shopcampuskart.in";
               const url = `${baseUrl}/visualize/${animationId}/${currentStep}`;
               try {
                 await navigator.clipboard.writeText(url);

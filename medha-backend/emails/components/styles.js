@@ -20,14 +20,15 @@ const fontManrope = "Manrope, 'Segoe UI', Arial, sans-serif";
 const fontMono = "'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace";
 
 const links = {
-  website: "https://medha-revision.vercel.app/",
-  login: "https://medha-revision.vercel.app/login",
-  search: "https://medha-revision.vercel.app/search",
-  subjects: "https://medha-revision.vercel.app/subjects",
-  suggest: "https://medha-revision.vercel.app/suggest",
-  unsubscribe: "https://medha-revision.vercel.app/unsubscribe",
+  website: "https://medharevision.shopcampuskart.in/",
+  login: "https://medharevision.shopcampuskart.in/login",
+  search: "https://medharevision.shopcampuskart.in/search",
+  subjects: "https://medharevision.shopcampuskart.in/subjects",
+  suggest: "https://medharevision.shopcampuskart.in/suggest",
+  unsubscribe: "https://medharevision.shopcampuskart.in/unsubscribe",
+  forgotPassword: "https://medharevision.shopcampuskart.in/forgot-password",
   shop: "https://www.shopcampuskart.in",
-  authMail: "auth@medharevision.shopcampuskart.in",
+  authMail: "medharevision@codelearnn.com",
   supportMail: "support@shopcampuskart.in",
 };
 

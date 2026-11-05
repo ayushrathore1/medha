@@ -17,7 +17,7 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const { login } = useContext(AuthContext);
   const baseUrl = import.meta.env.VITE_BACKEND_URL;
-  const nextPath = searchParams.get("next") || "/dashboard";
+  const nextPath = searchParams.get("next") || "/inside";
 
   const handleLogin = async (e) => {
     e.preventDefault();

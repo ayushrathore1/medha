@@ -97,6 +97,11 @@ const Register = () => {
 
   // ── Submit → Send OTP for email verification
   const handleSubmit = async () => {
+    if (!formData.college.trim() || !formData.branch || !formData.semester) {
+      setError("College, branch, and current semester are required.");
+      return;
+    }
+
     setError("");
     setLoading(true);
 
@@ -150,7 +155,7 @@ const Register = () => {
         localStorage.setItem("user", JSON.stringify(data.user));
         login(data.user);
         setSuccess(true);
-        setTimeout(() => navigate("/personalize"), 2500);
+        setTimeout(() => navigate("/inside"), 2500);
       } else if (response.status === 409) {
         const loginResponse = await fetch(
           `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
@@ -169,7 +174,7 @@ const Register = () => {
           localStorage.setItem("user", JSON.stringify(loginData.user));
           login(loginData.user);
           setSuccess(true);
-          setTimeout(() => navigate("/personalize"), 2500);
+          setTimeout(() => navigate("/inside"), 2500);
         } else {
           setError("Account exists but login failed. Try logging in manually.");
           setLoading(false);
@@ -526,7 +531,7 @@ const Register = () => {
                         type="text"
                         value={formData.name}
                         onChange={(e) => handleChange("name", e.target.value)}
-                        placeholder="Ayush Rathore"
+                        placeholder="Full Name"
                         required
                         style={inputStyle}
                         onFocus={inputFocus}
@@ -650,7 +655,7 @@ const Register = () => {
                   >
                     {/* College */}
                     <div style={{ marginBottom: 16 }}>
-                      <label style={labelStyle}>COLLEGE</label>
+                      <label style={labelStyle}>COLLEGE *</label>
                       <input
                         type="text"
                         value={formData.college}
@@ -658,6 +663,7 @@ const Register = () => {
                           handleChange("college", e.target.value)
                         }
                         placeholder="RTU Kota / Poornima College / ..."
+                        required
                         style={inputStyle}
                         onFocus={inputFocus}
                         onBlur={inputBlur}
@@ -666,7 +672,7 @@ const Register = () => {
 
                     {/* Branch */}
                     <div style={{ marginBottom: 16 }}>
-                      <label style={labelStyle}>BRANCH</label>
+                      <label style={labelStyle}>BRANCH *</label>
                       <div
                         style={{
                           display: "flex",
@@ -700,7 +706,7 @@ const Register = () => {
 
                     {/* Semester */}
                     <div style={{ marginBottom: 16 }}>
-                      <label style={labelStyle}>CURRENT SEMESTER</label>
+                      <label style={labelStyle}>CURRENT SEMESTER *</label>
                       <div
                         style={{
                           display: "grid",
