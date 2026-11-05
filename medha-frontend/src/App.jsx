@@ -1,7 +1,6 @@
 import React, { Suspense } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { Analytics } from "@vercel/analytics/react";
 import PageTransition from "./components/Common/PageTransition";
 import Loader from "./components/Common/Loader";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -23,7 +22,6 @@ const AppContent = () => {
 
   return (
     <>
-      <Analytics />
       <AnimatePresence mode="wait">
         <Suspense fallback={<Loader fullScreen />}>
           <Routes location={location} key={location.pathname}>

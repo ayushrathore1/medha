@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import AuthShell from "../components/Auth/AuthShell";
+import { apiUrl } from "../config/api";
 
 const inputStyle = {
   width: "100%",
@@ -36,8 +37,6 @@ export default function ResetPassword() {
   const [ok, setOk] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const baseUrl = import.meta.env.VITE_BACKEND_URL;
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (password.length < 6) {
@@ -60,7 +59,7 @@ export default function ResetPassword() {
     setMsg("");
 
     try {
-      const response = await fetch(`${baseUrl}/api/auth/reset-password`, {
+      const response = await fetch(apiUrl("/api/auth/reset-password"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, password }),

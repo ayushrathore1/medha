@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { AuthContext } from "../AuthContext";
 import AuthShell from "../components/Auth/AuthShell";
+import { apiUrl } from "../config/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,7 +17,6 @@ const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { login } = useContext(AuthContext);
-  const baseUrl = import.meta.env.VITE_BACKEND_URL;
   const nextPath = searchParams.get("next") || "/inside";
 
   const handleLogin = async (e) => {
@@ -25,7 +25,7 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await fetch(`${baseUrl}/api/auth/login`, {
+      const response = await fetch(apiUrl("/api/auth/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -64,7 +64,7 @@ const Login = () => {
     setError("");
 
     try {
-      const res = await fetch(`${baseUrl}/api/auth/send-otp`, {
+      const res = await fetch(apiUrl("/api/auth/send-otp"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, type: "login" }),
@@ -89,7 +89,7 @@ const Login = () => {
     setError("");
 
     try {
-      const res = await fetch(`${baseUrl}/api/auth/login-otp`, {
+      const res = await fetch(apiUrl("/api/auth/login-otp"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, code: otpCode }),

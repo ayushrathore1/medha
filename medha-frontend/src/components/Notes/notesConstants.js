@@ -1,4 +1,4 @@
-const API_BASE = `${import.meta.env.VITE_BACKEND_URL}`;
+import { API_BASE } from "../../config/api";
 const MAX_NOTE_UPLOAD_BYTES = 25 * 1024 * 1024;
 
 /* ── Resolve file URLs (local disk vs Cloudinary) ── */

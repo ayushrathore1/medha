@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { AuthContext } from "../AuthContext";
 import AuthShell from "../components/Auth/AuthShell";
+import { apiUrl } from "../config/api";
 
 // ─── Password Strength ─────────────────────────────────────
 function getStrength(pw) {
@@ -40,7 +41,6 @@ const Register = () => {
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
-  const baseUrl = import.meta.env.VITE_BACKEND_URL;
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -106,7 +106,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(`${baseUrl}/api/auth/send-otp`, {
+      const res = await fetch(apiUrl("/api/auth/send-otp"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, type: "registration" }),
@@ -131,9 +131,7 @@ const Register = () => {
   const createBackendAccount = async (retryCount = 0) => {
     const maxRetries = 3;
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`,
-        {
+      const response = await fetch(apiUrl("/api/auth/register"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -145,8 +143,7 @@ const Register = () => {
             branch: formData.branch,
             semester: formData.semester,
           }),
-        }
-      );
+        });
 
       const data = await response.json();
 
@@ -157,17 +154,14 @@ const Register = () => {
         setSuccess(true);
         setTimeout(() => navigate("/inside"), 2500);
       } else if (response.status === 409) {
-        const loginResponse = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
-          {
+        const loginResponse = await fetch(apiUrl("/api/auth/login"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               email: formData.email,
               password: formData.password,
             }),
-          }
-        );
+          });
         const loginData = await loginResponse.json();
         if (loginResponse.ok) {
           localStorage.setItem("token", loginData.token);
@@ -203,7 +197,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(`${baseUrl}/api/auth/verify-otp`, {
+      const res = await fetch(apiUrl("/api/auth/verify-otp"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, code: verificationCode }),
@@ -224,7 +218,7 @@ const Register = () => {
 
   const handleResendCode = async () => {
     try {
-      const res = await fetch(`${baseUrl}/api/auth/send-otp`, {
+      const res = await fetch(apiUrl("/api/auth/send-otp"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, type: "registration" }),

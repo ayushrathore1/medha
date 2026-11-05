@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import AuthShell from "../components/Auth/AuthShell";
+import { apiUrl } from "../config/api";
 
 const inputStyle = {
   width: "100%",
@@ -33,8 +34,6 @@ export default function ForgotPassword() {
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
-  const baseUrl = import.meta.env.VITE_BACKEND_URL;
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const nextEmail = email.trim().toLowerCase();
@@ -47,7 +46,7 @@ export default function ForgotPassword() {
     setError("");
 
     try {
-      const response = await fetch(`${baseUrl}/api/auth/forgot-password`, {
+      const response = await fetch(apiUrl("/api/auth/forgot-password"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: nextEmail }),

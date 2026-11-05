@@ -37,6 +37,27 @@ function generateOTP() {
   return crypto.randomInt(100000, 999999).toString();
 }
 
+// Browser probes (GET) are not login — auth actions are POST-only.
+router.get("/", (_req, res) => {
+  res.json({
+    ok: true,
+    service: "medha-auth",
+    endpoints: {
+      login: "POST /api/auth/login",
+      register: "POST /api/auth/register",
+      sendOtp: "POST /api/auth/send-otp",
+      loginOtp: "POST /api/auth/login-otp",
+      forgotPassword: "POST /api/auth/forgot-password",
+    },
+  });
+});
+
+router.get("/login", (_req, res) => {
+  res.status(405).json({
+    success: false,
+    message: "Use POST /api/auth/login with JSON { email, password }",
+  });
+});
 
 // ═══════════════════════════════════════════════════════
 // @route   POST /api/auth/send-otp
