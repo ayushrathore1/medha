@@ -10,7 +10,6 @@ const Otp = require("../models/Otp");
 const auth = require("../middleware/auth");
 const {
   sendWelcomeEmail,
-  sendCredentialsEmail,
   generateAccessiblePassword,
 } = require("./authExtraRoutes");
 const { sendEmail } = require("../utils/sendEmail");
@@ -243,18 +242,13 @@ router.post("/login-otp", async (req, res) => {
       user.emailVerified = true;
     }
 
-    // OTP sign-in with no password yet → create a unique 8-char password and email it
+    // OTP sign-in with no password yet → set a random password; user can reset via email
     if (!user.password) {
       const generatedPassword = generateAccessiblePassword(8);
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(generatedPassword, salt);
       if (user.authProvider === "google") user.authProvider = "both";
       else if (!user.authProvider) user.authProvider = "local";
-
-      sendCredentialsEmail(user, generatedPassword, { generated: true }).catch((emailError) => {
-        console.error("❌ FAILED to send credentials email to:", user.email);
-        console.error("Email error details:", emailError.message);
-      });
     }
 
     // Streak logic (same as password login)
@@ -357,11 +351,6 @@ router.post("/register", async (req, res, next) => {
         if (name) user.name = name;
         await user.save();
 
-        sendCredentialsEmail(user, password, { generated: false }).catch((emailError) => {
-          console.error("❌ FAILED to send credentials email to:", user.email);
-          console.error("Email error details:", emailError.message);
-        });
-
         const payload = { userId: user._id, email: user.email };
         const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
 
@@ -398,7 +387,7 @@ router.post("/register", async (req, res, next) => {
     await user.save();
     console.log("✅ User saved to database:", user.email, emailVerified ? "(email verified)" : "");
 
-    // Welcome + credentials (login email + password they chose)
+    // Welcome only — no password/credentials email (point users to reset if needed)
     sendWelcomeEmail(user)
       .then(() => {
         console.log("✅ Welcome email sent successfully to:", user.email);
@@ -408,11 +397,6 @@ router.post("/register", async (req, res, next) => {
         console.error("Email error details:", emailError.message);
         console.error("Full error:", emailError);
       });
-
-    sendCredentialsEmail(user, password, { generated: false }).catch((emailError) => {
-      console.error("❌ FAILED to send credentials email to:", user.email);
-      console.error("Email error details:", emailError.message);
-    });
 
     const payload = { userId: user._id, email: user.email };
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });

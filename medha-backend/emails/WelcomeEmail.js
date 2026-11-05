@@ -81,6 +81,20 @@ function WelcomeEmail({ name }) {
       )
     ),
 
+    h(EmailPanel, { accent: colors.ink },
+      h(Text, { style: { ...styles.body, margin: "0 0 8px 0", color: colors.ink, fontWeight: "700" } },
+        "Forgot your password?"
+      ),
+      h(Text, { style: { ...styles.body, margin: 0, color: colors.muted } },
+        "You can always reset it from the login page. We never email your password.",
+        " ",
+        h("a", {
+          href: links.forgotPassword,
+          style: { color: colors.ink, fontWeight: "600", textDecoration: "underline" },
+        }, "Reset password")
+      )
+    ),
+
     h(Text, { style: styles.note },
       "Need help? Write to ",
       h("a", { href: `mailto:${links.authMail}`, style: { color: colors.ink, fontWeight: "600", textDecoration: "none" } }, links.authMail),
