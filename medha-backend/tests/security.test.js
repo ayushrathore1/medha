@@ -291,8 +291,11 @@ describe('Request Size Limits', () => {
   test('should accept normal-sized JSON body', async () => {
     const normalPayload = {
       name: 'Normal User',
-      email: 'normal@example.com',
-      password: 'password123'
+      email: `normal.${Date.now()}@example.com`,
+      password: 'password123',
+      college: 'Test College',
+      branch: 'CSE',
+      year: '2'
     };
     
     const res = await request(app)
