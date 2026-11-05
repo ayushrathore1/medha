@@ -295,7 +295,7 @@ describe('Request Size Limits', () => {
       password: 'password123',
       college: 'Test College',
       branch: 'CSE',
-      year: '2'
+      year: '2',
     };
     
     const res = await request(app)
@@ -310,7 +310,10 @@ describe('Request Size Limits', () => {
     const largePayload = {
       name: 'x'.repeat(20000), // 20KB
       email: 'large@example.com',
-      password: 'password123'
+      password: 'password123',
+      college: 'RTU Kota',
+      branch: 'CSE',
+      semester: '4th',
     };
     
     const res = await request(app)
