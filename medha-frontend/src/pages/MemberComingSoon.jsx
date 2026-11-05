@@ -134,14 +134,6 @@ export default function MemberComingSoon() {
         >
           Diwali build in progress. We will open Medha here first.
         </motion.p>
-        <motion.p
-          className="coming-soon-member-note"
-          initial={reduceMotion ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, ease, delay: 0.24 }}
-        >
-          Login mail and password are in your inbox.
-        </motion.p>
       </section>
 
       <footer className="coming-soon-footer">
