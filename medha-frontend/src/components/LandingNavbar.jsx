@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import BrandMark from "./Common/BrandMark";
 
 const LandingNavbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -29,17 +30,7 @@ const LandingNavbar = () => {
     <>
       <nav className={`wama-nav ${scrolled ? "is-scrolled" : ""}`}>
         <div className="wama-nav-inner">
-          <Link to="/" className="wama-wordmark">
-            <span className="wama-wordmark-name">Medha Revision</span>
-            <span className="wama-wordmark-by">
-              By{" "}
-              <span className="wama-wordmark-ck">
-                <span className="wama-wordmark-ck-campus">campus</span>
-                <span className="wama-wordmark-ck-kart">kart</span>
-                <span className="wama-wordmark-dot" aria-hidden="true" />
-              </span>
-            </span>
-          </Link>
+          <BrandMark variant="nav" className="wama-wordmark" />
 
           <div className="nav-links-desktop wama-nav-links">
             {links.map((link) => (

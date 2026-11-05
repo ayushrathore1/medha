@@ -3,6 +3,7 @@ import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaUser } from "react-icons/fa6";
 import { Search, X } from "lucide-react";
+import BrandMark from "../Common/BrandMark";
 
 // Elaya Design Skills Base Easing Curve
 const BASE_EASE = [0.22, 1, 0.36, 1];
@@ -47,14 +48,6 @@ const Navbar = ({ user, onLogout }) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const handleLogoClick = () => {
-    if (user) {
-      navigate("/dashboard");
-    } else {
-      navigate("/");
-    }
-  };
-
   const handleProfileClick = () => {
     if (user) {
       navigate("/profile");
@@ -93,35 +86,11 @@ const Navbar = ({ user, onLogout }) => {
       <div className="w-full max-w-6xl mx-auto px-3.5 sm:px-6 flex items-center justify-between h-[64px] sm:h-[68px] gap-2.5 sm:gap-6">
         
         {/* ─── 1. LOGO SECTION (Left) ───────────────────────────── */}
-        <div
-          className="flex items-center cursor-pointer hover:opacity-85 transition-opacity shrink-0 select-none py-1"
-          onClick={handleLogoClick}
-          title="Medha Home"
-        >
-          <span
-            style={{
-              fontFamily: "ui-sans-serif, system-ui, sans-serif",
-              fontWeight: 700,
-              fontSize: 21,
-              letterSpacing: "-0.03em",
-              color: "var(--text-primary)",
-            }}
-          >
-            MEDHA
-          </span>
-          <span
-            style={{
-              display: "inline-block",
-              width: 7,
-              height: 7,
-              borderRadius: "50%",
-              background: "#7DC67A",
-              marginBottom: 1,
-              marginLeft: 3,
-              verticalAlign: "middle",
-            }}
-          />
-        </div>
+        <BrandMark
+          variant="nav"
+          className="shrink-0 select-none py-1"
+          medhaTo={user ? "/dashboard" : "/"}
+        />
 
         {/* ─── 2. SEARCH BOX (Center / Flexible) ────────────────── */}
         <form

@@ -1,20 +1,7 @@
 import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import BrandMark from "../Common/BrandMark";
 import "./LegalPage.css";
-
-const Wordmark = () => (
-  <Link to="/" className="legal-wordmark">
-    <span className="legal-wordmark-name">Medha Revision</span>
-    <span className="legal-wordmark-by">
-      By{" "}
-      <span className="legal-wordmark-ck">
-        <span className="legal-wordmark-campus">campus</span>
-        <span className="legal-wordmark-kart">kart</span>
-        <span className="legal-wordmark-dot" aria-hidden="true" />
-      </span>
-    </span>
-  </Link>
-);
 
 const LegalShell = ({
   doc,
@@ -38,7 +25,7 @@ const LegalShell = ({
   return (
     <div className="legal-page">
       <header className="legal-top">
-        <Wordmark />
+        <BrandMark variant="legal" className="legal-wordmark" />
         <nav className="legal-tabs" aria-label="Legal documents">
           <Link to="/terms" className={doc === "terms" ? "is-active" : ""}>
             Terms of Service

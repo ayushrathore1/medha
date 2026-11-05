@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import BrandMark from "./BrandMark";
 
 // Feature flag for Charcha
 const CHARCHA_ENABLED = import.meta.env.VITE_ENABLE_CHARCHA === 'true';
@@ -26,19 +27,8 @@ const Footer = () => (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-10 items-start">
         {/* Brand Section */}
         <div className="col-span-1 md:col-span-2">
-          <div className="flex items-center gap-2 mb-4">
-            <img
-              src="https://ik.imagekit.io/ayushrathore1/MEDHA%20Revision%20Logo%20(5)/6.svg?updatedAt=1767677218473"
-              alt="MEDHA logo"
-              className="w-10 h-10 object-contain"
-              width={40}
-              height={40}
-              loading="lazy"
-              decoding="async"
-            />
-            <span className="text-2xl font-bold bg-gradient-to-r from-[var(--action-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent tracking-tight">
-              MEDHA
-            </span>
+          <div className="mb-4">
+            <BrandMark variant="logo" />
           </div>
           <p className="text-[var(--text-secondary)] mb-4 max-w-md font-normal">
             Boost your learning with AI-powered notes, exam archives, and personalized study tools.

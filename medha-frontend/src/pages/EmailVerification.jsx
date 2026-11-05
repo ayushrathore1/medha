@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import Card from "../components/Common/Card";
 import Button from "../components/Common/Button";
+import BrandMark from "../components/Common/BrandMark";
 import { AuthContext } from "../AuthContext";
 
 /**
@@ -147,11 +148,9 @@ const EmailVerification = () => {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <img
-            src="https://ik.imagekit.io/ayushrathore1/MEDHA%20Revision%20Logo%20(5)/6.svg?updatedAt=1767677218473"
-            alt="MEDHA logo"
-            className="w-20 h-20 mx-auto mb-4 object-contain"
-          />
+          <div className="flex justify-center mb-4">
+            <BrandMark variant="logo" className="brand-mark--compact" />
+          </div>
           <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 mb-2">
             {verificationStep === "complete" ? "Email Verified!" : "Verify Your Email"}
           </h2>

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useRef } from "react";
+import BrandMark, { CAMPUSKART_URL } from "../Common/BrandMark";
 import "./AuthPage.css";
 
 const ROW_CARDS = [
@@ -27,87 +27,6 @@ const SOURCE_GAP = 28;
 const STEP_X = CARD_W + GAP;
 const STEP_Y = CARD_H + GAP;
 const SPEED = 64;
-
-const WORDMARK_NAME = "Medha Revision";
-const LETTER_COLORS = [
-  "#22D3EE",
-  "#34D399",
-  "#C6D93B",
-  "#FACC15",
-  "#FF8A1A",
-  "#E30613",
-  "#F472B6",
-  "#D946EF",
-  "#A78BFA",
-  "#60A5FA",
-  "#2DD4BF",
-  "#A3E635",
-  "#FB7185",
-  "#38BDF8",
-];
-
-function shuffleColors(colors) {
-  const next = [...colors];
-  for (let index = next.length - 1; index > 0; index -= 1) {
-    const swap = Math.floor(Math.random() * (index + 1));
-    [next[index], next[swap]] = [next[swap], next[index]];
-  }
-  return next;
-}
-
-const Wordmark = () => {
-  const [palette, setPalette] = useState(LETTER_COLORS);
-  const [lit, setLit] = useState(false);
-  let letterIndex = 0;
-
-  return (
-    <Link
-      to="/"
-      className={`auth-wordmark${lit ? " is-lit" : ""}`}
-      onMouseEnter={() => {
-        setPalette(shuffleColors(LETTER_COLORS));
-        setLit(true);
-      }}
-      onMouseLeave={() => setLit(false)}
-    >
-      <span className="auth-wordmark-name" aria-label="Medha Revision">
-        <span aria-hidden="true">
-          {[...WORDMARK_NAME].map((character, index) => {
-            if (character === " ") {
-              return (
-                <span key={`space-${index}`} className="auth-wordmark-space">
-                  {" "}
-                </span>
-              );
-            }
-
-            const color = palette[letterIndex % palette.length];
-            const order = letterIndex;
-            letterIndex += 1;
-
-            return (
-              <span
-                key={`letter-${index}`}
-                className="auth-wordmark-letter"
-                style={{ "--letter-color": color, "--letter-i": String(order) }}
-              >
-                {character}
-              </span>
-            );
-          })}
-        </span>
-      </span>
-      <span className="auth-wordmark-by">
-        By{" "}
-        <span className="auth-wordmark-ck">
-          <span className="auth-wordmark-campus">campus</span>
-          <span className="auth-wordmark-kart">kart</span>
-          <span className="auth-wordmark-dot" aria-hidden="true" />
-        </span>
-      </span>
-    </Link>
-  );
-};
 
 function wrap(value, span) {
   if (!span) return 0;
@@ -236,14 +155,20 @@ const AuthCardStream = () => {
           <span>Medha</span>
           <span>Revision</span>
         </span>
-        <span className="auth-source-by">
+        <a
+          className="auth-source-by"
+          href={CAMPUSKART_URL}
+          target="_blank"
+          rel="noreferrer"
+          title="CampusKart"
+        >
           By{" "}
           <span className="auth-source-ck">
             <span className="auth-source-campus">campus</span>
             <span className="auth-source-kart">kart</span>
             <span className="auth-source-dot" aria-hidden="true" />
           </span>
-        </span>
+        </a>
       </div>
     </div>
   );
@@ -253,7 +178,7 @@ const AuthShell = ({ kicker, titleLines, subtitle, children }) => {
   return (
     <div className="auth-page">
       <aside className="auth-visual">
-        <Wordmark />
+        <BrandMark variant="auth" className="auth-wordmark" />
         <div className="auth-visual-copy">
           {kicker ? <p className="auth-kicker">{kicker}</p> : null}
           <h1>
@@ -276,7 +201,7 @@ const AuthShell = ({ kicker, titleLines, subtitle, children }) => {
 
       <main className="auth-panel">
         <div className="auth-mobile-brand">
-          <Wordmark />
+          <BrandMark variant="auth" className="auth-wordmark" />
         </div>
         {children}
       </main>

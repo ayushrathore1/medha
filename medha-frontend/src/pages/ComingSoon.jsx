@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { AuthContext } from "../AuthContext";
+import BrandMark, { CAMPUSKART_URL } from "../components/Common/BrandMark";
 import "../styles/ComingSoon.css";
 
 const ease = [0.22, 1, 0.36, 1];
@@ -189,15 +190,7 @@ export default function ComingSoon() {
       </div>
 
       <header className="coming-soon-header">
-        <div className="coming-soon-brand" aria-label="Medha Revision by CampusKart">
-          <span className="coming-soon-brand-name">Medha Revision</span>
-          <span className="coming-soon-brand-rule" aria-hidden="true" />
-          <span className="coming-soon-brand-by">
-            <span className="coming-soon-brand-campus">campus</span>
-            <span className="coming-soon-brand-kart">kart</span>
-            <span className="coming-soon-brand-dot" aria-hidden="true" />
-          </span>
-        </div>
+        <BrandMark variant="coming-soon" />
         <Link to="/login" className="coming-soon-signin">
           Sign in
         </Link>
@@ -246,7 +239,11 @@ export default function ComingSoon() {
         <p className="coming-soon-footer-copy">
           © {new Date().getFullYear()} CampusKart. All rights reserved.
         </p>
-        <p className="coming-soon-footer-site">www.shopcampuskart.in</p>
+        <p className="coming-soon-footer-site">
+          <a href={CAMPUSKART_URL} target="_blank" rel="noreferrer">
+            www.shopcampuskart.in
+          </a>
+        </p>
       </footer>
     </main>
   );

@@ -1,0 +1,117 @@
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.brand-mark-medha,
+.brand-mark-ck {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+.brand-mark-medha:hover,
+.brand-mark-ck:hover {
+  opacity: 0.82;
+}
+
+.brand-mark-medha-text {
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(15px, 2.8vw, 18px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  word-spacing: 0.06em;
+  color: #111;
+}
+
+.brand-mark-medha-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  display: block;
+}
+
+.brand-mark-rule {
+  width: 1px;
+  height: 18px;
+  background: rgba(20, 20, 15, 0.18);
+  flex-shrink: 0;
+}
+
+.brand-mark-ck {
+  align-items: baseline;
+  font-family: Manrope, ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(12px, 2.4vw, 14px);
+  letter-spacing: -0.025em;
+  color: #14140f;
+  gap: 0;
+}
+
+.brand-mark-campus {
+  font-weight: 300;
+}
+
+.brand-mark-kart {
+  font-weight: 400;
+}
+
+.brand-mark-dot {
+  width: 5px;
+  height: 5px;
+  margin-left: 3px;
+  border-radius: 50%;
+  background: #3f6b52;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+/* Auth / legal shells — match existing wordmark scale */
+.brand-mark--auth .brand-mark-medha-text,
+.brand-mark--legal .brand-mark-medha-text {
+  font-size: clamp(18px, 2.4vw, 22px);
+}
+
+.brand-mark--auth .brand-mark-ck,
+.brand-mark--legal .brand-mark-ck {
+  font-size: clamp(13px, 1.8vw, 15px);
+}
+
+.brand-mark--nav .brand-mark-medha-text {
+  font-size: 18px;
+}
+
+.brand-mark--nav .brand-mark-ck {
+  font-size: 12px;
+}
+
+.brand-mark--nav .brand-mark-rule {
+  height: 16px;
+}
+
+.brand-mark--compact {
+  gap: 8px;
+}
+
+.brand-mark--compact .brand-mark-medha-img {
+  width: 28px;
+  height: 28px;
+}
+
+.brand-mark--compact .brand-mark-ck {
+  font-size: 12px;
+}
+
+@media (max-width: 640px) {
+  .brand-mark--coming-soon {
+    gap: 8px;
+  }
+
+  .brand-mark--coming-soon .brand-mark-rule {
+    height: 14px;
+  }
+}
