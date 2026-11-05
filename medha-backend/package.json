@@ -9,20 +9,22 @@
     "test:auth": "cross-env NODE_ENV=test jest tests/auth.test.js --detectOpenHandles --forceExit",
     "test:api": "cross-env NODE_ENV=test jest tests/api.test.js --detectOpenHandles --forceExit",
     "test:security": "cross-env NODE_ENV=test jest tests/security.test.js --detectOpenHandles --forceExit",
+    "test:oauth": "cross-env NODE_ENV=test jest tests/oauthCallback.test.js --detectOpenHandles --forceExit",
+    "test:prod": "cross-env NODE_ENV=test jest tests/auth.test.js tests/api.test.js tests/security.test.js tests/oauthCallback.test.js --detectOpenHandles --forceExit",
     "test:load": "node tests/load.test.js",
     "test:load:heavy": "node tests/load.test.js --users=500 --duration=60",
     "test:coverage": "cross-env NODE_ENV=test jest --coverage --detectOpenHandles --forceExit",
-    "ci": "npm run test:auth && npm run test:api && npm run test:security"
+    "ci": "npm run test:prod"
   },
   "dependencies": {
     "@ai-sdk/groq": "^3.0.29",
     "@google/generative-ai": "^0.24.1",
     "ai": "^6.0.116",
-    "axios": "^1.12.2",
+    "axios": "^1.21.0",
     "bcryptjs": "^3.0.2",
-    "body-parser": "^2.3.0",
+    "body-parser": "^2.4.0",
     "cloudinary": "^2.9.0",
-    "compression": "^1.8.1",
+    "compression": "^1.8.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
@@ -36,19 +38,20 @@
     "imagekit": "^6.0.0",
     "json5": "^2.2.3",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.18.1",
+    "mongoose": "^8.24.8",
     "morgan": "^1.10.1",
-    "multer": "^2.0.2",
+    "multer": "^2.5.0",
     "multer-storage-cloudinary": "^4.0.0",
-    "nodemailer": "^7.0.10",
+    "nodemailer": "^10.3.1",
     "pdf-parse": "^2.4.5",
     "pdf2pic": "^3.2.0",
+    "proxy-addr": "^2.0.8",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-email": "^6.0.0",
     "resend": "^6.3.0",
     "tesseract.js": "^6.0.1",
-    "zod": "^4.3.6"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "cross-env": "^10.1.0",
@@ -60,6 +63,9 @@
     "supertest": "^7.1.4"
   },
   "engines": {
-    "node": "18.x"
+    "node": ">=20.19.0"
+  },
+  "overrides": {
+    "proxy-addr": "^2.0.8"
   }
 }

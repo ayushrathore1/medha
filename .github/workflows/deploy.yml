@@ -1,0 +1,42 @@
+name: Deploy
+
+# Hostinger should track the `production` branch (not `main`).
+# This workflow only advances `production` after CI passes on `main`.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    name: Promote main to production
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main'
+    steps:
+      - name: Checkout passing main commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - name: Fast-forward production to tested main
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin production:production || true
+          git checkout -B production
+          git reset --hard "${{ github.event.workflow_run.head_sha }}"
+          git push origin production --force-with-lease
+          echo "Promoted ${{ github.event.workflow_run.head_sha }} to production"

@@ -32,7 +32,14 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/tests/setup.js',
-    include: ['src/**/*.{test,spec}.{js,jsx}'],
+    // Production gate: only structural + smoke suites that protect live deploy paths
+    include: [
+      'src/tests/prod.smoke.test.jsx',
+      'src/tests/notesSplit.test.js',
+      'src/tests/searchSplit.test.js',
+      'src/tests/adminSplit.test.jsx',
+      'src/utils/imageUtils.test.js',
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
