@@ -4,6 +4,12 @@ All notable changes to MEDHA Revision are recorded here.
 
 ## [Unreleased]
 
+### Changed
+- Site gate: every frontend route redirects to a premium Medha Revision coming-soon page (logo lockup, “Medha got a new home”, Diwali work copy, soft background motion, no CTAs).
+
+### Fixed
+- Frontend `package.json` declares Node `>=20.19.0` (and `.nvmrc` = 22) so Hostinger / Vite 7 builds do not run on Node 18.
+
 ### Added
 - Shared landing/auth visual system: Medha Revision lockup, CampusKart byline, white editorial canvas, black pills, lime/green/orange accents.
 - Auth pages (`/login`, `/register`) with the shared `AuthShell` animation.
