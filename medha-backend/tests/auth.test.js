@@ -13,6 +13,12 @@ process.env.NODE_ENV = 'test';
 
 const User = require('../models/User');
 
+const PROFILE = {
+  college: 'RTU Kota',
+  branch: 'CSE',
+  semester: '4th',
+};
+
 let app;
 
 beforeAll(async () => {
@@ -44,7 +50,8 @@ describe('Authentication API', () => {
       const userData = {
         name: 'Test User',
         email: 'test@example.com',
-        password: 'password123'
+        password: 'password123',
+        ...PROFILE,
       };
       
       const res = await request(app)
@@ -67,12 +74,26 @@ describe('Authentication API', () => {
       
       expect(res.body).toHaveProperty('message');
     });
+
+    test('should reject registration without college, branch, or semester', async () => {
+      const res = await request(app)
+        .post('/api/auth/register')
+        .send({
+          name: 'Test User',
+          email: 'missing-profile@example.com',
+          password: 'password123',
+        })
+        .expect(400);
+
+      expect(res.body.message).toMatch(/college|branch|year|semester/i);
+    });
     
     test('should reject duplicate email registration', async () => {
       const userData = {
         name: 'Test User',
         email: 'duplicate@example.com',
-        password: 'password123'
+        password: 'password123',
+        ...PROFILE,
       };
       
       // First registration
@@ -93,7 +114,8 @@ describe('Authentication API', () => {
       const userData = {
         name: 'Test User',
         email: 'hash-test@example.com',
-        password: 'password123'
+        password: 'password123',
+        ...PROFILE,
       };
       
       await request(app)
@@ -333,7 +355,8 @@ describe('Authentication Security', () => {
     const maliciousData = {
       name: 'Hacker',
       email: "test@example.com'; DROP TABLE users; --",
-      password: 'password123'
+      password: 'password123',
+      ...PROFILE,
     };
     
     const res = await request(app)
@@ -364,7 +387,8 @@ describe('Authentication Security', () => {
     const xssData = {
       name: '<script>alert("XSS")</script>',
       email: 'xss@example.com',
-      password: 'password123'
+      password: 'password123',
+      ...PROFILE,
     };
     
     const res = await request(app)
@@ -382,7 +406,8 @@ describe('Authentication Security', () => {
     const userData = {
       name: 'Password Check User',
       email: 'passwordcheck@example.com',
-      password: 'password123'
+      password: 'password123',
+      ...PROFILE,
     };
     
     // Register

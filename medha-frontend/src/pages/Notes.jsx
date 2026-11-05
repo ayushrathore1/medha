@@ -6,6 +6,9 @@ import {
   API_BASE,
   MAX_NOTE_UPLOAD_BYTES,
   NOTE_TYPES,
+  SEMESTERS,
+  chipStyle,
+  labelStyle,
 } from "../components/Notes/notesConstants";
 import NotePreviewModal from "../components/Notes/NotePreviewModal";
 import UploadWizard from "../components/Notes/UploadWizard";

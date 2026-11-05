@@ -53,6 +53,7 @@ export default function HistoryPanel({ admin }) {
     suggestions, suggestionsStats, loadingSuggestions, suggestionsFilter,
     setSuggestionsFilter, fetchSuggestions, updateSuggestion, deleteSuggestion,
     headers, token, fetchEmailHistory, fetchTeamMembers, fetchUsers, fetchStats,
+    setActiveTab,
   } = admin;
 
   return (

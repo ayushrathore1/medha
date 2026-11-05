@@ -53,6 +53,7 @@ export default function EmailPanel({ admin }) {
     suggestions, suggestionsStats, loadingSuggestions, suggestionsFilter,
     setSuggestionsFilter, fetchSuggestions, updateSuggestion, deleteSuggestion,
     headers, token, fetchEmailHistory, fetchTeamMembers, fetchUsers, fetchStats,
+    hasUserReceivedCurrentEmail, initDeleteUser, loadVerificationReminderTemplate,
   } = admin;
 
   return (

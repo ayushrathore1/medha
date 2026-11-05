@@ -1,6 +1,8 @@
 // ============================================
 // Process entry point — listen + MongoDB only.
 // The Express app itself lives in app.js.
+// Hostinger may `require()` this file and call listen on the
+// exported app itself — so Mongo must connect outside startServer().
 // ============================================
 process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception:", err);
@@ -26,16 +28,19 @@ console.log("🔍 [STARTUP] All modules loaded successfully");
 
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/medha";
+const isTest =
+  process.env.NODE_ENV === "test" || Boolean(process.env.JEST_WORKER_ID);
 
 const mongoOptions = {
   maxPoolSize: 50,
   minPoolSize: 10,
-  serverSelectionTimeoutMS: 5000,
+  serverSelectionTimeoutMS: 10000,
   socketTimeoutMS: 45000,
   family: 4,
 };
 
 let server;
+let mongoConnectPromise = null;
 
 const gracefulShutdown = async (signal) => {
   console.log(`\n[${signal}] Graceful shutdown initiated...`);
@@ -54,6 +59,35 @@ const gracefulShutdown = async (signal) => {
   }
 };
 
+function connectMongo() {
+  if (isTest) return Promise.resolve();
+
+  // already connected / connecting
+  if (mongoose.connection.readyState === 1) {
+    return Promise.resolve(mongoose.connection);
+  }
+  if (mongoConnectPromise) return mongoConnectPromise;
+
+  console.log("🔌 Connecting to MongoDB…");
+  mongoConnectPromise = mongoose
+    .connect(MONGO_URI, mongoOptions)
+    .then(() => {
+      console.log("✅ Connected to MongoDB");
+      console.log(
+        `📊 Connection pool: ${mongoOptions.maxPoolSize} max connections`
+      );
+      return mongoose.connection;
+    })
+    .catch((err) => {
+      mongoConnectPromise = null;
+      console.error("❌ MongoDB connection error:", err.message);
+      console.error("⚠️ Server running WITHOUT database connection");
+      throw err;
+    });
+
+  return mongoConnectPromise;
+}
+
 function startServer() {
   process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
   process.on("SIGINT", () => gracefulShutdown("SIGINT"));
@@ -68,24 +102,13 @@ function startServer() {
   server.keepAliveTimeout = 65000;
   server.headersTimeout = 66000;
 
-  mongoose
-    .connect(MONGO_URI, mongoOptions)
-    .then(() => {
-      console.log("✅ Connected to MongoDB");
-      console.log(
-        `📊 Connection pool: ${mongoOptions.maxPoolSize} max connections`
-      );
-      console.log("🔒 Security middleware: Enabled");
-      console.log("⚡ Rate limiting: Enabled");
-      console.log("🗜️  Compression: Enabled");
-    })
-    .catch((err) => {
-      console.error("❌ MongoDB connection error:", err.message);
-      console.error("⚠️ Server running WITHOUT database connection");
-    });
-
   return server;
 }
+
+// Always open Mongo in non-test runs (Hostinger require() path included).
+connectMongo().catch(() => {
+  // Error already logged; keep HTTP up so health checks still respond.
+});
 
 if (require.main === module) {
   startServer();

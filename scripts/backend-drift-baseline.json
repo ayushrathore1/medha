@@ -143,7 +143,7 @@
     "scripts/seedCppAnimation.js": "d340da5802005a6aaed927036eba31a89639e3e0d52f6b3d9b95810e730577bf",
     "scripts/seedPracticeQuestions.js": "27ed43ebfdb32c60ae774e045eda07d2804537572af25db410310a1cdae9d030",
     "scripts/seedUniversityContext.js": "c6d03e21ec33371f97514f3b71b3689c944fd90ff98ffd46147dd7e32d7c9222",
-    "scripts/seedWallpapers.js": "5ffc15f9d65a65bb2cd87c3eaddba3804d51090c8674b8426d17aae9b0a7ec15",
+    "scripts/seedWallpapers.js": "8d3425a49585b203465ee7a04a331cbb0cdc9a380b0e7b4164bcb16ae9d75e1a",
     "scripts/sendSem4Notification.js": "f5ffe65a23b1b4b2231e02d7d0a145909b761849ef3fdf32aaab34e5926e9cff",
     "scripts/sendTestReEngagement.js": "fda7373e96fa15a9aebd14918e5c374cdf55e61f1e1cb87d17a9881fd901d64e",
     "scripts/testEarlyAccessEmail.js": "80eec170f6d9d43c329bcc6a88ac5dd812795113217ef853b6c6495e5714bf3f",
