@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import Loader from "../components/Common/Loader";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = String(import.meta.env.VITE_BACKEND_URL || "https://medharevisionapi.shopcampuskart.in").replace(/\/$/, "");
 
 /**
  * GoogleAuthSuccess — completes Google OAuth after the backend redirect.

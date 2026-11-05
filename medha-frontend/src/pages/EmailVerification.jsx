@@ -14,7 +14,7 @@ const EmailVerification = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
-  const baseUrl = import.meta.env.VITE_BACKEND_URL;
+  const baseUrl = String(import.meta.env.VITE_BACKEND_URL || "https://medharevisionapi.shopcampuskart.in").replace(/\/$/, "");
 
   // Get user data passed from login page
   const userData = location.state?.userData;
