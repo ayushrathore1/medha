@@ -50,7 +50,7 @@ export default function TranscribePanel({ admin }) {
     setSelectedHistoryItem, teamMembers, loadingTeam, setDeleteModalUser,
     setInviteModalOpen, setInviteEmail, handleUpdateRole, audioFile,
     isTranscribing, transcriptionResult, transcriptionError, copied,
-    handleAudioFileChange, handleTranscribe, handleCopyTranscription,
+    handleAudioFileChange, handleTranscribe, handleCopyTranscription, clearTranscription,
     suggestions, suggestionsStats, loadingSuggestions, suggestionsFilter,
     setSuggestionsFilter, fetchSuggestions, updateSuggestion, deleteSuggestion,
     headers, token,

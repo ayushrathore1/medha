@@ -721,6 +721,7 @@ export function useAdminDashboard() {
     handleAudioFileChange,
     handleTranscribe,
     handleCopyTranscription,
+    clearTranscription,
     fetchSuggestions,
     updateSuggestion,
     deleteSuggestion,
