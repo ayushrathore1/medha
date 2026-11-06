@@ -6,7 +6,6 @@ export default function TopicChip({
   children,
   to,
   onClick,
-  sharedWithAutonomous = false,
   highlighted = false,
   match,
 }) {
@@ -18,7 +17,6 @@ export default function TopicChip({
 
   const content = (
     <>
-      {sharedWithAutonomous ? <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--cyan)]" aria-hidden /> : null}
       <span className="min-w-0">
         {match ? highlight(children, match) : children}
       </span>

@@ -1,69 +1,77 @@
 const User = require("../models/User");
 const TeamInvitation = require("../models/TeamInvitation");
 
+/**
+ * Accept a pending team invite for the logged-in user.
+ * No invite code — admin already approved the email.
+ */
 exports.verifyTeamInvite = async (req, res) => {
-  const { code, email } = req.body; // Email might come from body or req.user
-
-  if (!code) {
-    return res.status(400).json({ message: "Invitation code is required." });
-  }
-
   try {
-    // 1. Find the invitation
-    // We strictly check the code. Checking email is optional but recommended for security.
-    // If email is provided in body, check against it. Else check against logged in user.
-    const userEmail = req.user.email;
-
-    // Find valid invitation
-    const invitation = await TeamInvitation.findOne({
-      code: code,
-      used: false,
-      expiresAt: { $gt: new Date() }, // Not expired
-    });
-
-    if (!invitation) {
-      return res
-        .status(404)
-        .json({ message: "Invalid or expired invitation code." });
+    const userEmail = String(req.user.email || "").toLowerCase();
+    if (!userEmail) {
+      return res.status(400).json({ message: "Logged-in email is required." });
     }
 
-    // 2. Validate Email Mismatch
-    // The invitation was sent to a specific email. The user claiming it MUST be logged in as that email.
-    if (invitation.email.toLowerCase() !== userEmail.toLowerCase()) {
-      return res
-        .status(403)
-        .json({
-          message: `This code belongs to ${invitation.email}, but you are logged in as ${userEmail}.`,
-        });
-    }
-
-    // 3. Update User Role
     const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    if (user.role === "team" || user.role === "admin") {
-      return res
-        .status(400)
-        .json({ message: "You are already a team member." });
+    if (user.role === "team" || user.role === "admin" || user.isAdmin) {
+      return res.json({
+        message: "You are already a team member.",
+        role: user.role,
+      });
+    }
+
+    const invitation = await TeamInvitation.findOne({
+      email: userEmail,
+      used: false,
+      expiresAt: { $gt: new Date() },
+    }).sort({ createdAt: -1 });
+
+    if (!invitation) {
+      return res.status(404).json({
+        message:
+          "No pending team invite for this email. Ask an admin to invite you again.",
+      });
     }
 
     user.role = "team";
+    user.isAdmin = false;
     await user.save();
 
-    // 4. Mark invitation as used
     invitation.used = true;
     await invitation.save();
 
     res.json({
-      message: "Welcome to the team! verification successful.",
+      message: "Welcome to the Medha Revision team.",
       role: user.role,
     });
   } catch (error) {
     console.error("Error verifying invitation:", error);
-    res.status(500).json({ message: "Verification failed." });
+    res.status(500).json({ message: "Could not join the team." });
   }
+};
+
+/** Apply a pending invite after login/register (no response shape change needed by callers). */
+exports.applyPendingTeamInvite = async (userDoc) => {
+  if (!userDoc?.email) return userDoc;
+  if (userDoc.role === "team" || userDoc.role === "admin" || userDoc.isAdmin) {
+    return userDoc;
+  }
+  const invitation = await TeamInvitation.findOne({
+    email: String(userDoc.email).toLowerCase(),
+    used: false,
+    expiresAt: { $gt: new Date() },
+  }).sort({ createdAt: -1 });
+  if (!invitation) return userDoc;
+  userDoc.role = "team";
+  userDoc.isAdmin = false;
+  await userDoc.save();
+  invitation.used = true;
+  await invitation.save();
+  return userDoc;
 };
 
 // Check if user has team access

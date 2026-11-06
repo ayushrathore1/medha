@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BookOpen, GraduationCap, Search, Sparkles, University } from "lucide-react";
 import SearchBar from "./SearchBar";
-import { getRecentSearches, saveRecentSearch, tagsForText } from "../../data/subjectCatalog";
-import { SchemeTags } from "./SchemeTag";
+import { getRecentSearches, saveRecentSearch } from "../../data/subjectCatalog";
 import { ARYA_SEM3_STATS, ARYA_SEM3_SUBJECTS } from "../../data/aryaSem3Syllabus";
 import { RTU_SEM5_STATS, RTU_SEM5_SUBJECTS } from "../../data/rtuSem5Syllabus";
 
@@ -12,7 +11,7 @@ const ARYA = "Rajasthan Technical University, Kota (Arya Autonomous)";
 
 const SCHEMES = {
   [RTU]: {
-    kicker: "RTU • CSE • Semester V",
+    kicker: "CSE • Semester V",
     subtitle: "III Year • V Semester • B.Tech. Computer Science and Engineering",
     statLabel: "semester V papers",
     subjects: RTU_SEM5_SUBJECTS,
@@ -21,7 +20,7 @@ const SCHEMES = {
     scheme: "rtu",
   },
   [ARYA]: {
-    kicker: "RTU • Arya Autonomous • Semester III",
+    kicker: "CSE • Semester III",
     subtitle: "II Year • III Semester • B.Tech. Computer Science and Engineering",
     statLabel: "semester III papers",
     subjects: ARYA_SEM3_SUBJECTS,
@@ -149,8 +148,8 @@ export default function UniversitySyllabusDashboard({ user }) {
             className="w-full rounded-2xl border border-emerald-100 bg-emerald-50/40 px-3 py-3 text-sm text-slate-900 outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
           >
             <option value="">Select your university (required)</option>
-            <option value={RTU}>Rajasthan Technical University, Kota (RTU)</option>
-            <option value={ARYA}>RTU — Arya Autonomous (II Year / III Sem)</option>
+            <option value={RTU}>Curriculum · Semester V</option>
+            <option value={ARYA}>Curriculum · Semester III</option>
             <option value="Other">Other university</option>
           </select>
           {university === "Other" && (
@@ -203,9 +202,6 @@ export default function UniversitySyllabusDashboard({ user }) {
                 onClick={() => search(x)}
                 className="rounded-full border border-sky-100 bg-sky-50 px-3 py-2 text-left text-xs font-medium text-sky-800 hover:bg-sky-100"
               >
-                <span className="mb-1 block">
-                  <SchemeTags tags={tagsForText(x, scheme?.scheme, name)} />
-                </span>
                 {x}
               </button>
             ))}
@@ -220,9 +216,6 @@ export default function UniversitySyllabusDashboard({ user }) {
               <BookOpen size={19} />
             </div>
             <div>
-              <div className="mb-1.5">
-                <SchemeTags tags={scheme ? tagsForText(selected?.name || scheme.kicker, scheme.scheme, name) : name ? tagsForText(name, null, name) : []} />
-              </div>
               <p className="text-[10px] font-bold uppercase tracking-[.16em] text-emerald-700">
                 {scheme ? scheme.kicker : name ? "University syllabus" : "Choose university first"}
               </p>
@@ -261,7 +254,6 @@ export default function UniversitySyllabusDashboard({ user }) {
                       <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold ${tone.badge}`}>
                         {/\d/.test(subject.code) ? subject.code : subject.short}
                       </span>
-                      <SchemeTags tags={tagsForText(subject.name, scheme.scheme, name)} />
                     </div>
                     <p className="mt-2 text-sm font-bold text-slate-900">{subject.name}</p>
                     <p className="mt-1 text-[11px] text-slate-500">
@@ -282,9 +274,6 @@ export default function UniversitySyllabusDashboard({ user }) {
                         {String(u.unitNumber).padStart(2, "0")}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <div className="mb-1.5">
-                          <SchemeTags tags={tagsForText(u.title, scheme.scheme, name)} />
-                        </div>
                         <button
                           onClick={() => topic(u.title, selected.name + " | " + u.title)}
                           className="text-left text-sm font-bold leading-5 text-slate-900 hover:text-emerald-700 hover:underline"
@@ -298,9 +287,6 @@ export default function UniversitySyllabusDashboard({ user }) {
                               onClick={() => topic(t, selected.name + " | " + u.title)}
                               className="rounded-lg border border-slate-100 bg-slate-50 px-2.5 py-1.5 text-left text-[12px] leading-5 text-slate-600 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800"
                             >
-                              <span className="mb-1 block">
-                                <SchemeTags tags={tagsForText(t, scheme.scheme, name)} />
-                              </span>
                               {t}
                             </button>
                           ))}
@@ -316,8 +302,7 @@ export default function UniversitySyllabusDashboard({ user }) {
           <div className="p-6">
             <p className="text-sm font-semibold text-slate-800">We need the official syllabus for {name} to show the correct units.</p>
             <p className="mt-2 text-[13px] leading-6 text-slate-500">
-              We won't display RTU topics as if they belong to another university. You can search for its official syllabus while its
-              unit-by-unit content is added.
+              Unit-by-unit content for this curriculum isn’t mapped yet. You can still search topics while we add it.
             </p>
             <button
               onClick={() => search("official syllabus " + name)}

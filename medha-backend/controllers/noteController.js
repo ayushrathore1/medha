@@ -6,7 +6,9 @@ const notifications = require("./notificationController");
 const fs = require("fs");
 const path = require("path");
 const { uploadToCloudinary, CLOUDINARY_MAX_BYTES } = require("../utils/cloudinaryUpload");
-const { extractPdfText, moderateNote } = require("../utils/noteModerator");
+const { compressPdfIfNeeded } = require("../utils/pdfCompressor");
+const { enqueueNoteScan } = require("../utils/noteScanWorker");
+const { sendNotePipelineEmail } = require("../utils/noteEmails");
 const {
   parseNoteListQuery,
   keysetFilter,
@@ -110,7 +112,8 @@ exports.getPublicNotes = async (req, res) => {
     }
 
     const { search, subject, semester, noteType } = req.query;
-    const match = { isPublic: true, verificationStatus: { $ne: "rejected" } };
+    // Only fully approved public notes are discoverable
+    const match = { isPublic: true, verificationStatus: "approved" };
 
     if (subject) {
       if (!mongoose.Types.ObjectId.isValid(subject)) {
@@ -227,39 +230,66 @@ exports.getPublicNotes = async (req, res) => {
 exports.toggleVisibility = async (req, res) => {
   try {
     const { noteId } = req.params;
-    
+
     const note = await Note.findOne({ _id: noteId, owner: req.user._id });
     if (!note) {
       return res.status(404).json({ error: "Note not found or not owned by you." });
     }
-    
-    note.isPublic = !note.isPublic;
+
+    if (note.verificationStatus === "rejected" && !note.isPublic) {
+      // Allow re-publishing attempt
+    }
+
+    const makingPublic = !note.isPublic;
+    note.isPublic = makingPublic;
+
+    if (makingPublic) {
+      note.verificationStatus = "pending";
+      note.pipelineStage = "queued";
+      note.scanAttempts = 0;
+      note.emailsSent = { live: false, rejected: false };
+      note.verificationReason = "";
+      await note.save();
+      await enqueueNoteScan(note._id, { immediate: true });
+      return res.json({
+        message: "Note is now public. It will appear for everyone after review.",
+        note,
+      });
+    }
+
+    // Going private: stop public pipeline; owner-only access
+    note.verificationStatus = "approved";
+    note.pipelineStage = "none";
+    note.scanLockUntil = null;
     await note.save();
-    
-    res.json({ 
-      message: `Note is now ${note.isPublic ? 'public' : 'private'}`,
-      note 
+
+    res.json({
+      message: "Note is now private. Only you can see it.",
+      note,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// Upload a note with file (PDF or Image)
-// Strategy: files ≤ 10MB → Cloudinary (CDN), files > 10MB → served from disk
+/**
+ * Instant upload: size/type only. No AI on the request path.
+ * - Private → approved immediately (owner-only)
+ * - Public → pending + background compress / Cloudinary / Groq / team
+ */
 exports.uploadNote = async (req, res) => {
   const localFilePath = req.file?.path;
   let persistLocalFile = false;
+  let compressCleanup = null;
 
   try {
     const { title, subject, subjectTag, isPublic, semester, noteType } = req.body;
     const owner = req.user._id;
-    
+
     if (!title || !title.trim()) {
       return res.status(400).json({ error: "Title is required." });
     }
-    
-    // Support both old subject ObjectId and new subjectTag
+
     if (!subject && !subjectTag) {
       return res.status(400).json({ error: "Subject or subject tag is required." });
     }
@@ -269,49 +299,36 @@ exports.uploadNote = async (req, res) => {
       return res.status(400).json({ error: "No file uploaded." });
     }
 
-    const isPdf = file.detectedType === "pdf" || /pdf/i.test(file.mimetype);
-    const extractedText = isPdf ? await extractPdfText(localFilePath) : "";
+    const makePublic = isPublic === "true" || isPublic === true;
 
-    let verdict;
+    // Compress PDF quickly when possible (non-blocking for AI — still sync but local CPU only)
+    let workingPath = localFilePath;
+    let workingBytes = file.size;
     try {
-      verdict = await moderateNote({
-        title: title.trim(),
-        subject: subjectTag || "",
-        description: req.body.content || "",
-        filename: file.originalname,
-        extractedText,
-      });
-    } catch (modErr) {
-      console.error("[Upload] Groq check failed:", modErr.message);
-      return res.status(503).json({ error: "We could not check this file. Try again in a minute." });
+      const compressed = await compressPdfIfNeeded(localFilePath, file.originalname);
+      workingPath = compressed.path;
+      workingBytes = compressed.bytes;
+      if (compressed.cleanup) compressCleanup = compressed.cleanup;
+    } catch {
+      // keep original
     }
 
-    if (!verdict.allowed) {
-      return res.status(400).json({
-        error: verdict.reason || "This file was not accepted as study material.",
-        verificationStatus: "rejected",
-      });
-    }
+    let fileUrl = `/uploads/notes/${file.filename}`;
+    let cloudinaryPublicId = null;
+    let storedLocally = true;
 
-    let fileUrl;
-    let storedLocally = false;
-
-    // Decide storage strategy based on file size
-    if (file.size <= CLOUDINARY_MAX_BYTES) {
-      // Small file → upload to Cloudinary for CDN delivery
+    // Best-effort Cloudinary now so CDN is ready; failures fall back to disk
+    if (workingBytes <= CLOUDINARY_MAX_BYTES) {
       try {
-        const result = await uploadToCloudinary(localFilePath, file.originalname);
+        const result = await uploadToCloudinary(workingPath, file.originalname);
         fileUrl = result.url;
+        cloudinaryPublicId = result.publicId;
+        storedLocally = false;
       } catch (cloudErr) {
-        console.warn("[Upload] Cloudinary upload failed, using local storage:", cloudErr.message);
+        console.warn("[Upload] Cloudinary deferred/failed:", cloudErr.message);
         fileUrl = `/uploads/notes/${file.filename}`;
         storedLocally = true;
       }
-    } else {
-      const sizeMB = (file.size / 1024 / 1024).toFixed(1);
-      console.log(`[Upload] Large file (${sizeMB}MB) — storing on disk: ${file.filename}`);
-      fileUrl = `/uploads/notes/${file.filename}`;
-      storedLocally = true;
     }
 
     const noteData = {
@@ -321,40 +338,53 @@ exports.uploadNote = async (req, res) => {
       fileType: file.mimetype,
       originalName: file.originalname,
       content: req.body.content || "",
-      extractedText: extractedText || req.body.content || "",
-      isPublic: isPublic === "true" || isPublic === true,
-      verificationStatus: "approved",
-      verificationReason: verdict.reason || "",
-      moderationLabel: verdict.label || "notes",
+      extractedText: "",
+      isPublic: makePublic,
+      cloudinaryPublicId,
+      compressedBytes: workingBytes,
+      localFilePath: storedLocally || makePublic ? localFilePath : null,
       downloadCount: 0,
+      emailsSent: { live: false, rejected: false },
     };
 
-    // Save semester and noteType if provided
-    if (semester) noteData.semester = semester.trim();
-    if (noteType) noteData.noteType = noteType.trim();
-
-    // Set either subject ref or subjectTag
-    if (subjectTag) {
-      noteData.subjectTag = subjectTag.trim();
-    } else if (subject) {
-      noteData.subject = subject;
+    if (makePublic) {
+      noteData.verificationStatus = "pending";
+      noteData.pipelineStage = "queued";
+      noteData.nextScanAt = new Date();
+      noteData.scanAttempts = 0;
+    } else {
+      noteData.verificationStatus = "approved";
+      noteData.pipelineStage = "none";
+      noteData.verificationReason = "Private note — no public review.";
     }
+
+    if (semester) noteData.semester = String(semester).trim();
+    if (noteType) noteData.noteType = String(noteType).trim();
+    if (subjectTag) noteData.subjectTag = subjectTag.trim();
+    else if (subject) noteData.subject = subject;
 
     const note = new Note(noteData);
     await note.save();
-    persistLocalFile = storedLocally;
-    
-    // Populate owner info before returning
+    persistLocalFile = Boolean(note.localFilePath);
+
     await note.populate("owner", "name email avatar");
-    
+
+    if (makePublic) {
+      await enqueueNoteScan(note._id, { immediate: true });
+    }
+
     res.status(201).json({
-      message: "Note uploaded successfully!",
+      message: makePublic
+        ? "Notes uploaded successfully. They will appear for everyone after a quick review."
+        : "Private notes saved. Only you can see them.",
       note,
-      verification: { status: "approved", reason: verdict.reason, label: verdict.label },
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   } finally {
+    if (compressCleanup && compressCleanup !== localFilePath) {
+      removeLocalFile(compressCleanup);
+    }
     if (localFilePath && !persistLocalFile) {
       removeLocalFile(localFilePath);
     }
@@ -507,13 +537,18 @@ exports.getNoteById = async (req, res) => {
     }
 
     if (!note) {
-      note = await Note.findOne({ _id: noteId, isPublic: true })
+      note = await Note.findOne({
+        _id: noteId,
+        isPublic: true,
+        verificationStatus: "approved",
+      })
         .populate("owner", "name email")
         .populate("subject", "name");
     }
-    
+
     if (!note) return res.status(404).json({ error: "Note not found." });
-    if (note.verificationStatus === "rejected" && String(note.owner?._id || note.owner) !== String(userId || "")) {
+    const isOwner = userId && String(note.owner?._id || note.owner) === String(userId);
+    if (!isOwner && note.verificationStatus !== "approved") {
       return res.status(404).json({ error: "Note not found." });
     }
 
@@ -604,13 +639,15 @@ exports.recordDownload = async (req, res) => {
     const userId = req.user._id;
 
     const note = await Note.findById(noteId);
-    if (!note || note.verificationStatus === "rejected") {
+    if (!note) {
       return res.status(404).json({ error: "Note not found." });
     }
 
     const isOwner = String(note.owner) === String(userId);
-    if (!note.isPublic && !isOwner) {
-      return res.status(404).json({ error: "Note not found." });
+    if (!isOwner) {
+      if (!note.isPublic || note.verificationStatus !== "approved") {
+        return res.status(404).json({ error: "Note not found." });
+      }
     }
 
     const already = (note.downloadedBy || []).some((id) => String(id) === String(userId));

@@ -194,6 +194,32 @@
   flex-shrink: 0;
 }
 
+.coming-soon-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.coming-soon-team-link {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  color: #111;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 7px 12px;
+}
+
+.coming-soon-team-link:hover {
+  border-color: #111;
+}
+
 .coming-soon-signin {
   border: 0;
   background: transparent;

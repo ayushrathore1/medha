@@ -112,6 +112,12 @@ connectMongo().catch(() => {
 
 if (require.main === module) {
   startServer();
+  try {
+    const { startNoteScanWorker } = require("./utils/noteScanWorker");
+    startNoteScanWorker();
+  } catch (err) {
+    console.warn("Note scan worker not started:", err.message);
+  }
 }
 
 // Same app instance tests import from app.js. Requiring this file does not listen.

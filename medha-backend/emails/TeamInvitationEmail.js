@@ -2,31 +2,70 @@ const React = require("react");
 const { Text } = require("react-email");
 const { MedhaLayout } = require("./components/Layout");
 const { colors, links, styles } = require("./components/styles");
-const { EmailKicker, EmailTitle, EmailLead, EmailButton, EmailCode, EmailPanel } = require("./components/primitives");
+const {
+  EmailKicker,
+  EmailTitle,
+  EmailLead,
+  EmailButton,
+  EmailPanel,
+} = require("./components/primitives");
 const h = React.createElement;
 
-function TeamInvitationEmail({ firstName, code, joinLink }) {
+function TeamInvitationEmail({ firstName, joinLink, alreadyMember = false }) {
   const first = firstName || "there";
+  const cta = alreadyMember ? "Open Ops desk" : "Join the team";
 
-  return h(MedhaLayout, {
-    preview: `You're invited to the Medha Revision team. Invite code ${code}.`,
-  },
-    h(EmailKicker, null, "Team invite"),
-    h(EmailTitle, null, "You're invited"),
-    h(EmailLead, null,
-      `Hi ${first}. Ayush Rathore invited you to join the Medha Revision team.`
+  return h(
+    MedhaLayout,
+    {
+      preview:
+        "You're on the Medha Revision team — early access before we open to everyone.",
+    },
+    h(EmailKicker, null, "Team access"),
+    h(EmailTitle, null, "Welcome to the Medha Revision team"),
+    h(
+      EmailLead,
+      null,
+      `Hi ${first}. You've been given access to the Medha Revision team.`
     ),
-    h(EmailPanel, { accent: colors.green },
-      h(Text, { style: { ...styles.body, margin: 0, color: colors.ink } },
-        "We're building a syllabus-first study search for college exams. Accept the invite with the email this message reached."
+    h(
+      EmailPanel,
+      { accent: colors.green },
+      h(
+        Text,
+        { style: { ...styles.body, margin: "0 0 12px 0", color: colors.ink } },
+        "You're accessing the platform before we open it for other users. Use this early window to check the product, improve it, and add what engineering students actually need."
+      ),
+      h(
+        Text,
+        { style: { ...styles.body, margin: 0, color: colors.ink } },
+        "Help make Medha Revision the best place for engineering students to get the right resources for their prep — curriculum, notes, and revision that match their semester and branch."
       )
     ),
-    h(EmailButton, { href: joinLink }, "Accept invitation"),
-    h(Text, { style: { ...styles.note, textAlign: "center" } }, "Or enter this code if the page asks for one."),
-    h(EmailCode, { value: code, caption: "Invitation code" }),
-    h(Text, { style: styles.note },
+    h(
+      Text,
+      { style: { ...styles.body, margin: "20px 0 0 0", color: colors.ink } },
+      alreadyMember
+        ? "Your team access is already active. Sign in with this email and open the Ops desk to start."
+        : "Sign in (or create an account) with this same email, then open the link below — no invite code needed. Admin already approved you."
+    ),
+    h(EmailButton, { href: joinLink }, cta),
+    h(
+      Text,
+      { style: styles.note },
       "Questions: ",
-      h("a", { href: `mailto:${links.authMail}`, style: { color: colors.ink, fontWeight: "600", textDecoration: "none" } }, links.authMail)
+      h(
+        "a",
+        {
+          href: `mailto:${links.authMail}`,
+          style: {
+            color: colors.ink,
+            fontWeight: "600",
+            textDecoration: "none",
+          },
+        },
+        links.authMail
+      )
     )
   );
 }

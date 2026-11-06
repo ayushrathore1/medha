@@ -1,38 +1,27 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 const pageVariants = {
-  initial: {
-    opacity: 0,
-    y: 20,
-    scale: 0.98,
-  },
-  in: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-  },
-  out: {
-    opacity: 0,
-    y: -20,
-    scale: 0.98,
-  },
+  initial: { opacity: 0, y: 10 },
+  in: { opacity: 1, y: 0 },
+  out: { opacity: 0, y: -6 },
 };
 
-const pageTransition = {
-  type: "spring",
-  ease: "anticipate",
-  duration: 0.5,
-};
+/** Soft transition for auth/legal pages. Primary tab routes should skip this. */
+const PageTransition = ({ children, className = "", enabled = true }) => {
+  const reduceMotion = useReducedMotion();
 
-const PageTransition = ({ children, className = "" }) => {
+  if (!enabled || reduceMotion) {
+    return <div className={`w-full h-full ${className}`}>{children}</div>;
+  }
+
   return (
     <motion.div
       initial="initial"
       animate="in"
       exit="out"
       variants={pageVariants}
-      transition={pageTransition}
+      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
       className={`w-full h-full ${className}`}
     >
       {children}

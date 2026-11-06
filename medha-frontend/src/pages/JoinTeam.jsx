@@ -1,42 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaUserPlus, FaSpinner, FaCircleCheck, FaCircleExclamation } from "react-icons/fa6";
-import Card from "../components/Common/Card";
+import {
+  FaUserPlus,
+  FaSpinner,
+  FaCircleCheck,
+  FaCircleExclamation,
+} from "react-icons/fa6";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const JoinTeam = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
-  const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("idle"); // idle, success, error
+  const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
 
   const token = localStorage.getItem("token");
+  const emailParam = searchParams.get("email") || "";
 
   useEffect(() => {
-    // Check login
     if (!token) {
-      // Redirect to login with return url
-      // For now just storing intent? Or let them login and come back manually?
-      // Better: navigate to login with state
-      navigate("/login", { state: { returnUrl: `/join-team?${searchParams.toString()}` } });
-      return;
-    }
-
-    // Pre-fill email from URL
-    const emailParam = searchParams.get("email");
-    if (emailParam) {
-      setEmail(emailParam);
+      navigate("/login", {
+        state: { returnUrl: `/join-team?${searchParams.toString()}` },
+      });
     }
   }, [searchParams, navigate, token]);
 
-  const handleVerify = async (e) => {
-    e.preventDefault();
+  const handleJoin = async (e) => {
+    e?.preventDefault?.();
     setLoading(true);
     setStatus("idle");
     setMessage("");
@@ -44,99 +37,88 @@ const JoinTeam = () => {
     try {
       const res = await axios.post(
         `${BACKEND_URL}/api/team/join`,
-        { email, code },
+        { email: emailParam },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setStatus("success");
       setMessage(res.data.message || "Welcome to the team!");
-      
-      // Update local storage user info if storing role?
-      // Usually need to refresh profile or token. The token contains role? 
-      // If token has role, user needs to relogin. If role is fetched from /me, it's fine.
-      // Assuming role is checked from DB on critical actions.
-      
-      setTimeout(() => {
-        navigate("/team-dashboard");
-      }, 2000);
 
+      try {
+        const raw = localStorage.getItem("user");
+        if (raw) {
+          const user = JSON.parse(raw);
+          user.role = res.data.role || "team";
+          user.isAdmin = true;
+          localStorage.setItem("user", JSON.stringify(user));
+        }
+      } catch {
+        /* ignore */
+      }
+
+      setTimeout(() => {
+        navigate("/admin");
+      }, 1500);
     } catch (error) {
-      console.error("Verification failed:", error);
+      console.error("Join failed:", error);
       setStatus("error");
-      setMessage(error.response?.data?.message || "Verification failed. Please check your code.");
+      setMessage(
+        error.response?.data?.message ||
+          "Could not join the team. Ask an admin to invite this email again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  if (!token) return null;
+
   return (
-    <div className="min-h-screen pt-20 px-4 flex items-center justify-center bg-[var(--bg-primary)]">
-      <Card className="max-w-md w-full p-8 shadow-2xl border-t-4 border-purple-600">
-        <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-            <FaUserPlus />
+    <div className="flex min-h-screen items-center justify-center bg-[#f7f7f4] px-4 pt-20">
+      <div className="w-full max-w-md rounded-2xl border border-[#e8e8e8] bg-white p-8 shadow-[0_12px_40px_rgba(17,17,17,0.06)]">
+        <div className="mb-6 text-center">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#e8f8ee] text-[#1ba34a]">
+            <FaUserPlus size={22} />
           </div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Join the Team</h1>
-          <p className="text-[var(--text-secondary)] mt-2">
-            Enter the 6-digit code sent to your email to verify your invitation.
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#111]">
+            Join the Medha team
+          </h1>
+          <p className="mt-2 text-sm leading-relaxed text-[#5a5a5a]">
+            Admin already approved you — no invite code. Confirm with the same
+            email that received the invite.
           </p>
+          {emailParam ? (
+            <p className="mt-3 rounded-full bg-[#f4f4f2] px-3 py-1.5 text-xs font-semibold text-[#111]">
+              {emailParam}
+            </p>
+          ) : null}
         </div>
 
         {status === "success" ? (
-          <div className="bg-green-50 border border-green-200 text-green-700 p-4 rounded-lg text-center mb-6">
-            <FaCircleCheck className="inline text-xl mb-1 mr-2" />
-            <span className="font-bold block">Success!</span>
-            {message}
+          <div className="rounded-xl border border-[#b7e4c4] bg-[#e8f8ee] p-4 text-center text-[#14532d]">
+            <FaCircleCheck className="mb-1 inline text-xl" />
+            <p className="font-bold">You&apos;re in</p>
+            <p className="text-sm">{message}</p>
           </div>
         ) : (
-          <form onSubmit={handleVerify} className="space-y-4">
-            {status === "error" && (
-              <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-sm flex items-start gap-2">
+          <form onSubmit={handleJoin} className="space-y-4">
+            {status === "error" ? (
+              <div className="flex items-start gap-2 rounded-xl border border-[#fecaca] bg-[#fff5f5] p-3 text-sm text-[#be123c]">
                 <FaCircleExclamation className="mt-0.5 shrink-0" />
                 <span>{message}</span>
               </div>
-            )}
-
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                Your Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-secondary)] text-[var(--text-primary)] focus:ring-2 focus:ring-purple-500 outline-none"
-                placeholder="yours@example.com"
-                required
-                readOnly={!!searchParams.get("email")} // Read-only if from link
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                Invitation Code
-              </label>
-              <input
-                type="text"
-                value={code}
-                onChange={(e) => setCode(e.target.value.toUpperCase())}
-                className="w-full px-4 py-3 text-center text-2xl tracking-[0.5em] font-mono rounded-lg border border-[var(--border-default)] bg-[var(--bg-secondary)] text-[var(--text-primary)] focus:ring-2 focus:ring-purple-500 outline-none uppercase placeholder:tracking-normal"
-                placeholder="XXXXXX"
-                maxLength={6}
-                required
-              />
-            </div>
+            ) : null}
 
             <button
               type="submit"
-              disabled={loading || code.length < 6}
-              className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              disabled={loading}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#111] py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
             >
-              {loading ? <FaSpinner className="animate-spin" /> : "Verify & Join Team"}
+              {loading ? <FaSpinner className="animate-spin" /> : "Accept team access"}
             </button>
           </form>
         )}
-      </Card>
+      </div>
     </div>
   );
 };

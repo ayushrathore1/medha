@@ -4,8 +4,9 @@ const Topic = require("../models/Topic");
 const axios = require("axios");
 const mongoose = require("mongoose");
 
+const { GROQ_CAPABLE } = require("../config/groqModels");
 const GROQ_API_KEY = process.env.GROQ_API_KEY || "YOUR_GROQ_API_KEY_HERE";
-const GROQ_MODEL = "llama-3.3-70b-versatile";
+const GROQ_MODEL = GROQ_CAPABLE;
 
 // Manual flashcard creation
 // Manual flashcard creation

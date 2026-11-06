@@ -3,7 +3,47 @@ const LearnContent = require("../models/LearnContent");
 const ExamAnalysis = require("../models/ExamAnalysis");
 const Subject = require("../models/Subject");
 const SearchHistory = require("../models/SearchHistory");
+const CuratedResource = require("../models/CuratedResource");
 const SYLLABUS_CATALOG = require("../data/syllabusCatalog");
+const { seedCuratedResources } = require("../utils/seedCuratedResources");
+
+function publicCurated(doc) {
+  return {
+    id: doc._id.toString(),
+    type: doc.kind === "gfg" ? "gfg" : "youtube",
+    category: doc.kind === "gfg" ? "gfg" : "youtube",
+    title: doc.title,
+    description: doc.unitTitle
+      ? `Unit ${doc.unitNumber || ""}: ${doc.unitTitle}`.trim()
+      : doc.subject
+        ? `Curated for ${doc.subject}`
+        : undefined,
+    subject: doc.subject || null,
+    semester: doc.semester ? `${doc.semester}th Sem` : null,
+    unitNumber: doc.unitNumber || null,
+    unitTitle: doc.unitTitle || null,
+    duration: doc.duration || null,
+    channelTitle: doc.channelTitle || (doc.kind === "gfg" ? "GeeksforGeeks" : "Lecture"),
+    hasThumbnail: doc.kind === "youtube",
+    thumbnailUrl: doc.kind === "youtube" ? `/api/resources/${doc._id}/thumb` : null,
+    score: doc._score || 40,
+  };
+}
+
+function sanitizeNoteResult(note) {
+  const { fileUrl, redirects, ...rest } = note;
+  return {
+    ...rest,
+    fileUrl: undefined,
+    redirects: redirects
+      ? {
+          subjectNotes: redirects.subjectNotes,
+          subjectYouTube: redirects.subjectYouTube,
+          communityNotes: redirects.communityNotes,
+        }
+      : undefined,
+  };
+}
 
 // High-speed In-Memory LRU Cache with TTL
 const searchCache = new Map();
@@ -120,9 +160,9 @@ exports.searchAll = async (req, res) => {
         $and: [
           {
             $or: [
-              { isPublic: true },
-              ...(userId ? [{ owner: userId }] : [])
-            ]
+              { isPublic: true, verificationStatus: "approved" },
+              ...(userId ? [{ owner: userId }] : []),
+            ],
           },
           {
             $or: [
@@ -130,10 +170,10 @@ exports.searchAll = async (req, res) => {
               { content: { $regex: safeRegex } },
               { subjectTag: { $regex: safeRegex } },
               { extractedText: { $regex: safeRegex } },
-              { noteType: { $regex: safeRegex } }
-            ]
-          }
-        ]
+              { noteType: { $regex: safeRegex } },
+            ],
+          },
+        ],
       };
 
       if (semesterFilter !== "all") {
@@ -252,7 +292,6 @@ exports.searchAll = async (req, res) => {
           subject: subjectName,
           semester: note.semester ? `${note.semester.replace(/[^0-9]/g, "")}th Sem` : "All Semesters",
           noteType: note.noteType || (isPYQ ? "📄 PYQ Paper" : "📝 Handwritten Notes"),
-          fileUrl: note.fileUrl,
           fileType: note.fileType || "pdf",
           likesCount: note.likes ? note.likes.length : 0,
           mcqCount: note.mcqs ? note.mcqs.length : 0,
@@ -263,142 +302,82 @@ exports.searchAll = async (req, res) => {
           createdAt: note.createdAt,
           score,
           redirects: {
-            subjectNotes: `/rtu-exams/subject/${encodeURIComponent(subjectName)}/notes`,
-            subjectYouTube: `/rtu-exams/subject/${encodeURIComponent(subjectName)}/youtube`,
-            communityNotes: `/notes?search=${encodeURIComponent(note.title)}`,
-            fileDirect: note.fileUrl || null
+            subjectNotes: `/subjects`,
+            subjectYouTube: `/search?q=${encodeURIComponent(subjectName)}`,
+            communityNotes: `/search?q=${encodeURIComponent(note.title)}`,
           }
         };
       });
+      notesResults = notesResults.map(sanitizeNoteResult);
     }
 
-    // ─── 2. PROCESS YOUTUBE LECTURES ───────────────────────────
+    // ─── 2. YOUTUBE + GFG FROM CURATED DB (no raw URLs) ────────
     let youtubeResults = [];
+    let gfgResults = [];
     if (shouldFetchYoutube) {
-      // From DB
+      try {
+        await seedCuratedResources();
+        const curatedFilter = { active: true };
+        if (subjectFilter !== "all") {
+          curatedFilter.subject = new RegExp(escapeRegex(subjectFilter), "i");
+        }
+        curatedFilter.$or = [
+          { title: safeRegex },
+          { subject: safeRegex },
+          { unitTitle: safeRegex },
+          { tags: safeRegex },
+          { channelTitle: safeRegex },
+        ];
+        const curated = await CuratedResource.find(curatedFilter).limit(limit * 2).lean();
+        curated.forEach((doc) => {
+          const scored = {
+            ...publicCurated(doc),
+            score: Math.max(
+              calculateScore(doc.title, rawQuery) * 1.5,
+              calculateScore(doc.subject, rawQuery) * 1.2,
+              calculateScore(doc.unitTitle, rawQuery) * 1.1,
+              25
+            ),
+          };
+          if (doc.kind === "gfg") gfgResults.push({ ...scored, type: "gfg", category: "gfg" });
+          else youtubeResults.push(scored);
+        });
+      } catch (curatedErr) {
+        console.warn("[Search] Curated resources unavailable:", curatedErr.message);
+      }
+
+      // LearnContent titles only — open still goes through curated/learn ids if seeded
       if (Array.isArray(learnVideoMatches)) {
-        learnVideoMatches.forEach(v => {
+        learnVideoMatches.forEach((v) => {
           const score = Math.max(
             calculateScore(v.title, rawQuery) * 1.5,
             calculateScore(v.subject, rawQuery) * 1.2
           );
           youtubeResults.push({
-            id: v.videoId || v._id.toString(),
+            id: v._id.toString(),
             type: "youtube",
             category: "youtube",
             title: v.title,
             description: v.description || `Chapter video lecture for ${v.subject}`,
             subject: v.subject,
-            semester: v.semester ? `${v.semester}th Sem` : "3rd Sem",
+            semester: v.semester ? `${v.semester}th Sem` : null,
             unitNumber: v.unit || null,
             unitTitle: v.unit ? `Unit ${v.unit}` : "Core Concept",
             duration: v.duration || "15m",
             channelTitle: "Medha Curated",
-            thumbnailUrl: v.thumbnailUrl || (v.videoId ? `https://i.ytimg.com/vi/${v.videoId}/mqdefault.jpg` : null),
-            videoId: v.videoId,
-            youtubeUrl: v.videoUrl || (v.videoId ? `https://www.youtube.com/watch?v=${v.videoId}` : null),
-            isPlaylist: false,
+            hasThumbnail: Boolean(v.thumbnailUrl || v.videoId),
+            thumbnailUrl: null,
             score,
-            redirects: {
-              subjectYouTube: `/rtu-exams/subject/${encodeURIComponent(v.subject)}/youtube${v.unit ? `?unit=${v.unit}` : ""}`,
-              subjectNotes: `/rtu-exams/subject/${encodeURIComponent(v.subject)}/notes`,
-              watchDirect: v.videoUrl || (v.videoId ? `https://www.youtube.com/watch?v=${v.videoId}` : null)
-            }
+            learnContentId: v._id.toString(),
           });
         });
       }
 
-      // From SYLLABUS_CATALOG
-      Object.keys(SYLLABUS_CATALOG).forEach(subjectName => {
-        const subData = SYLLABUS_CATALOG[subjectName];
-        const semNum = subData.semester || 4;
-        const semString = `${semNum}th Sem`;
-
-        if (semesterFilter !== "all" && !semString.toLowerCase().includes(semesterFilter.replace(/[^0-9]/g, ""))) {
-          return;
-        }
-
-        if (subjectFilter !== "all" && !subjectName.toLowerCase().includes(subjectFilter.toLowerCase())) {
-          return;
-        }
-
-        const subjectMatchScore = calculateScore(subjectName, rawQuery);
-
-        // Subject Playlist
-        if (subData.playlistUrl && (subjectMatchScore > 0 || safeRegex.test(subjectName))) {
-          youtubeResults.push({
-            id: `playlist-${encodeURIComponent(subjectName)}`,
-            type: "youtube",
-            category: "youtube",
-            title: `${subjectName} — Complete Syllabus Playlist`,
-            description: `Full subject curated YouTube video playlist for ${subjectName} (${semString})`,
-            subject: subjectName,
-            semester: semString,
-            unitNumber: null,
-            unitTitle: "Full Syllabus Playlist",
-            duration: "Full Playlist",
-            channelTitle: subData.channelTitle || "Curated Channel",
-            thumbnailUrl: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=480&auto=format&fit=crop&q=80",
-            youtubeUrl: subData.playlistUrl,
-            isPlaylist: true,
-            score: subjectMatchScore * 1.3 + 20,
-            redirects: {
-              subjectYouTube: `/rtu-exams/subject/${encodeURIComponent(subjectName)}/youtube`,
-              subjectNotes: `/rtu-exams/subject/${encodeURIComponent(subjectName)}/notes`,
-              watchDirect: subData.playlistUrl
-            }
-          });
-        }
-
-        // Units & Unit Videos
-        (subData.units || []).forEach(unit => {
-          const unitMatches = safeRegex.test(unit.title) || safeRegex.test(subjectName);
-          const topicMatches = (unit.topics || []).some(t => safeRegex.test(t));
-
-          (unit.videos || []).forEach(v => {
-            const videoTitleScore = calculateScore(v.title, rawQuery);
-            const score = Math.max(
-              videoTitleScore * 1.5,
-              unitMatches ? 60 : 0,
-              topicMatches ? 50 : 0,
-              subjectMatchScore * 1.1
-            );
-
-            if (score > 15 || videoTitleScore > 0 || unitMatches || topicMatches) {
-              youtubeResults.push({
-                id: v.videoId || `vid-${unit.unitNumber}-${v.title.slice(0, 10)}`,
-                type: "youtube",
-                category: "youtube",
-                title: v.title,
-                description: `Unit ${unit.unitNumber}: ${unit.title} — ${unit.topics ? unit.topics.slice(0, 3).join(", ") : ""}`,
-                subject: subjectName,
-                semester: semString,
-                unitNumber: unit.unitNumber,
-                unitTitle: unit.title,
-                duration: v.duration || "20m",
-                channelTitle: v.channelTitle || subData.channelTitle || "YouTube",
-                thumbnailUrl: v.thumbnail || (v.videoId ? `https://i.ytimg.com/vi/${v.videoId}/mqdefault.jpg` : null),
-                videoId: v.videoId,
-                youtubeUrl: `https://www.youtube.com/watch?v=${v.videoId}`,
-                isPlaylist: false,
-                score,
-                redirects: {
-                  subjectYouTube: `/rtu-exams/subject/${encodeURIComponent(subjectName)}/youtube?unit=${unit.unitNumber}`,
-                  subjectNotes: `/rtu-exams/subject/${encodeURIComponent(subjectName)}/notes`,
-                  watchDirect: `https://www.youtube.com/watch?v=${v.videoId}`
-                }
-              });
-            }
-          });
-        });
-      });
-
-      // Deduplicate YouTube results
-      const seenVideos = new Set();
-      youtubeResults = youtubeResults.filter(item => {
-        const key = item.videoId || item.title;
-        if (seenVideos.has(key)) return false;
-        seenVideos.add(key);
+      const seen = new Set();
+      youtubeResults = youtubeResults.filter((item) => {
+        const key = item.id || item.title;
+        if (seen.has(key)) return false;
+        seen.add(key);
         return true;
       });
     }
@@ -532,6 +511,7 @@ exports.searchAll = async (req, res) => {
 
     notesResults.sort(sortByScore);
     youtubeResults.sort(sortByScore);
+    gfgResults.sort(sortByScore);
     subjectResults.sort(sortByScore);
     pyqResults.sort(sortByScore);
 
@@ -539,15 +519,17 @@ exports.searchAll = async (req, res) => {
       ...subjectResults.slice(0, 2),
       ...youtubeResults.slice(0, 3),
       ...notesResults.slice(0, 3),
+      ...gfgResults.slice(0, 2),
       ...pyqResults.slice(0, 2)
     ].sort(sortByScore);
 
     const topMatches = allRanked.slice(0, 4);
 
     const counts = {
-      total: notesResults.length + youtubeResults.length + subjectResults.length + pyqResults.length,
+      total: notesResults.length + youtubeResults.length + gfgResults.length + subjectResults.length + pyqResults.length,
       notes: notesResults.length,
       youtube: youtubeResults.length,
+      gfg: gfgResults.length,
       subjects: subjectResults.length,
       pyq: pyqResults.length
     };
@@ -560,6 +542,7 @@ exports.searchAll = async (req, res) => {
       results: {
         notes: notesResults.slice(0, limit),
         youtube: youtubeResults.slice(0, limit),
+        gfg: gfgResults.slice(0, limit),
         subjects: subjectResults.slice(0, limit),
         pyq: pyqResults.slice(0, limit)
       },

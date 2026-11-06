@@ -1,0 +1,315 @@
+/* Shared study-desk theme for Home / Search / Subjects / Upload / Profile */
+
+.desk-shell {
+  background: #f7f7f4 !important;
+  color: #111;
+}
+
+.desk-shell > header {
+  background: rgba(255, 255, 255, 0.92) !important;
+}
+
+.desk-page {
+  position: relative;
+  isolation: isolate;
+}
+
+.desk-page::before {
+  content: "";
+  position: absolute;
+  inset: -4px 0 auto;
+  height: 200px;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 0;
+  background:
+    radial-gradient(ellipse 50% 65% at 10% 20%, rgba(27, 163, 74, 0.12), transparent 70%),
+    radial-gradient(ellipse 42% 55% at 90% 15%, rgba(37, 99, 235, 0.1), transparent 68%),
+    radial-gradient(ellipse 36% 50% at 60% 100%, rgba(245, 158, 11, 0.08), transparent 72%);
+}
+
+.desk-eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6b6b6b;
+}
+
+.desk-title {
+  margin: 0;
+  font-family: Manrope, "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+  color: #111;
+}
+
+.desk-sub {
+  margin: 8px 0 0;
+  max-width: 48ch;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #5a5a5a;
+}
+
+.desk-panel {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 16px;
+  padding: 18px;
+  min-width: 0;
+}
+
+.desk-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.desk-panel-head h2 {
+  margin: 0;
+  font-family: Manrope, "Plus Jakarta Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 780;
+  letter-spacing: -0.03em;
+  color: #111;
+}
+
+.desk-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  text-decoration: none;
+  color: #111;
+  border: 1px solid transparent;
+}
+
+.desk-banner--green {
+  background: linear-gradient(145deg, #e8f8ee, #d4f0dd);
+  border-color: #b7e4c4;
+  color: #14532d;
+}
+
+.desk-banner--blue {
+  background: linear-gradient(145deg, #e8f0ff, #d6e4ff);
+  border-color: #93c5fd;
+  color: #1e3a8a;
+}
+
+.desk-banner--orange {
+  background: linear-gradient(145deg, #fff4e5, #ffe2bf);
+  border-color: #fdba74;
+  color: #9a3412;
+}
+
+.desk-banner--violet {
+  background: linear-gradient(145deg, #f3eaff, #e7d7ff);
+  border-color: #c4b5fd;
+  color: #5b21b6;
+}
+
+.desk-banner strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.desk-banner span {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+.desk-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+}
+
+.desk-tab {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 650;
+  color: #5a5a5a;
+  background: transparent;
+  cursor: pointer;
+}
+
+.desk-tab.is-on {
+  background: #111;
+  color: #fff;
+}
+
+.desk-solid-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: #111;
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 650;
+  padding: 11px 18px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.desk-ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  color: #111;
+  font-size: 14px;
+  font-weight: 650;
+  padding: 11px 16px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.desk-subject-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.desk-subject-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: #111;
+  background: color-mix(in srgb, var(--accent, #1ba34a) 14%, white);
+  border: 1px solid color-mix(in srgb, var(--accent, #1ba34a) 28%, white);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.desk-subject-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--accent, #1ba34a) 18%, transparent);
+}
+
+.desk-subject-code {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--accent, #1ba34a);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.desk-subject-name {
+  font-size: 15px;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+
+.desk-subject-meta {
+  font-size: 12px;
+  color: #5a5a5a;
+}
+
+.desk-field {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.desk-field > span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b6b6b;
+}
+
+.desk-field input,
+.desk-field select,
+.desk-field textarea {
+  width: 100%;
+  border: 1px solid #e5e5e5 !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  padding: 12px 14px !important;
+  font: inherit;
+  font-size: 15px;
+  color: #111;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.desk-field input:focus,
+.desk-field select:focus,
+.desk-field textarea:focus {
+  border-color: #cfcfcf !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+}
+
+.desk-dropzone {
+  display: block;
+  cursor: pointer;
+  border-radius: 16px;
+  border: 1.5px dashed #cfcfcf;
+  background: #fff;
+  padding: 28px 16px;
+  text-align: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.desk-dropzone:hover {
+  border-color: #111;
+  background: #fafafa;
+}
+
+.desk-shell .dash-search input,
+.desk-shell .dash-search input:focus,
+.desk-shell .dash-search input:focus-visible {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* Profile cards under desk shell */
+.desk-shell .shadow-xl {
+  box-shadow: 0 10px 28px rgba(17, 17, 17, 0.05) !important;
+}
+
+@media (max-width: 720px) {
+  .desk-subject-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .desk-title {
+    font-size: 26px;
+  }
+}

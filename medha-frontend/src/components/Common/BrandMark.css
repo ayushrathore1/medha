@@ -1,32 +1,70 @@
 .brand-mark {
   display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  line-height: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  line-height: 1.15;
   text-decoration: none;
-}
-
-.brand-mark-medha,
-.brand-mark-ck {
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-  color: inherit;
-  transition: opacity 0.2s ease;
-}
-
-.brand-mark-medha:hover,
-.brand-mark-ck:hover {
-  opacity: 0.82;
+  color: #111;
+  flex-shrink: 0;
 }
 
 .brand-mark-medha-text {
   font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(15px, 2.8vw, 18px);
+  font-size: 17px;
   font-weight: 800;
   letter-spacing: -0.03em;
-  word-spacing: 0.06em;
+  word-spacing: 0.04em;
   color: #111;
+  line-height: 1.15;
+  transform: none;
+}
+
+.brand-mark-by {
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: #6b6b6b;
+  line-height: 1.2;
+}
+
+.brand-mark-ck {
+  display: inline-flex;
+  align-items: baseline;
+  font-family: Manrope, ui-sans-serif, system-ui, sans-serif;
+  font-size: 12px;
+  letter-spacing: -0.025em;
+  color: #14140f;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transform: none;
+  height: auto;
+}
+
+.brand-mark-campus {
+  font-weight: 300;
+}
+
+.brand-mark-kart {
+  font-weight: 400;
+}
+
+.brand-mark-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin: 0 0 0.12em 0.16em;
+  border-radius: 50%;
+  background: #3f6b52;
+  flex-shrink: 0;
+}
+
+.brand-mark-medha {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
 }
 
 .brand-mark-medha-img {
@@ -43,34 +81,26 @@
   flex-shrink: 0;
 }
 
-.brand-mark-ck {
-  align-items: baseline;
-  font-family: Manrope, ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(12px, 2.4vw, 14px);
-  letter-spacing: -0.025em;
-  color: #14140f;
-  gap: 0;
+/* Horizontal logo + ck (auth compact) */
+.brand-mark--logo,
+.brand-mark--compact.brand-mark--logo {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 }
 
-.brand-mark-campus {
-  font-weight: 300;
+.brand-mark--nav .brand-mark-medha-text {
+  font-size: 18px;
 }
 
-.brand-mark-kart {
-  font-weight: 400;
+.brand-mark--nav .brand-mark-by {
+  font-size: 11px;
 }
 
-.brand-mark-dot {
-  width: 5px;
-  height: 5px;
-  margin-left: 3px;
-  border-radius: 50%;
-  background: #3f6b52;
-  align-self: center;
-  flex-shrink: 0;
+.brand-mark--nav .brand-mark-ck {
+  font-size: 13px;
 }
 
-/* Auth / legal shells — match existing wordmark scale */
 .brand-mark--auth .brand-mark-medha-text,
 .brand-mark--legal .brand-mark-medha-text {
   font-size: clamp(18px, 2.4vw, 22px);
@@ -78,23 +108,7 @@
 
 .brand-mark--auth .brand-mark-ck,
 .brand-mark--legal .brand-mark-ck {
-  font-size: clamp(13px, 1.8vw, 15px);
-}
-
-.brand-mark--nav .brand-mark-medha-text {
-  font-size: 18px;
-}
-
-.brand-mark--nav .brand-mark-ck {
-  font-size: 12px;
-}
-
-.brand-mark--nav .brand-mark-rule {
-  height: 16px;
-}
-
-.brand-mark--compact {
-  gap: 8px;
+  font-size: 13px;
 }
 
 .brand-mark--compact .brand-mark-medha-img {
@@ -107,11 +121,7 @@
 }
 
 @media (max-width: 640px) {
-  .brand-mark--coming-soon {
-    gap: 8px;
-  }
-
-  .brand-mark--coming-soon .brand-mark-rule {
-    height: 14px;
+  .brand-mark--nav .brand-mark-medha-text {
+    font-size: 16px;
   }
 }

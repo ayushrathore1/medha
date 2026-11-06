@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import RevisionShell from "../components/Revision/RevisionShell";
 import ResourceBoard from "../components/Revision/ResourceBoard";
-import CodeChip from "../components/Revision/CodeChip";
-import CurriculumBadge from "../components/Revision/CurriculumBadge";
 import TopicChip from "../components/Revision/TopicChip";
-import { SCHEME, getUnitBySlug, saveRecentSearch, searchPath, topicIsShared } from "../data/subjectCatalog";
+import { saveRecentSearch, searchPath } from "../data/subjectCatalog";
+import { findMergedSubject, findMergedUnit, useMergedSubjects } from "../hooks/useMergedSubjects";
 
 const TABS = [
   { id: "overview", label: "Overview" },
@@ -15,86 +14,110 @@ const TABS = [
 
 export default function TopicDetail() {
   const { subjectSlug, unitSlug } = useParams();
-  const { subject, unit } = getUnitBySlug(subjectSlug, unitSlug);
+  const { subjects, loading } = useMergedSubjects();
+  const subject = findMergedSubject(subjects, subjectSlug);
+  const unit = findMergedUnit(subject, unitSlug);
   const [tab, setTab] = useState("overview");
 
-  if (!subject || !unit) {
+  if (loading) {
     return (
-      <RevisionShell title="Unit" showBack>
-        <p className="text-[15px] text-[var(--slate-2)]">Couldn’t load your syllabus.</p>
-        <Link to="/subjects" className="mt-4 inline-flex rounded-full bg-[var(--navy)] px-4 py-2.5 text-[14px] font-semibold text-white no-underline">
-          Try again
-        </Link>
+      <RevisionShell title="Unit" showBack desk>
+        <p className="desk-sub">Loading syllabus…</p>
       </RevisionShell>
     );
   }
 
+  if (!subject || !unit) {
+    return (
+      <RevisionShell title="Unit" showBack desk>
+        <div className="desk-page">
+          <p className="desk-sub">Couldn’t load this unit.</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {subject ? (
+              <Link to={`/subjects/${subject.slug}`} className="desk-solid-btn">
+                Back to subject
+              </Link>
+            ) : null}
+            <Link to="/subjects" className="desk-ghost-btn">
+              All subjects
+            </Link>
+          </div>
+        </div>
+      </RevisionShell>
+    );
+  }
+
+  const topics = (unit.topics || []).map((t) => (typeof t === "string" ? t : t?.title)).filter(Boolean);
   const query = unit.title;
   const context = { code: subject.code, scheme: subject.scheme, unit: unit.title };
 
   return (
-    <RevisionShell title={unit.title} showBack>
-      <div className="mb-3 flex flex-wrap gap-2">
-        <CodeChip code={subject.code} />
-        <CurriculumBadge label={SCHEME[subject.scheme]?.label} />
-      </div>
-      <p className="text-[14px] text-[var(--muted)]">
-        {subject.name} · Unit {String(unit.unitNumber).padStart(2, "0")}
-      </p>
-      <h1 className="mt-1 font-[family-name:var(--font-display)] text-[clamp(26px,4vw,44px)] font-extrabold leading-none tracking-[-0.045em] text-[var(--navy)]">
-        {unit.title}
-      </h1>
+    <RevisionShell title={unit.title} showBack desk>
+      <div className="desk-page">
+        <p className="desk-eyebrow">
+          <Link to={`/subjects/${subject.slug}`} className="no-underline text-inherit hover:text-[#1ba34a]">
+            {subject.name}
+          </Link>
+          {" · "}Unit {String(unit.unitNumber || "").padStart(2, "0")}
+        </p>
+        <h1 className="desk-title" style={{ fontSize: "clamp(24px, 4vw, 34px)" }}>
+          {unit.title}
+        </h1>
+        <p className="desk-sub">{topics.length} topics in this unit</p>
 
-      <div className="mt-5 flex flex-wrap gap-2 text-[14px]">
-        {TABS.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => {
-              setTab(item.id);
-              if (item.id === "resources") saveRecentSearch(query);
-            }}
-            className={`rounded-full px-4 py-1.5 ${
-              tab === item.id ? "bg-[#111] font-semibold text-white" : "border border-[var(--line)] text-[#5A5A5A]"
-            }`}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-
-      {tab === "overview" && (
-        <section className="mt-5">
-          <p className="text-[15px] leading-6 text-[var(--slate-2)]">
-            {unit.topicCount} syllabus points
-            {unit.videoCount ? `, ${unit.videoCount} lectures` : ""}. Use Topics for the list, or Resources for notes and videos.
-          </p>
-          <button type="button" onClick={() => setTab("topics")} className="mt-4 text-[14px] font-medium text-[var(--blue)]">
-            Read the topic list
-          </button>
-        </section>
-      )}
-
-      {tab === "topics" && (
-        <section className="mt-4 flex flex-wrap gap-2.5">
-          {unit.topics.map((topic) => (
-            <TopicChip
-              key={topic}
-              to={searchPath(topic, context)}
-              onClick={() => saveRecentSearch(topic)}
-              sharedWithAutonomous={topicIsShared(topic)}
+        <div className="desk-tabs mt-4" role="tablist">
+          {TABS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              role="tab"
+              aria-pressed={tab === item.id}
+              onClick={() => {
+                setTab(item.id);
+                if (item.id === "resources") saveRecentSearch(query);
+              }}
+              className={`desk-tab${tab === item.id ? " is-on" : ""}`}
             >
-              {topic}
-            </TopicChip>
+              {item.label}
+            </button>
           ))}
-        </section>
-      )}
-
-      {tab === "resources" && (
-        <div className="mt-5">
-          <ResourceBoard query={query} subject={subject.name} extraTitles={unit.topics} />
         </div>
-      )}
+
+        {tab === "overview" && (
+          <section className="desk-panel mt-4">
+            <p className="desk-sub" style={{ margin: 0, maxWidth: "none" }}>
+              {topics.length} syllabus points
+              {unit.videoCount ? `, ${unit.videoCount} lectures` : ""}. Open Topics for the list, or Resources for notes
+              and videos.
+            </p>
+            <button type="button" onClick={() => setTab("topics")} className="desk-ghost-btn mt-4">
+              Read the topic list
+            </button>
+          </section>
+        )}
+
+        {tab === "topics" && (
+          <section className="desk-panel mt-4">
+            <div className="flex flex-wrap gap-2">
+              {topics.map((topic) => (
+                <TopicChip
+                  key={topic}
+                  to={searchPath(topic, context)}
+                  onClick={() => saveRecentSearch(topic)}
+                >
+                  {topic}
+                </TopicChip>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {tab === "resources" && (
+          <div className="mt-4">
+            <ResourceBoard query={query} subject={subject.name} extraTitles={topics} />
+          </div>
+        )}
+      </div>
     </RevisionShell>
   );
 }

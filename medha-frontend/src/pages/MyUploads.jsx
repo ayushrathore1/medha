@@ -7,14 +7,34 @@ import api from "../api/api";
 
 const FILTERS = [
   { id: "all", label: "All" },
-  { id: "approved", label: "Live" },
+  { id: "approved", label: "Live / private" },
+  { id: "pending", label: "Processing" },
   { id: "rejected", label: "Rejected" },
 ];
 
 function statusOf(note) {
   if (note.verificationStatus === "rejected") return "rejected";
-  if (note.verificationStatus === "approved" || note.isPublic) return "approved";
+  if (note.verificationStatus === "pending" || note.verificationStatus === "awaiting_team") {
+    return "pending";
+  }
+  if (note.verificationStatus === "approved") return "approved";
   return "pending";
+}
+
+function statusLabel(note) {
+  if (!note.isPublic && note.verificationStatus === "approved") return "Private";
+  if (note.verificationStatus === "awaiting_team") return "Almost ready";
+  if (note.verificationStatus === "pending") return "Uploading";
+  if (note.verificationStatus === "rejected") return "Not published";
+  if (note.verificationStatus === "approved" && note.isPublic) return "Live";
+  return "Saved";
+}
+
+function statusTone(note) {
+  if (note.verificationStatus === "rejected") return "warn";
+  if (note.verificationStatus === "pending" || note.verificationStatus === "awaiting_team") return "busy";
+  if (!note.isPublic) return "quiet";
+  return "ok";
 }
 
 export default function MyUploads() {
@@ -44,61 +64,61 @@ export default function MyUploads() {
   const downloads = notes.reduce((sum, note) => sum + (note.downloadCount || 0), 0);
 
   return (
-    <RevisionShell title="Your uploads" showBack>
-      <p className="text-[14px] text-[#5C5C5C]">
-        Aura {user?.auraPoints ?? 0} · {downloads} downloads across your notes.
-      </p>
+    <RevisionShell title="Your uploads" showBack desk>
+      <div className="desk-page">
+        <header className="mb-4">
+          <p className="desk-eyebrow">Your library</p>
+          <h1 className="desk-title">Uploads</h1>
+          <p className="desk-sub">
+            {downloads} downloads across your notes.
+          </p>
+        </header>
 
-      <div className="mt-5 flex flex-wrap gap-2 text-[13px]">
-        {FILTERS.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => setFilter(item.id)}
-            className={`rounded-full px-4 py-1.5 ${
-              filter === item.id ? "bg-[#111] font-semibold text-white" : "border border-[#E8E8E8] text-[#5A5A5A]"
-            }`}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-
-      <div className="mt-2 border-t border-[#E5E5E5]">
-        {loading && <div className="h-16 animate-pulse bg-[#F4F4F4]" />}
-        {!loading && visible.length === 0 && (
-          <div className="py-10">
-            <p className="text-[15px] font-medium">Nothing here yet.</p>
-            <Link to="/upload" className="mt-2 inline-block text-[13px] text-[#1F1F1F] underline underline-offset-2">
-              Share notes
-            </Link>
-          </div>
-        )}
-        {visible.map((note) => {
-          const status = statusOf(note);
-          return (
-            <Link
-              key={note._id}
-              to={`/note/${note._id}`}
-              state={{ note }}
-              className="block border-b border-[#E5E5E5] py-4 no-underline"
+        <div className="desk-tabs mb-4">
+          {FILTERS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setFilter(item.id)}
+              className={`desk-tab${filter === item.id ? " is-on" : ""}`}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h2 className="text-[15px] font-medium text-[#1F1F1F]">{note.title}</h2>
-                  <p className="mt-1 text-[12px] text-[#8A8A8A]">
-                    {note.subjectTag || note.subject?.name || "General"}
-                    {note.createdAt ? ` · ${formatDate(note.createdAt)}` : ""}
-                    {note.downloadCount ? ` · ${note.downloadCount} downloads` : ""}
-                  </p>
-                </div>
-                <span className="shrink-0 text-[12px] text-[#8A8A8A]">
-                  {status === "approved" ? "Live" : status === "rejected" ? "Rejected" : "Checking"}
-                </span>
-              </div>
-            </Link>
-          );
-        })}
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        <section className="desk-panel">
+          {loading ? <div className="h-16 animate-pulse rounded-xl bg-[#F4F4F4]" /> : null}
+          {!loading && visible.length === 0 ? (
+            <div className="py-8 text-center">
+              <p className="text-[15px] font-medium">Nothing here yet.</p>
+              <Link to="/upload" className="desk-solid-btn mt-4 inline-flex">
+                Share notes
+              </Link>
+            </div>
+          ) : null}
+          <ul className="dash-list">
+            {visible.map((note) => (
+              <li key={note._id}>
+                <Link to={`/note/${note._id}`} state={{ note }} className="dash-list-row">
+                  <span className={`dash-status dash-status--${statusTone(note)}`}>{statusLabel(note)}</span>
+                  <div className="dash-list-copy">
+                    <strong>{note.title}</strong>
+                    <span>
+                      {[
+                        typeof note.subject === "object" ? note.subject?.name : note.subjectTag || note.subject,
+                        note.createdAt ? formatDate(note.createdAt) : null,
+                        note.downloadCount ? `${note.downloadCount} downloads` : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
     </RevisionShell>
   );

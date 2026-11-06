@@ -5,9 +5,13 @@ import Card from "../components/Common/Card";
 import Button from "../components/Common/Button";
 import Loader from "../components/Common/Loader";
 import RevisionShell from "../components/Revision/RevisionShell";
+import LogoutConfirm from "../components/Revision/LogoutConfirm";
+import { loginPath } from "../components/Revision/revisionUtils";
 import { AuthContext } from "../AuthContext";
 import api from "../api/api";
 import { generateAvatarOptions, getAvatarByIndex } from "../utils/avatarUtils";
+import { getAuraTier } from "../utils/auraUtils";
+import { isTeamUser } from "../config/appMode";
 import { 
   FaMars, 
   FaVenus, 
@@ -20,17 +24,15 @@ import {
   FaUser,
   FaAward,
   FaBuildingColumns,
-  FaUsers,
   FaFileLines,
   FaPen,
-  FaCloudArrowUp,
-  FaBookOpen,
-  FaCircleCheck,
-  FaSpinner,
-  FaCircleXmark,
-  FaChevronDown,
-  FaChevronUp,
+  FaLock,
+  FaEye,
+  FaShieldHalved,
+  FaGear,
+  FaArrowRightFromBracket,
 } from "react-icons/fa6";
+import "./ProfileDesk.css";
 
 const UNIVERSITIES = ["RTU", "GGSIPU", "DTU", "AKTU"];
 const BRANCHES = ["CSE", "IT", "ECE", "EE", "ME", "Civil", "AIDS"];
@@ -42,29 +44,6 @@ const GenderIcon = ({ gender }) => {
     case "Female": return <FaVenus />;
     default: return <FaGenderless />;
   }
-};
-
-// AURA Tier Calculator
-const getAuraTier = (notesCount) => {
-  // 🟣 ADVANCED TIER — RADIANCE
-  if (notesCount >= 701) return { tier: "RADIANCE", rank: "Beacon", emoji: "🟣" };
-  if (notesCount >= 401) return { tier: "RADIANCE", rank: "Luminary", emoji: "🟣" };
-  if (notesCount >= 251) return { tier: "RADIANCE", rank: "Scholar", emoji: "🟣" };
-  if (notesCount >= 151) return { tier: "RADIANCE", rank: "Mentor", emoji: "🟣" };
-  
-  // 🔵 INTERMEDIATE TIER — GLOW
-  if (notesCount >= 101) return { tier: "GLOW", rank: "Anchor", emoji: "🔵" };
-  if (notesCount >= 61) return { tier: "GLOW", rank: "Guide", emoji: "🔵" };
-  if (notesCount >= 36) return { tier: "GLOW", rank: "Solver", emoji: "🔵" };
-  if (notesCount >= 21) return { tier: "GLOW", rank: "Thinker", emoji: "🔵" };
-  
-  // 🌱 BEGINNER TIER — SPARK
-  if (notesCount >= 11) return { tier: "SPARK", rank: "Builder", emoji: "🌱" };
-  if (notesCount >= 6) return { tier: "SPARK", rank: "Initiate", emoji: "🌱" };
-  if (notesCount >= 3) return { tier: "SPARK", rank: "Seeker", emoji: "🌱" };
-  if (notesCount >= 1) return { tier: "SPARK", rank: "Flicker", emoji: "🌱" };
-  
-  return { tier: "SPARK", rank: "New", emoji: "✨" };
 };
 
 // Simple Image Cropper & Filter Component
@@ -241,10 +220,17 @@ const ImageCropper = ({ imageSrc, onCancel, onSave }) => {
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { setUser, logout } = useContext(AuthContext);
+  const { user, setUser, logout } = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
-  const [stats, setStats] = useState({ followers: 0, following: 0, notesShared: 0 });
+  const showOps = isTeamUser(user) || isTeamUser(userData);
+  const [stats, setStats] = useState({ notesShared: 0, auraPoints: 0 });
+  const [libraryStats, setLibraryStats] = useState({
+    total: 0,
+    inReview: 0,
+    livePublic: 0,
+  });
   const [isEditing, setIsEditing] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteStep, setDeleteStep] = useState(1); // 1 = reason, 2 = confirm
   const [deleteReason, setDeleteReason] = useState("");
@@ -270,12 +256,24 @@ const Profile = () => {
   const [saving, setSaving] = useState(false);
   const [imgError, setImgError] = useState(false);
 
-  // Syllabus states
-  const [syllabusSemesters, setSyllabusSemesters] = useState([]);
-  const [syllabusUploading, setSyllabusUploading] = useState(false);
-  const [selectedSem, setSelectedSem] = useState(null);
-  const [expandedSubjects, setExpandedSubjects] = useState({});
-  const syllabusFileRef = useRef(null);
+  const [privacy, setPrivacy] = useState(() => {
+    try {
+      return {
+        publicProfile: localStorage.getItem("medha_privacy_public_profile") !== "false",
+        showEmail: localStorage.getItem("medha_privacy_show_email") === "true",
+        showUniversity: localStorage.getItem("medha_privacy_show_university") !== "false",
+        showActivity: localStorage.getItem("medha_privacy_show_activity") !== "false",
+      };
+    } catch {
+      return {
+        publicProfile: true,
+        showEmail: false,
+        showUniversity: true,
+        showActivity: true,
+      };
+    }
+  });
+  const [settingsTab, setSettingsTab] = useState("about"); // about | privacy | account
 
   // Reset img error when data changes
   useEffect(() => {
@@ -296,12 +294,55 @@ const Profile = () => {
 
   useEffect(() => {
     fetchProfile();
-    fetchSyllabus();
+    fetchLibraryStats();
   }, []);
+
+  const updatePrivacy = (key, value) => {
+    setPrivacy((prev) => {
+      const next = { ...prev, [key]: value };
+      const map = {
+        publicProfile: "medha_privacy_public_profile",
+        showEmail: "medha_privacy_show_email",
+        showUniversity: "medha_privacy_show_university",
+        showActivity: "medha_privacy_show_activity",
+      };
+      try {
+        localStorage.setItem(map[key], String(value));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  };
+
+  const fetchLibraryStats = async () => {
+    try {
+      const res = await api.get("/notes", { params: { limit: 50 } });
+      const notes = res.data?.notes || [];
+      const inReview = notes.filter(
+        (n) => n.verificationStatus === "pending" || n.verificationStatus === "awaiting_team"
+      ).length;
+      const livePublic = notes.filter(
+        (n) => n.verificationStatus === "approved" && n.isPublic
+      ).length;
+      setLibraryStats({
+        total: notes.length,
+        inReview,
+        livePublic,
+      });
+    } catch {
+      setLibraryStats({ total: 0, inReview: 0, livePublic: 0 });
+    }
+  };
 
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
+      if (!token) {
+        logout?.();
+        navigate(loginPath("/profile"), { replace: true });
+        return;
+      }
       // First get basic info to get ID
       const responseMe = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
@@ -315,10 +356,23 @@ const Profile = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setUserData(responseProfile.data.user);
-      if (responseProfile.data.stats) {
-        setStats(responseProfile.data.stats);
-      }
+      const profileUser = responseProfile.data.user;
+      const auraPoints =
+        profileUser?.auraPoints ??
+        responseProfile.data.stats?.auraPoints ??
+        user.auraPoints ??
+        0;
+
+      setUserData(profileUser);
+      setStats({
+        notesShared: responseProfile.data.stats?.notesShared || 0,
+        auraPoints,
+      });
+      setUser?.((prev) => ({
+        ...(prev || {}),
+        ...profileUser,
+        auraPoints,
+      }));
 
       setFormData({ 
         name: user.name || "", 
@@ -331,64 +385,14 @@ const Profile = () => {
       });
     } catch (error) {
       console.error("Error fetching profile:", error);
+      if (error?.response?.status === 401 || error?.response?.status === 403) {
+        logout?.();
+        navigate(loginPath("/profile"), { replace: true });
+        return;
+      }
     } finally {
       setLoading(false);
     }
-  };
-
-  // Syllabus API handlers
-  const fetchSyllabus = async () => {
-    try {
-      const res = await api.get("/recommendations/syllabus");
-      const sems = res.data.semesters || [];
-      setSyllabusSemesters(sems);
-      if (sems.length > 0 && !selectedSem) setSelectedSem(sems[0].semester);
-    } catch (err) {
-      console.error("Error fetching syllabus:", err);
-    }
-  };
-
-  const handleSyllabusUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    e.target.value = null;
-
-    setSyllabusUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append("syllabus", file);
-      await api.post("/recommendations/syllabus/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      // Poll for processing completion
-      pollSyllabusStatus();
-    } catch (err) {
-      console.error("Syllabus upload failed:", err);
-      setSyllabusUploading(false);
-    }
-  };
-
-  const pollSyllabusStatus = () => {
-    const interval = setInterval(async () => {
-      try {
-        const res = await api.get("/recommendations/syllabus");
-        const sems = res.data.semesters || [];
-        if (sems.length > 0) {
-          setSyllabusSemesters(sems);
-          if (!selectedSem) setSelectedSem(sems[0].semester);
-          setSyllabusUploading(false);
-          clearInterval(interval);
-        }
-      } catch {
-        clearInterval(interval);
-        setSyllabusUploading(false);
-      }
-    }, 4000);
-    setTimeout(() => clearInterval(interval), 120000);
-  };
-
-  const toggleSubjectExpand = (idx) => {
-    setExpandedSubjects(prev => ({ ...prev, [idx]: !prev[idx] }));
   };
 
   const handleSelect = (field, value) => {
@@ -538,8 +542,13 @@ const Profile = () => {
   }
 
   return (
-    <RevisionShell title="You">
-    <div className="w-full bg-transparent">
+    <RevisionShell title="Profile" desk>
+    <div className="desk-page w-full bg-transparent">
+      <header className="mb-4">
+        <p className="desk-eyebrow">Your account</p>
+        <h1 className="desk-title">Profile</h1>
+        <p className="desk-sub">Your public presence, privacy controls, and account settings.</p>
+      </header>
       <div className="mx-auto max-w-4xl space-y-6">
         
         {isEditing ? (
@@ -746,303 +755,182 @@ const Profile = () => {
             </div>
           </Card>
         ) : (
-          /* ================= READ MODE (Public Profile Layout) ================= */
+          /* ================= SOCIAL PROFILE ================= */
           <>
-             {/* Header Card */}
-             <Card className="shadow-xl border-t-4 border-[var(--action-primary)] bg-[var(--bg-secondary)] overflow-hidden">
-                 <div className="relative pt-6 px-6 pb-8 text-center sm:text-left sm:flex sm:items-end sm:justify-between">
-                     
-                     <div className="flex flex-col sm:flex-row items-center gap-6">
-                         {/* Avatar */}
-                         <div className="relative">
-                             <div className="w-32 h-32 rounded-full border-4 border-[var(--bg-secondary)] shadow-lg overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                                 {getAvatarUrl() ? (
-                                     <img src={getAvatarUrl()} alt={userData?.name} className="w-full h-full object-cover" />
-                                 ) : (
-                                     <span className="text-4xl text-white font-bold">{userData?.name?.charAt(0)}</span>
-                                 )}
-                             </div>
-                             {userData?.gender && (
-                                 <div className={`absolute bottom-1 right-1 w-8 h-8 rounded-full flex items-center justify-center shadow border-2 border-white ${
-                                     userData.gender === "Male" ? "bg-blue-500" : 
-                                     userData.gender === "Female" ? "bg-pink-500" : "bg-purple-500"
-                                 }`}>
-                                     <div className="text-white text-xs">
-                                         <GenderIcon gender={userData.gender} />
-                                     </div>
-                                 </div>
-                             )}
-                         </div>
+            <section className="profile-card">
+              <div className="profile-cover" aria-hidden="true" />
+              <div className="profile-card-body">
+                <div className="profile-hero-row">
+                  <div className="profile-avatar-wrap">
+                    <div className="profile-avatar">
+                      {getAvatarUrl() ? (
+                        <img src={getAvatarUrl()} alt={userData?.name} />
+                      ) : (
+                        <span>{userData?.name?.charAt(0)}</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="profile-hero-main">
+                    <div className="profile-name-row">
+                      <h2>{userData?.name}</h2>
+                      {userData?.role === "admin" ? <span className="profile-badge">Admin</span> : null}
+                    </div>
+                    <p className="profile-handle">@{(userData?.email || "student").split("@")[0]}</p>
+                    <p className="profile-bio">
+                      {[privacy.showUniversity ? userData?.university : null, userData?.branch]
+                        .filter(Boolean)
+                        .join(" · ") || "Add university & branch in Edit profile"}
+                    </p>
+                    <div className="profile-actions">
+                      <button type="button" className="desk-solid-btn" onClick={() => setIsEditing(true)}>
+                        <FaPen /> Edit profile
+                      </button>
+                      <button type="button" className="desk-ghost-btn" onClick={() => setLogoutOpen(true)}>
+                        <FaArrowRightFromBracket /> Log out
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
-                         {/* Name & Info */}
-                         <div className="space-y-1 text-center sm:text-left">
-                             <h1 className="text-2xl sm:text-3xl font-black text-[var(--text-primary)] flex items-center gap-2 justify-center sm:justify-start flex-wrap">
-                                 {userData?.name}
-                                 {userData?.role === 'admin' && <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full border border-red-200 uppercase tracking-wide">Admin</span>}
-                             </h1>
-                             <p className="text-[var(--text-secondary)] font-medium text-lg flex items-center gap-2 justify-center sm:justify-start">
-                                 {userData?.university || "University Student"} 
-                                 {userData?.branch && <span className="text-[var(--text-tertiary)]">• {userData.branch}</span>}
-                             </p>
-                             
-                             {/* Stats Row */}
-                             <div className="flex items-center gap-3 sm:gap-6 mt-4 justify-center sm:justify-start flex-wrap">
-                                 <div className="text-center sm:text-left">
-                                     <div className="text-2xl font-bold text-[var(--text-primary)]">{stats.followers || 0}</div>
-                                     <div className="text-xs font-bold uppercase text-[var(--text-tertiary)] tracking-wide">Followers</div>
-                                 </div>
-                                 <div className="text-center sm:text-left">
-                                     <div className="text-2xl font-bold text-[var(--text-primary)]">{stats.following || 0}</div>
-                                     <div className="text-xs font-bold uppercase text-[var(--text-tertiary)] tracking-wide">Following</div>
-                                 </div>
-                                 <div className="text-center sm:text-left">
-                                     <div className="text-2xl font-bold text-[var(--text-primary)]">{stats.notesShared || 0}</div>
-                                     <div className="text-xs font-bold uppercase text-[var(--text-tertiary)] tracking-wide">Notes Shared</div>
-                                 </div>
-                             </div>
-                         </div>
-                     </div>
+                <div className="profile-metric-row">
+                  {[
+                    { value: libraryStats.total, label: "Notes", tone: "green" },
+                    { value: libraryStats.inReview, label: "In review", tone: "blue" },
+                    { value: libraryStats.livePublic, label: "Live", tone: "violet" },
+                    { value: stats.auraPoints || 0, label: "Aura", tone: "amber" },
+                  ].map((item) => (
+                    <div key={item.label} className={"profile-metric profile-metric--" + item.tone}>
+                      <strong>{item.value}</strong>
+                      <span>{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
 
-                     {/* Edit Action */}
-                     <div className="mt-6 sm:mt-0">
-                          <Button variant="primary" onClick={() => setIsEditing(true)}>
-                              <FaPen className="mr-2" /> Edit Profile
-                          </Button>
-                     </div>
-                 </div>
-             </Card>
+            <div className="desk-tabs profile-tabs">
+              {[
+                { id: "about", label: "About" },
+                { id: "privacy", label: "Privacy" },
+                { id: "account", label: "Account" },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  className={"desk-tab" + (settingsTab === tab.id ? " is-on" : "")}
+                  onClick={() => setSettingsTab(tab.id)}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
-             {/* Bio/Info Grid */}
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* AURA Card */}
-                  <Card className="bg-[var(--bg-secondary)] border border-[var(--border-default)] relative overflow-hidden">
-                      <div className="absolute inset-0 opacity-20" style={{
-                          background: getAuraTier(stats.notesShared).tier === "RADIANCE" 
-                              ? "radial-gradient(circle at 30% 30%, #a855f7 0%, transparent 50%)"
-                              : getAuraTier(stats.notesShared).tier === "GLOW"
-                              ? "radial-gradient(circle at 30% 30%, #3b82f6 0%, transparent 50%)"
-                              : "radial-gradient(circle at 30% 30%, #22c55e 0%, transparent 50%)"
-                      }} />
-                      
-                      <div className="relative z-10">
-                          <div className="flex items-center gap-4 mb-4">
-                              <div className={`p-3 rounded-xl ${
-                                  getAuraTier(stats.notesShared).tier === "RADIANCE" 
-                                      ? "bg-purple-100 text-purple-600"
-                                      : getAuraTier(stats.notesShared).tier === "GLOW"
-                                      ? "bg-blue-100 text-blue-600"
-                                      : "bg-green-100 text-green-600"
-                              }`}>
-                                  <FaAward size={24} />
-                              </div>
-                              <div>
-                                  <h3 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2">
-                                      AURA
-                                      <span className={`text-xs px-2 py-0.5 rounded-full uppercase tracking-wide ${
-                                          getAuraTier(stats.notesShared).tier === "RADIANCE" 
-                                              ? "bg-purple-100 text-purple-700 border border-purple-200"
-                                              : getAuraTier(stats.notesShared).tier === "GLOW"
-                                              ? "bg-blue-100 text-blue-700 border border-blue-200"
-                                              : "bg-green-100 text-green-700 border border-green-200"
-                                      }`}>
-                                          {getAuraTier(stats.notesShared).tier}
-                                      </span>
-                                  </h3>
-                                  <p className="text-sm text-[var(--text-secondary)]">Contribution Level</p>
-                              </div>
-                          </div>
-                          <div className="flex items-end gap-2">
-                              <span className={`text-4xl font-black ${
-                                  getAuraTier(stats.notesShared).tier === "RADIANCE" 
-                                      ? "text-purple-600"
-                                      : getAuraTier(stats.notesShared).tier === "GLOW"
-                                      ? "text-blue-600"
-                                      : "text-green-600"
-                              }`}>{stats.notesShared}</span>
-                              <span className="text-sm font-bold text-[var(--text-tertiary)] mb-2">Notes Shared</span>
-                          </div>
-                          <div className={`mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold ${
-                              getAuraTier(stats.notesShared).tier === "RADIANCE" 
-                                  ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-700 border border-purple-200"
-                                  : getAuraTier(stats.notesShared).tier === "GLOW"
-                                  ? "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-700 border border-blue-200"
-                                  : "bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-700 border border-green-200"
-                          }`}>
-                              <span>{getAuraTier(stats.notesShared).emoji}</span>
-                              <span>{getAuraTier(stats.notesShared).rank}</span>
-                          </div>
-                      </div>
-                  </Card>
+            {settingsTab === "about" && (
+              <div className="profile-grid">
+                <section className="desk-panel profile-panel">
+                  <div className="desk-panel-head">
+                    <h2><FaAward /> Aura</h2>
+                    <span className="profile-chip">{getAuraTier(stats.auraPoints).tier}</span>
+                  </div>
+                  <p className="profile-aura-line">
+                    <span className="profile-aura-emoji">{getAuraTier(stats.auraPoints).emoji}</span>
+                    <strong>{getAuraTier(stats.auraPoints).rank}</strong>
+                    <span className="profile-aura-points">{stats.auraPoints || 0} pts</span>
+                  </p>
+                  <p className="desk-sub" style={{ marginTop: 8 }}>
+                    Earned when students download your public notes (+3 each). Share useful notes to climb ranks.
+                  </p>
+                </section>
+                <section className="desk-panel profile-panel">
+                  <div className="desk-panel-head">
+                    <h2><FaBuildingColumns /> Academic</h2>
+                  </div>
+                  <div className="profile-kv">
+                    <div><span>University</span><strong>{userData?.university || "Not set"}</strong></div>
+                    <div><span>Branch</span><strong>{userData?.branch || "Not set"}</strong></div>
+                    <div><span>Member since</span><strong>{new Date(userData?.createdAt || Date.now()).toLocaleDateString()}</strong></div>
+                    {privacy.showEmail ? (
+                      <div><span>Email</span><strong>{userData?.email}</strong></div>
+                    ) : null}
+                  </div>
+                </section>
+              </div>
+            )}
 
-                  {/* Academic Card */}
-                  <Card className="bg-[var(--bg-secondary)] border border-[var(--border-default)]">
-                      <div className="flex items-center gap-4 mb-4">
-                          <div className="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
-                              <FaBuildingColumns size={24} />
-                          </div>
-                          <div>
-                              <h3 className="text-lg font-bold text-[var(--text-primary)]">Academic Info</h3>
-                              <p className="text-sm text-[var(--text-secondary)]">University Details</p>
-                          </div>
-                      </div>
-                      <div className="space-y-2">
-                          <div className="flex justify-between border-b border-[var(--border-default)] pb-2">
-                              <span className="text-sm text-[var(--text-secondary)]">University</span>
-                              <span className="text-sm font-bold text-[var(--text-primary)]">{userData?.university || "Not set"}</span>
-                          </div>
-                          <div className="flex justify-between border-b border-[var(--border-default)] pb-2">
-                              <span className="text-sm text-[var(--text-secondary)]">Branch</span>
-                              <span className="text-sm font-bold text-[var(--text-primary)]">{userData?.branch || "Not set"}</span>
-                          </div>
-                          <div className="flex justify-between">
-                              <span className="text-sm text-[var(--text-secondary)]">Member Since</span>
-                              <span className="text-sm font-bold text-[var(--text-primary)]">{new Date(userData?.createdAt || Date.now()).toLocaleDateString()}</span>
-                          </div>
-                      </div>
-                  </Card>
-             </div>
+            {settingsTab === "privacy" && (
+              <section className="desk-panel profile-panel">
+                <div className="desk-panel-head">
+                  <h2><FaShieldHalved /> Privacy & visibility</h2>
+                </div>
+                <p className="desk-sub" style={{ marginBottom: 8 }}>
+                  Control what others can see on your profile.
+                </p>
+                {[
+                  { key: "publicProfile", title: "Public profile", desc: "Anyone on Medha can view your profile page", Icon: FaEye },
+                  { key: "showUniversity", title: "Show university & branch", desc: "Display academic details on your profile", Icon: FaBuildingColumns },
+                  { key: "showEmail", title: "Show email", desc: "Let others see your email address", Icon: FaUser },
+                  { key: "showActivity", title: "Show activity", desc: "Surface recent notes and contribution stats", Icon: FaFileLines },
+                ].map((row) => {
+                  const Icon = row.Icon;
+                  return (
+                    <div key={row.key} className="privacy-row">
+                      <span className="privacy-row-icon"><Icon size={16} /></span>
+                      <span className="privacy-row-copy">
+                        <strong>{row.title}</strong>
+                        <span>{row.desc}</span>
+                      </span>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={privacy[row.key]}
+                        className={"privacy-switch" + (privacy[row.key] ? " is-on" : "")}
+                        onClick={() => updatePrivacy(row.key, !privacy[row.key])}
+                      >
+                        <span />
+                      </button>
+                    </div>
+                  );
+                })}
+                {!privacy.publicProfile ? (
+                  <p className="privacy-note"><FaLock /> Your profile is private. Only you can see full details.</p>
+                ) : null}
+              </section>
+            )}
 
-             {/* University Syllabus Section */}
-             <Card className="bg-[var(--bg-secondary)] border border-[var(--border-default)]">
-                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
-                     <div className="flex items-center gap-4">
-                         <div className="p-3 bg-green-100 text-green-600 rounded-xl">
-                             <FaBookOpen size={24} />
-                         </div>
-                         <div>
-                             <h3 className="text-lg font-bold text-[var(--text-primary)]">University Syllabus</h3>
-                             <p className="text-sm text-[var(--text-secondary)]">
-                                 {syllabusSemesters.length > 0
-                                     ? `${userData?.university || ""} · ${userData?.branch || ""} · ${syllabusSemesters.length} semester${syllabusSemesters.length > 1 ? "s" : ""}`
-                                     : "Upload your syllabus — it will be shared with all students of your university & branch"}
-                             </p>
-                         </div>
-                     </div>
-                     <div className="flex gap-2 w-full sm:w-auto">
-                         <input
-                             type="file"
-                             ref={syllabusFileRef}
-                             className="hidden"
-                             accept=".pdf,.jpg,.jpeg,.png"
-                             onChange={handleSyllabusUpload}
-                         />
-                         <Button
-                             variant="primary" size="sm"
-                             disabled={syllabusUploading}
-                             onClick={() => syllabusFileRef.current?.click()}
-                         >
-                             {syllabusUploading ? (
-                                 <><FaSpinner className="mr-1 animate-spin" /> Processing...</>
-                             ) : (
-                                 <><FaCloudArrowUp className="mr-1" /> {syllabusSemesters.length > 0 ? "Upload More" : "Upload Syllabus"}</>
-                             )}
-                         </Button>
-                     </div>
-                 </div>
-
-                 {/* Processing state */}
-                 {syllabusUploading && (
-                     <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-3 mb-4">
-                         <FaSpinner className="text-amber-600 animate-spin" />
-                         <span className="text-sm text-amber-800 font-medium">
-                             Extracting and structuring your syllabus with AI... This may take up to a minute.
-                         </span>
-                     </div>
-                 )}
-
-                 {/* Semester tabs */}
-                 {syllabusSemesters.length > 0 && (
-                     <div className="space-y-3">
-                         <div className="flex gap-2 flex-wrap">
-                             {syllabusSemesters.map((sem) => (
-                                 <button
-                                     key={sem.semester}
-                                     onClick={() => { setSelectedSem(sem.semester); setExpandedSubjects({}); }}
-                                     className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-                                         selectedSem === sem.semester
-                                             ? "bg-green-600 text-white shadow-md"
-                                             : "bg-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:bg-[var(--border-default)]"
-                                     }`}
-                                 >
-                                     Sem {sem.semester}
-                                     <span className={`text-xs ml-1.5 ${selectedSem === sem.semester ? "text-green-100" : "text-[var(--text-tertiary)]"}`}>
-                                         {sem.subjects?.length || 0}
-                                     </span>
-                                 </button>
-                             ))}
-                         </div>
-
-                         {/* Contributor badge */}
-                         {(() => {
-                             const activeSem = syllabusSemesters.find(s => s.semester === selectedSem);
-                             if (!activeSem) return null;
-                             return (
-                                 <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
-                                     <FaUsers size={12} />
-                                     <span>Contributed by {activeSem.contributorCount || 1} student{activeSem.contributorCount > 1 ? "s" : ""}</span>
-                                 </div>
-                             );
-                         })()}
-
-                         {/* Subjects for selected semester */}
-                         {(() => {
-                             const activeSem = syllabusSemesters.find(s => s.semester === selectedSem);
-                             if (!activeSem) return null;
-                             return (
-                                 <div className="space-y-2">
-                                     {(activeSem.subjects || []).map((subj, idx) => (
-                                         <div key={idx} className="border border-[var(--border-default)] rounded-xl overflow-hidden">
-                                             <button
-                                                 onClick={() => toggleSubjectExpand(idx)}
-                                                 className="w-full flex items-center justify-between p-3 hover:bg-[var(--bg-tertiary)] transition-colors text-left"
-                                             >
-                                                 <div>
-                                                     <span className="text-sm font-bold text-[var(--text-primary)]">{subj.name}</span>
-                                                     {subj.code && <span className="text-xs text-[var(--text-tertiary)] ml-2">({subj.code})</span>}
-                                                     <span className="text-xs text-green-600 ml-2">{subj.units?.length || 0} units</span>
-                                                 </div>
-                                                 {expandedSubjects[idx] ? <FaChevronUp size={12} className="text-[var(--text-tertiary)]" /> : <FaChevronDown size={12} className="text-[var(--text-tertiary)]" />}
-                                             </button>
-                                             {expandedSubjects[idx] && (
-                                                 <div className="px-3 pb-3 space-y-2">
-                                                     {(subj.units || []).map((unit, ui) => (
-                                                         <div key={ui} className="bg-[var(--bg-tertiary)] rounded-lg p-2.5">
-                                                             <div className="text-xs font-bold text-[var(--text-secondary)] mb-1">
-                                                                 Unit {unit.unitNumber}: {unit.title}
-                                                             </div>
-                                                             <div className="flex flex-wrap gap-1">
-                                                                 {(unit.topics || []).map((topic, ti) => (
-                                                                     <span key={ti} className="text-[10px] px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">
-                                                                         {topic}
-                                                                     </span>
-                                                                 ))}
-                                                             </div>
-                                                         </div>
-                                                     ))}
-                                                 </div>
-                                             )}
-                                         </div>
-                                     ))}
-                                 </div>
-                             );
-                         })()}
-                     </div>
-                 )}
-
-                 {/* No syllabus state */}
-                 {syllabusSemesters.length === 0 && !syllabusUploading && (
-                     <div className="text-center p-6 bg-[var(--bg-tertiary)] rounded-xl border border-dashed border-[var(--border-default)]">
-                         <FaCloudArrowUp size={32} className="mx-auto text-[var(--text-tertiary)] mb-3" />
-                         <p className="text-sm font-bold text-[var(--text-primary)] mb-1">Upload your university syllabus</p>
-                         <p className="text-xs text-[var(--text-secondary)] mb-4">
-                             PDF or image of your syllabus. AI extracts subjects & topics — shared with all students of your university for accurate lecture matching.
-                         </p>
-                         <Button variant="primary" size="sm" onClick={() => syllabusFileRef.current?.click()}>
-                             <FaCloudArrowUp className="mr-1" /> Choose File
-                         </Button>
-                     </div>
-                 )}
-             </Card>
+            {settingsTab === "account" && (
+              <div className="profile-grid">
+                <section className="desk-panel profile-panel">
+                  <div className="desk-panel-head">
+                    <h2><FaGear /> Account</h2>
+                  </div>
+                  <div className="account-actions">
+                    {showOps ? (
+                      <button type="button" className="desk-ghost-btn" onClick={() => navigate("/admin")}>
+                        <FaShieldHalved /> Ops desk
+                      </button>
+                    ) : null}
+                    <button type="button" className="desk-ghost-btn" onClick={() => setIsEditing(true)}>
+                      <FaPen /> Edit profile details
+                    </button>
+                    <button type="button" className="desk-ghost-btn" onClick={() => navigate("/uploads")}>
+                      <FaFileLines /> Manage uploads
+                    </button>
+                    <button type="button" className="desk-ghost-btn" onClick={() => setLogoutOpen(true)}>
+                      <FaArrowRightFromBracket /> Log out
+                    </button>
+                  </div>
+                </section>
+                <section className="desk-panel profile-panel profile-danger">
+                  <div className="desk-panel-head">
+                    <h2><FaTrash /> Danger zone</h2>
+                  </div>
+                  <p className="desk-sub">Permanently delete your account and all associated data.</p>
+                  <Button variant="danger" className="mt-4" onClick={() => setShowDeleteModal(true)}>
+                    Delete account
+                  </Button>
+                </section>
+              </div>
+            )}
           </>
         )}
 
@@ -1126,6 +1014,16 @@ const Profile = () => {
             onSave={handleCropSave}
           />
         )}
+
+        <LogoutConfirm
+          open={logoutOpen}
+          onCancel={() => setLogoutOpen(false)}
+          onConfirm={() => {
+            setLogoutOpen(false);
+            logout?.();
+            navigate("/", { replace: true });
+          }}
+        />
       </div>
     </div>
     </RevisionShell>

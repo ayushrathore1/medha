@@ -135,11 +135,57 @@ export default function TeamPanel({ admin }) {
                 <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mb-2 group-hover:bg-purple-100 transition-colors">
                   <FaPlus />
                 </div>
-                <span className="font-bold text-sm">Add Team Member</span>
+                <span className="font-bold text-sm">Invite Team Member</span>
                 <span className="text-xs mt-1">Send an invitation email</span>
               </div>
             )}
           </div>
+
+          {isFullAdmin ? (
+            <div className="mt-10 border-t border-gray-200 pt-8">
+              <h3 className="mb-2 text-lg font-bold text-gray-900">Assign team role</h3>
+              <p className="mb-4 text-sm text-gray-600">
+                Super-admin only. Promote a registered user to <strong>team</strong> so they can manage
+                curriculum (semesters, subjects, units, topics, notes/links). They cannot assign roles.
+              </p>
+              <div className="mb-3">
+                <input
+                  type="search"
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  placeholder="Search users by name or email"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-purple-400"
+                />
+              </div>
+              <div className="max-h-80 space-y-2 overflow-y-auto">
+                {(getFilteredUsers ? getFilteredUsers() : users)
+                  .filter((u) => u.role === "user" || !u.role)
+                  .slice(0, 40)
+                  .map((u) => (
+                    <div
+                      key={u._id}
+                      className="flex items-center justify-between gap-3 rounded-lg border border-gray-100 px-3 py-2"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate font-semibold text-gray-900">{u.name}</p>
+                        <p className="truncate text-xs text-gray-500">{u.email}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleUpdateRole(u._id, "team")}
+                        className="shrink-0 rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-purple-700"
+                      >
+                        Make team member
+                      </button>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          ) : (
+            <p className="mt-8 text-sm text-gray-500">
+              Team members can edit curriculum. Only a super-admin can invite or promote users.
+            </p>
+          )}
         </Card>
       )}
 

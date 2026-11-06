@@ -1,11 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const noteController = require("../controllers/noteController");
+const noteReviewController = require("../controllers/noteReviewController");
 const auth = require("../middleware/auth");
 const upload = require("../middleware/upload");
+const { staffAuth } = require("../middleware/staffAuth");
 
 // Get all public notes (explore feature) - must be before /:noteId
 router.get("/public", auth.optionalAuth, noteController.getPublicNotes);
+
+// Staff review queue (before /:noteId)
+router.get("/review/queue", auth, staffAuth, noteReviewController.listAwaitingTeam);
+router.get("/review/pending", auth, staffAuth, noteReviewController.listPendingScans);
+router.post("/review/:noteId", auth, staffAuth, noteReviewController.reviewNote);
 
 // List user's own notes (optionally by subject)
 router.get("/", auth, noteController.getNotes);

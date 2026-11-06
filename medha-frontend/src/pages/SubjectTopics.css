@@ -1,0 +1,373 @@
+/* Subject detail — hero card + syllabus */
+
+.st-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 960px) {
+  .st-page {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 24px;
+  }
+}
+
+.st-crumb {
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #6b6b6b;
+}
+
+.st-crumb a {
+  color: #6b6b6b;
+  text-decoration: none;
+}
+
+.st-crumb a:hover {
+  color: #1ba34a;
+}
+
+.st-crumb-current {
+  font-weight: 700;
+  color: #111;
+}
+
+/* —— Hero card (kept structure, tuned colors) —— */
+.st-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+  border-radius: 22px;
+  padding: 20px 18px 18px;
+  color: #fff;
+  background:
+    radial-gradient(ellipse 80% 60% at 90% 0%, rgba(27, 163, 74, 0.22), transparent 55%),
+    linear-gradient(165deg, #161616 0%, #111 55%, #0c0c0c 100%);
+  border: 1px solid #222;
+  box-shadow: 0 16px 36px rgba(17, 17, 17, 0.12);
+}
+
+@media (min-width: 960px) {
+  .st-hero {
+    flex: 0 1 360px;
+    max-width: 380px;
+    position: sticky;
+    top: 88px;
+    max-height: calc(100dvh - 7.5rem);
+    padding: 22px 20px 20px;
+  }
+}
+
+.st-hero-badges {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.st-hero-title {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-family: Manrope, "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1.08;
+  color: #fff;
+}
+
+.st-hero-meta {
+  position: relative;
+  z-index: 1;
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #a8a8a8;
+}
+
+.st-hero-stats {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 14px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.st-hero-stats strong {
+  display: block;
+  font-family: Manrope, "Plus Jakarta Sans", sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: #fff;
+}
+
+.st-hero-stats span {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8f8f8f;
+}
+
+.st-hero-search {
+  position: relative;
+  z-index: 1;
+  margin-top: 16px;
+}
+
+.st-hero-search.dash-search {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+.st-hero-search .dash-search-inner {
+  min-height: 44px;
+  padding: 6px 14px;
+}
+
+.st-hero-search input {
+  width: 100%;
+}
+
+.st-hero-shared {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: #a8a8a8;
+}
+
+.st-hero-shared i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1ba34a;
+  flex-shrink: 0;
+}
+
+.st-siblings {
+  position: relative;
+  z-index: 1;
+  margin-top: 16px;
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 56px;
+}
+
+.st-siblings-label {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1ba34a;
+}
+
+.st-sibling {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: inherit;
+  text-decoration: none;
+}
+
+.st-sibling:last-child {
+  border-bottom: 0;
+}
+
+.st-sibling-code {
+  width: 72px;
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 750;
+  color: #7dcea0;
+}
+
+.st-sibling-name {
+  font-size: 14px;
+  font-weight: 550;
+  color: #f2f2f2;
+  line-height: 1.3;
+}
+
+.st-hero .ridgeline-wrap,
+.st-hero > svg {
+  opacity: 0.85;
+}
+
+/* —— Syllabus column —— */
+.st-syllabus {
+  flex: 1;
+  min-width: 0;
+}
+
+.st-syllabus-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.st-syllabus-head h2 {
+  margin: 0;
+  font-family: Manrope, "Plus Jakarta Sans", sans-serif;
+  font-size: 18px;
+  font-weight: 780;
+  letter-spacing: -0.03em;
+  color: #111;
+}
+
+.st-syllabus-head span {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b6b6b;
+}
+
+.st-empty {
+  margin: 0;
+  padding: 20px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  font-size: 14px;
+  color: #5a5a5a;
+}
+
+.st-unit {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 22px rgba(17, 17, 17, 0.03);
+}
+
+.st-unit-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.st-unit-num {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-family: Manrope, "Plus Jakarta Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #14532d;
+  background: linear-gradient(145deg, #e8f8ee, #d4f0dd);
+  border: 1px solid #b7e4c4;
+  text-decoration: none;
+}
+
+.st-unit-copy {
+  min-width: 0;
+  flex: 1;
+  padding-top: 2px;
+}
+
+.st-unit-copy h3 {
+  margin: 0;
+  font-family: Manrope, "Plus Jakarta Sans", sans-serif;
+  font-size: 17px;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+  color: #111;
+}
+
+.st-unit-copy p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  font-weight: 650;
+  color: #6b6b6b;
+}
+
+.st-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.st-topic {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid #e5e5e5;
+  background: #fafafa;
+  color: #111;
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1.3;
+  text-decoration: none;
+  text-align: left;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+
+.st-topic:hover {
+  border-color: #1ba34a;
+  background: #f0faf3;
+  transform: translateY(-1px);
+}
+
+.st-topic mark {
+  background: #d4f0dd;
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+.st-topic-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #1ba34a;
+  flex-shrink: 0;
+}
+
+@media (max-width: 959px) {
+  .st-hero {
+    border-radius: 20px;
+  }
+
+  .st-unit {
+    padding: 14px;
+  }
+
+  .st-unit-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    font-size: 14px;
+  }
+}

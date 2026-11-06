@@ -89,7 +89,7 @@ const Navbar = ({ user, onLogout }) => {
         <BrandMark
           variant="nav"
           className="shrink-0 select-none py-1"
-          medhaTo={user ? "/dashboard" : "/"}
+          medhaTo="/"
         />
 
         {/* ─── 2. SEARCH BOX (Center / Flexible) ────────────────── */}

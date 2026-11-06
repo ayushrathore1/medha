@@ -63,7 +63,10 @@ export default function NotePreview() {
       ) : (
         <div>
           <p className="text-[12px] text-[#8A8A8A]">
-            {formatFileMeta(note)} · {note.subject || note.subjectTag || "Notes"}
+            {formatFileMeta(note)} ·{" "}
+            {typeof note.subject === "object" && note.subject
+              ? note.subject.name || note.subject.code || "Notes"
+              : note.subject || note.subjectTag || "Notes"}
             {note.downloadCount ? ` · ${note.downloadCount} downloads` : ""}
           </p>
           <h1 className="mt-1 break-words text-[24px] font-semibold leading-tight tracking-[-0.03em] text-[#1F1F1F]">

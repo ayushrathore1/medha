@@ -7,9 +7,11 @@ const teamInvitationSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
+  /** Legacy field — invites no longer require a user-entered code. */
   code: {
     type: String,
-    required: true,
+    required: false,
+    default: null,
   },
   expiresAt: {
     type: Date,

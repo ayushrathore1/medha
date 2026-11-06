@@ -1,6 +1,7 @@
 const express = require("express");
 const { streamText } = require("ai");
 const { createGroq } = require("@ai-sdk/groq");
+const { GROQ_FAST } = require("../config/groqModels");
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ router.post("/stream", async (req, res) => {
 
     // Call the Vercel AI SDK streamText method with Groq
     const result = streamText({
-      model: groq("llama-3.1-8b-instant"),
+      model: groq(GROQ_FAST),
       messages,
       system: `You are MEDHA AI, a highly intelligent and supportive student assistant built specifically for engineering and college students. 
       Your personality is encouraging, academic yet accessible, and concise. 

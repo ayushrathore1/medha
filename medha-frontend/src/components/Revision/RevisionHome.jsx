@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, FileText, HelpCircle, PlayCircle, Search, Sparkles } from "lucide-react";
 import {
-  SCHEME,
   SUBJECTS,
   UNIVERSITY_OPTIONS,
   catalogStats,
@@ -11,10 +10,8 @@ import {
   getUniversityOption,
   saveRecentSearch,
   searchPath,
-  topicIsShared,
 } from "../../data/subjectCatalog";
 import CodeChip from "./CodeChip";
-import CurriculumBadge from "./CurriculumBadge";
 import Ridgeline from "./Ridgeline";
 import TopicChip from "./TopicChip";
 
@@ -110,7 +107,7 @@ export default function RevisionHome({ user }) {
               See how it works
             </a>
           </div>
-          <p className="text-[14px] text-[var(--muted)]">Starting with RTU, Kota. Autonomous college syllabi included.</p>
+          <p className="text-[14px] text-[var(--muted)]">Pick your curriculum, then jump into units and topics.</p>
         </div>
 
         <div className="relative min-h-[620px] min-w-[min(100%,440px)] flex-[1_1_440px] overflow-hidden rounded-[36px] bg-[#111] p-7 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.35)]">
@@ -168,7 +165,6 @@ export default function RevisionHome({ user }) {
             {featured ? (
               <div className="mt-3 flex flex-wrap gap-2">
                 {[
-                  SCHEME[featured.scheme]?.label,
                   `${featured.branch} · Sem ${roman}`,
                   featured.name,
                   unit ? `Unit ${String(unit.unitNumber || 1).padStart(2, "0")}` : null,
@@ -226,7 +222,7 @@ export default function RevisionHome({ user }) {
           <div className="mx-auto flex max-w-[1240px] flex-wrap gap-10">
             <div className="min-w-[min(100%,520px)] flex-[1_1_520px]">
               <p className="text-[13px] font-semibold uppercase tracking-[.12em] text-[var(--cyan)]">
-                {featured.code} · {SCHEME[featured.scheme]?.label} · {featured.branch} · Sem {roman}
+                {featured.code} · {featured.branch} · Sem {roman}
               </p>
               <h2 className="mt-4 font-[family-name:var(--font-display)] text-[clamp(36px,4.6vw,60px)] font-extrabold leading-[1.02] tracking-[-0.04em] text-white">
                 The syllabus
@@ -271,7 +267,6 @@ export default function RevisionHome({ user }) {
                         key={topic}
                         to={searchPath(topic, { code: featured.code, scheme: featured.scheme, unit: unit.title })}
                         onClick={() => saveRecentSearch(topic)}
-                        sharedWithAutonomous={topicIsShared(topic)}
                         highlighted={index === 0}
                       >
                         {topic}
@@ -343,7 +338,6 @@ function CompareCard({ subject, navy = false }) {
     >
       <div className="flex flex-wrap gap-2">
         <CodeChip code={subject.code} onNavy={navy} />
-        <CurriculumBadge label={SCHEME[subject.scheme]?.label} onNavy={navy} />
       </div>
       <h3 className={`mt-5 font-[family-name:var(--font-display)] text-[22px] font-extrabold tracking-[-0.03em] ${navy ? "text-white" : "text-[var(--navy)]"}`}>
         {subject.name}

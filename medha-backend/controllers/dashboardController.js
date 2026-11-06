@@ -76,7 +76,7 @@ exports.generateDailyPlan = async (req, res) => {
     const currentDateTime = now.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     
     const apiKey = process.env.GROQ_API_KEY;
-    const model = "llama-3.3-70b-versatile"; 
+    const model = require("../config/groqModels").GROQ_CAPABLE;
 
     // --- STEP 1: PROMPT ENGINEERING (The "Intermediate AI") ---
     // Goal: Turn vague user input into precise instructions for the Coach AI
@@ -257,7 +257,7 @@ Return ONLY valid JSON, nothing else.`;
     const aiRes = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama-3.3-70b-versatile",
+        model: require("../config/groqModels").GROQ_CAPABLE,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: "Give me today's inspirational quote." }

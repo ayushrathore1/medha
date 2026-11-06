@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { AuthContext } from "../AuthContext";
 import AuthShell from "../components/Auth/AuthShell";
 import { apiUrl } from "../config/api";
+import { resolvePostAuthPath } from "../config/appMode";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { login } = useContext(AuthContext);
-  const nextPath = searchParams.get("next") || "/inside";
+  const nextParam = searchParams.get("next");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -43,7 +44,7 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         login(data.user);
-        navigate(nextPath);
+        navigate(resolvePostAuthPath(data.user, nextParam));
       } else {
         setError(data.message || "Login failed");
       }
@@ -100,7 +101,7 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         login(data.user);
-        navigate(nextPath);
+        navigate(resolvePostAuthPath(data.user, nextParam));
       } else {
         setError(data.message || "Verification failed");
       }

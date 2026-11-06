@@ -2,6 +2,7 @@ import React, { useEffect, useContext, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import Loader from "../components/Common/Loader";
+import { getPostAuthHome } from "../config/appMode";
 
 const BACKEND_URL = String(import.meta.env.VITE_BACKEND_URL || "https://medharevisionapi.shopcampuskart.in").replace(/\/$/, "");
 
@@ -60,7 +61,7 @@ const GoogleAuthSuccess = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         login(data.user);
-        navigate("/inside", { replace: true });
+        navigate(getPostAuthHome(data.user), { replace: true });
       } catch {
         fail("Something went wrong. Redirecting...");
       }

@@ -3,6 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { AuthContext } from "../AuthContext";
 import BrandMark, { CAMPUSKART_URL } from "../components/Common/BrandMark";
+import { isTeamUser } from "../config/appMode";
 import "../styles/ComingSoon.css";
 
 const ease = [0.22, 1, 0.36, 1];
@@ -86,6 +87,10 @@ export default function MemberComingSoon() {
   const first = String(user?.name || "friend").split(" ")[0];
 
   if (!user) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (isTeamUser(user)) {
     return <Navigate to="/" replace />;
   }
 

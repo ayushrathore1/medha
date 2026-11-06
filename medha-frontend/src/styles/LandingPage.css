@@ -126,10 +126,20 @@
 /* ============================================= 
    RESPONSIVE — TABLET (≤ 1024px)
    ============================================= */
+.nav-mobile-logout {
+  display: none !important;
+  align-items: center;
+  gap: 10px;
+}
+
 @media (max-width: 1024px) {
   /* ——— Navbar ——— */
   .nav-hamburger {
     display: flex;
+  }
+
+  .nav-mobile-logout {
+    display: inline-flex !important;
   }
 
   .nav-links-desktop,
@@ -173,6 +183,8 @@
   }
 
   .nav-mobile-overlay .mobile-cta {
+    display: block;
+    width: 100%;
     margin-top: 24px;
     text-align: center;
     background: #1F1F1F;
@@ -181,7 +193,11 @@
     padding: 16px;
     font-weight: 700;
     font-size: 16px;
+    border: none;
     border-bottom: none;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
   }
 
   /* ——— Hero ——— */
@@ -806,7 +822,6 @@
 
 
 /* Premium editorial finish: one clear hierarchy, quieter surfaces, deliberate accents. */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 .landing-page{background:#F8F7F2!important;color:#171A2B!important;font-family:'DM Sans',sans-serif!important}
 .landing-page h1,.landing-page h2,.landing-page h3,.landing-page h4,.landing-page h5,.landing-page h6{font-family:'Manrope',sans-serif!important;letter-spacing:-.045em}
 .landing-page .landing-nav{padding-left:clamp(18px,4vw,56px)!important;padding-right:clamp(18px,4vw,56px)!important;background:rgba(248,247,242,.9)!important;border-bottom:1px solid rgba(23,26,43,.08)!important;box-shadow:none!important}
@@ -1143,7 +1158,6 @@
 
 
 /* Premium typography pass: clean geometric sans for UI, editorial serif only for emphasis. */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&display=swap');
 .landing-page{
   --font-ui:'DM Sans',sans-serif;
   --font-display:'Manrope',sans-serif;
@@ -1296,11 +1310,14 @@
   justify-content: center;
   background: #111 !important;
   color: #fff !important;
+  border: none;
   border-radius: 999px;
   padding: 14px 22px;
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 .wama-pill-sm {
   padding: 11px 18px;

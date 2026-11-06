@@ -5,6 +5,7 @@ import Card from "../components/Common/Card";
 import Button from "../components/Common/Button";
 import BrandMark from "../components/Common/BrandMark";
 import { AuthContext } from "../AuthContext";
+import { getPostAuthHome } from "../config/appMode";
 
 /**
  * EmailVerification page for existing users who haven't verified their email.
@@ -33,7 +34,7 @@ const EmailVerification = () => {
       return;
     }
     if (userData.emailVerified === true) {
-      navigate("/inside");
+      navigate(getPostAuthHome(userData));
     }
   }, [userData, navigate]);
 
@@ -109,7 +110,7 @@ const EmailVerification = () => {
     localStorage.setItem("user", JSON.stringify(updatedUser));
     login(updatedUser);
     setVerificationStep("complete");
-    setTimeout(() => navigate("/inside"), 2000);
+    setTimeout(() => navigate(getPostAuthHome(updatedUser)), 2000);
   };
 
   // Resend code

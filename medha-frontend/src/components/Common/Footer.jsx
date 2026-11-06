@@ -110,7 +110,7 @@ const Footer = () => (
           {
             section: "Quick Links",
             links: [
-              { to: "/dashboard", label: "Dashboard" },
+              { to: "/", label: "Home" },
               { to: "/notes", label: "Notes Community" },
               { to: "/exams", label: "Exams" },
             ],

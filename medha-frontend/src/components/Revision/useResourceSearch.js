@@ -1,34 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { searchDatabase } from "../../api/api";
-import { findGfgArticles } from "../../data/gfgArticles";
-import { SUBJECTS, findTopicMatch } from "../../data/subjectCatalog";
-
-function catalogVideos(query, subjectName) {
-  const q = String(query || "").toLowerCase().trim();
-  if (!q) return [];
-  const videos = [];
-  SUBJECTS.filter((subject) => !subjectName || subject.name === subjectName).forEach((subject) => {
-    subject.units.forEach((unit) => {
-      const hit =
-        unit.title.toLowerCase().includes(q) ||
-        subject.name.toLowerCase().includes(q) ||
-        unit.topics.some((topic) => topic.toLowerCase().includes(q) || q.includes(topic.toLowerCase().slice(0, 12)));
-      if (!hit) return;
-      (unit.videos || []).forEach((video) => {
-        videos.push({
-          id: video.videoId || video.title,
-          title: video.title,
-          channelTitle: video.channelTitle,
-          thumbnailUrl: video.thumbnail,
-          duration: video.duration,
-          videoId: video.videoId,
-          youtubeUrl: video.videoId ? `https://www.youtube.com/watch?v=${video.videoId}` : null,
-        });
-      });
-    });
-  });
-  return videos.filter((item, index, arr) => arr.findIndex((x) => x.id === item.id) === index);
-}
+import { findTopicMatch } from "../../data/subjectCatalog";
 
 export const TABS = [
   { id: "all", label: "All" },
@@ -71,16 +43,13 @@ export function useResourceSearch({ query, subject, extraTitles = [] }) {
   }, [load]);
 
   const notes = payload?.results?.notes || [];
-  const youtube = useMemo(() => {
-    const fromSearch = payload?.results?.youtube || [];
-    const fromCatalog = catalogVideos(trimmed, subject);
-    const merged = [...fromCatalog, ...fromSearch];
-    return merged.filter((item, index, arr) => arr.findIndex((x) => (x.videoId || x.id) === (item.videoId || item.id)) === index);
-  }, [payload, trimmed, subject]);
-  const gfg = useMemo(
-    () => findGfgArticles(trimmed, extraTitles),
-    [trimmed, extraTitles]
-  );
+  const youtube = payload?.results?.youtube || [];
+  const gfg = useMemo(() => {
+    const fromApi = payload?.results?.gfg || [];
+    if (fromApi.length) return fromApi;
+    // Fallback labels only — open still requires a curated id from API
+    return (extraTitles || []).slice(0, 0);
+  }, [payload, extraTitles]);
   const match = useMemo(() => findTopicMatch(trimmed), [trimmed]);
 
   const counts = {

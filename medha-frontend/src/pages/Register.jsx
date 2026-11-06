@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AuthContext } from "../AuthContext";
 import AuthShell from "../components/Auth/AuthShell";
 import { apiUrl } from "../config/api";
+import { getPostAuthHome } from "../config/appMode";
 
 // ─── Password Strength ─────────────────────────────────────
 function getStrength(pw) {
@@ -152,7 +153,7 @@ const Register = () => {
         localStorage.setItem("user", JSON.stringify(data.user));
         login(data.user);
         setSuccess(true);
-        setTimeout(() => navigate("/inside"), 2500);
+        setTimeout(() => navigate(getPostAuthHome(data.user)), 2500);
       } else if (response.status === 409) {
         const loginResponse = await fetch(apiUrl("/api/auth/login"), {
             method: "POST",
@@ -168,7 +169,7 @@ const Register = () => {
           localStorage.setItem("user", JSON.stringify(loginData.user));
           login(loginData.user);
           setSuccess(true);
-          setTimeout(() => navigate("/inside"), 2500);
+          setTimeout(() => navigate(getPostAuthHome(loginData.user)), 2500);
         } else {
           setError("Account exists but login failed. Try logging in manually.");
           setLoading(false);

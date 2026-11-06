@@ -4,26 +4,29 @@ import { AuthContext } from "../AuthContext";
 import RevisionShell from "../components/Revision/RevisionShell";
 import { loginPath } from "../components/Revision/revisionUtils";
 import { SUBJECTS, getSubjectBySlug } from "../data/subjectCatalog";
+import { useMergedSubjects } from "../hooks/useMergedSubjects";
 import api from "../api/api";
 
 const SEMESTERS = ["3rd", "4th", "5th", "6th"];
-const FIELD =
-  "w-full rounded-none border-0 border-b border-[#E8E8E8] bg-transparent py-2 text-[15px] text-[#111] shadow-none outline-none focus:border-[#111] disabled:opacity-50";
 
 export default function UploadNotes() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { subjects: mergedSubjects } = useMergedSubjects();
+  const subjectOptions = mergedSubjects.length ? mergedSubjects : SUBJECTS;
+
   const [file, setFile] = useState(null);
   const [title, setTitle] = useState("");
   const [subjectSlug, setSubjectSlug] = useState("");
   const [topic, setTopic] = useState("");
   const [semester, setSemester] = useState("");
   const [description, setDescription] = useState("");
+  const [isPublic, setIsPublic] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
 
-  const subject = getSubjectBySlug(subjectSlug);
+  const subject = subjectOptions.find((s) => s.slug === subjectSlug) || getSubjectBySlug(subjectSlug);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -46,7 +49,7 @@ export default function UploadNotes() {
       formData.append("file", file);
       formData.append("title", title.trim());
       formData.append("subjectTag", subject.name);
-      formData.append("isPublic", "true");
+      formData.append("isPublic", isPublic ? "true" : "false");
       if (semester) formData.append("semester", semester);
       if (topic) formData.append("noteType", topic);
       if (description) formData.append("content", description);
@@ -60,115 +63,160 @@ export default function UploadNotes() {
   };
 
   return (
-    <RevisionShell title="Share notes">
-      {user && (
-        <div className="mb-6 flex items-baseline justify-between text-[13px]">
-          <p className="text-[#5C5C5C]">Aura {user.auraPoints ?? 0} · earned when people download your notes</p>
-          <button type="button" onClick={() => navigate("/uploads")} className="border-b border-[#111] text-[#111]">
-            Your uploads
-          </button>
-        </div>
-      )}
-
-      {!user && (
-        <p className="mb-6 text-[14px] text-[#5C5C5C]">
-          You can fill the form. Uploading needs an account.{" "}
-          <button type="button" className="text-[#1F1F1F] underline underline-offset-2" onClick={() => navigate(loginPath("/upload"))}>
-            Sign in
-          </button>
-        </p>
-      )}
-
-      {done ? (
-        <div className="py-6">
-          <p className="text-[22px] font-semibold tracking-[-0.03em]">These notes are live.</p>
-          <p className="mt-2 text-[14px] leading-6 text-[#5C5C5C]">
-            We checked the file and accepted it as study material. You earn Aura each time another student downloads it.
+    <RevisionShell title="Upload" desk>
+      <div className="desk-page">
+        <header className="mb-4">
+          <p className="desk-eyebrow">Share with Medha</p>
+          <h1 className="desk-title">Upload notes</h1>
+          <p className="desk-sub">
+            PDF or a scan of class notes, up to 25MB. Public notes can be shared with your campus; private stays in your library.
           </p>
-          <button
-            type="button"
-            onClick={() => navigate("/uploads")}
-            className="mt-6 rounded-full bg-[#111] px-5 py-2.5 text-[13px] font-semibold text-white"
-          >
-            See your uploads
-          </button>
-        </div>
-      ) : (
-        <form onSubmit={submit} className="space-y-6">
-          <p className="text-[14px] leading-6 text-[#5C5C5C]">
-            PDF or a scan of class notes. We read the file before it goes live. Comics, memes, and anything that isn’t course material is rejected.
-          </p>
+        </header>
 
-          <label className="block cursor-pointer rounded-[22px] border border-dashed border-[#E8E8E8] px-4 py-8 text-center transition-colors hover:border-[#111]">
-            <input
-              type="file"
-              accept="application/pdf,image/*"
-              className="hidden"
-              onChange={(e) => {
-                const next = e.target.files?.[0];
-                setFile(next || null);
-                if (next && !title) setTitle(next.name.replace(/\.[^.]+$/, ""));
-              }}
-            />
-            <p className="text-[15px] font-medium">{file ? file.name : "Choose a PDF or image"}</p>
-            <p className="mt-1 text-[12px] text-[#8A8A8A]">Up to 25MB.</p>
-          </label>
+        {user ? (
+          <div className="desk-banner desk-banner--violet mb-4">
+            <div>
+              <strong>Your uploads</strong>
+              <span>Review what you’ve shared and what’s still in review</span>
+            </div>
+            <button type="button" className="desk-ghost-btn" onClick={() => navigate("/uploads")}>
+              Open library
+            </button>
+          </div>
+        ) : (
+          <div className="desk-banner desk-banner--orange mb-4">
+            <div>
+              <strong>Sign in to upload</strong>
+              <span>You can fill the form now — uploading needs an account.</span>
+            </div>
+            <button type="button" className="desk-solid-btn" onClick={() => navigate(loginPath("/upload"))}>
+              Sign in
+            </button>
+          </div>
+        )}
 
-          <Field label="Title">
-            <input value={title} onChange={(e) => setTitle(e.target.value)} className={FIELD} placeholder="DBMS notes, Unit 1" />
-          </Field>
+        <section className="desk-panel">
+          {done ? (
+            <div className="py-2">
+              <p className="desk-title" style={{ fontSize: 24 }}>
+                {isPublic ? "Upload complete" : "Private notes saved"}
+              </p>
+              <p className="desk-sub">
+                {isPublic
+                  ? "Your file is uploaded. We’ll email you when it’s live for everyone, or if we need a different file."
+                  : "Only you can see these notes. No public review runs on private uploads."}
+              </p>
+              <button type="button" onClick={() => navigate("/uploads")} className="desk-solid-btn mt-5">
+                See your uploads
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={submit} className="space-y-5">
+              <label className="desk-dropzone">
+                <input
+                  type="file"
+                  accept="application/pdf,image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const next = e.target.files?.[0];
+                    setFile(next || null);
+                    if (next && !title) setTitle(next.name.replace(/\.[^.]+$/, ""));
+                  }}
+                />
+                <p className="text-[15px] font-semibold text-[#111]">
+                  {file ? file.name : "Choose a PDF or image"}
+                </p>
+                <p className="mt-1 text-[12px] text-[#8A8A8A]">Up to 25MB.</p>
+              </label>
 
-          <Field label="Subject">
-            <select value={subjectSlug} onChange={(e) => { setSubjectSlug(e.target.value); setTopic(""); }} className={FIELD}>
-              <option value="">Select subject</option>
-              {SUBJECTS.map((item) => (
-                <option key={item.slug} value={item.slug}>{item.name}</option>
-              ))}
-            </select>
-          </Field>
+              <label className="desk-field">
+                <span>Title</span>
+                <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="DBMS notes, Unit 1" />
+              </label>
 
-          <Field label="Unit">
-            <select value={topic} onChange={(e) => setTopic(e.target.value)} className={FIELD} disabled={!subject}>
-              <option value="">Optional</option>
-              {subject?.units.map((unit) => (
-                <option key={unit.slug} value={unit.title}>{unit.title}</option>
-              ))}
-            </select>
-          </Field>
+              <label className="desk-field">
+                <span>Subject</span>
+                <select
+                  value={subjectSlug}
+                  onChange={(e) => {
+                    setSubjectSlug(e.target.value);
+                    setTopic("");
+                  }}
+                >
+                  <option value="">Select subject</option>
+                  {subjectOptions.map((item) => (
+                    <option key={`${item.semester}-${item.slug}`} value={item.slug}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-          <Field label="Semester">
-            <select value={semester} onChange={(e) => setSemester(e.target.value)} className={FIELD}>
-              <option value="">Optional</option>
-              {SEMESTERS.map((item) => (
-                <option key={item} value={item}>{item}</option>
-              ))}
-            </select>
-          </Field>
+              <label className="desk-field">
+                <span>Unit</span>
+                <select value={topic} onChange={(e) => setTopic(e.target.value)} disabled={!subject}>
+                  <option value="">Optional</option>
+                  {subject?.units?.map((unit) => (
+                    <option key={unit.slug || unit.title} value={unit.title}>
+                      {unit.title}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-          <Field label="What’s inside">
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} className={`${FIELD} min-h-20`} placeholder="Handwritten unit 1, covers ER model and keys." />
-          </Field>
+              <label className="desk-field">
+                <span>Semester</span>
+                <select value={semester} onChange={(e) => setSemester(e.target.value)}>
+                  <option value="">Optional</option>
+                  {SEMESTERS.map((item) => (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-          {error && <p className="text-[14px] text-[#B42318]">{error}</p>}
+              <label className="desk-field">
+                <span>What’s inside</span>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="min-h-24"
+                  placeholder="Handwritten unit 1, covers ER model and keys."
+                />
+              </label>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full rounded-full bg-[#111] px-4 py-3.5 text-[14px] font-semibold text-white disabled:opacity-50"
-          >
-            {submitting ? "Checking the file…" : "Upload notes"}
-          </button>
-        </form>
-      )}
+              <div className="desk-tabs">
+                <button
+                  type="button"
+                  onClick={() => setIsPublic(true)}
+                  className={`desk-tab${isPublic ? " is-on" : ""}`}
+                >
+                  Public
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsPublic(false)}
+                  className={`desk-tab${!isPublic ? " is-on" : ""}`}
+                >
+                  Private
+                </button>
+              </div>
+              <p className="text-[12px] text-[#8A8A8A]">
+                {isPublic
+                  ? "Shared with students after upload completes successfully."
+                  : "Only visible in your library. You can make it public later from Your uploads."}
+              </p>
+
+              {error ? <p className="text-[14px] text-[#B42318]">{error}</p> : null}
+
+              <button type="submit" disabled={submitting} className="desk-solid-btn w-full py-3.5">
+                {submitting ? "Uploading…" : "Upload notes"}
+              </button>
+            </form>
+          )}
+        </section>
+      </div>
     </RevisionShell>
-  );
-}
-
-function Field({ label, children }) {
-  return (
-    <label className="block">
-      <span className="mb-1 block text-[12px] text-[#8A8A8A]">{label}</span>
-      {children}
-    </label>
   );
 }

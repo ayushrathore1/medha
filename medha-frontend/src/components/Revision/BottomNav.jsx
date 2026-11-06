@@ -1,14 +1,28 @@
-import React, { useContext } from "react";
+import React, { useContext, memo, useCallback } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Home, Search, BookOpen, Upload, UserRound } from "lucide-react";
 import { AuthContext } from "../../AuthContext";
 
 export const REVISION_TABS = [
-  { to: "/dashboard", label: "Home", icon: Home },
-  { to: "/search", label: "Search", icon: Search, match: (path) => path === "/search" },
-  { to: "/subjects", label: "Subjects", icon: BookOpen, match: (path) => path.startsWith("/subjects") },
-  { to: "/upload", label: "Upload", icon: Upload, match: (path) => path === "/upload" || path === "/uploads" },
-  { to: "/profile", label: "You", icon: UserRound, authTo: "/login", match: (path) => path.startsWith("/profile") },
+  { to: "/", label: "Home", icon: Home, match: (path) => path === "/", preload: () => import("../../pages/HomeGate") },
+  { to: "/search", label: "Search", icon: Search, match: (path) => path === "/search", preload: () => import("../../pages/RevisionSearch") },
+  { to: "/subjects", label: "Subjects", icon: BookOpen, match: (path) => path.startsWith("/subjects"), preload: () => import("../../pages/Subjects") },
+  {
+    to: "/upload",
+    label: "Upload",
+    icon: Upload,
+    authTo: "/login",
+    match: (path) => path === "/upload" || path === "/uploads",
+    preload: () => import("../../pages/UploadNotes"),
+  },
+  {
+    to: "/profile",
+    label: "Profile",
+    icon: UserRound,
+    authTo: "/login",
+    match: (path) => path.startsWith("/profile"),
+    preload: () => import("../../pages/Profile"),
+  },
 ];
 
 export function isRevisionTabActive(tab, pathname) {
@@ -21,12 +35,22 @@ export function revisionTabHref(tab, user) {
   return tab.authTo && !user ? `${tab.authTo}?next=${encodeURIComponent(tab.to)}` : tab.to;
 }
 
-export default function BottomNav() {
+function BottomNav() {
   const location = useLocation();
   const { user } = useContext(AuthContext);
 
+  const warm = useCallback((tab) => {
+    if (typeof tab.preload === "function") {
+      try {
+        tab.preload();
+      } catch {
+        /* ignore */
+      }
+    }
+  }, []);
+
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--line)] bg-white pb-[max(22px,env(safe-area-inset-bottom))] md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--line,#E8E8E8)] bg-white pb-[max(22px,env(safe-area-inset-bottom))] lg:hidden">
       <div className="mx-auto flex h-[62px] max-w-[1240px] items-center justify-around px-2">
         {REVISION_TABS.map((tab) => {
           const Icon = tab.icon;
@@ -36,6 +60,9 @@ export default function BottomNav() {
             <NavLink
               key={tab.to}
               to={href}
+              onMouseEnter={() => warm(tab)}
+              onFocus={() => warm(tab)}
+              onTouchStart={() => warm(tab)}
               className="flex h-11 min-w-0 flex-1 flex-col items-center justify-center gap-1 text-inherit no-underline"
             >
               <span className={`grid h-[30px] w-[52px] place-items-center rounded-full ${active ? "bg-[#111]" : ""}`}>
@@ -51,3 +78,5 @@ export default function BottomNav() {
     </nav>
   );
 }
+
+export default memo(BottomNav);

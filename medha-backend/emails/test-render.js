@@ -17,7 +17,7 @@ async function test() {
     { name: 'Welcome', el: h(WelcomeEmail, { name: 'Ayush Rathore' }) },
     { name: 'Credentials', el: h(CredentialsEmail, { name: 'Ayush', email: 'ayush@example.com', password: 'Ab3kLm9Q', generated: true, forgotPasswordUrl: 'https://medharevision.shopcampuskart.in/forgot-password' }) },
     { name: 'Reset', el: h(PasswordResetEmail, { name: 'Ayush', resetUrl: 'https://medha.study/reset?token=abc123', ttlMinutes: 30 }) },
-    { name: 'Team Invite', el: h(TeamInvitationEmail, { firstName: 'Priya', code: 'A7B3C1', joinLink: 'https://medha.study/join-team?email=test@test.com' }) },
+    { name: 'Team Invite', el: h(TeamInvitationEmail, { firstName: 'Priya', joinLink: 'https://medha.study/join-team?email=test@test.com', alreadyMember: false }) },
     { name: 'Early Access', el: h(EarlyAccessEmail, { name: 'Rahul' }) },
     { name: 'Re-engagement', el: h(ReEngagementEmail, { name: 'Neha' }) },
     { name: 'Sem 4 notice', el: h(Sem4NotificationEmail, { name: 'Aman' }) },

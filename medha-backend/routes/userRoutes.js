@@ -86,7 +86,9 @@ router.get("/profile/:userId", auth, async (req, res, next) => {
     const { userId } = req.params;
     const currentUserId = req.user.userId;
 
-    const user = await User.findById(userId).select("name email avatar avatarIndex university branch gender karma rank role customFlair createdAt");
+    const user = await User.findById(userId).select(
+      "name email avatar avatarIndex university branch gender karma rank role customFlair createdAt auraPoints"
+    );
     
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -100,16 +102,14 @@ router.get("/profile/:userId", auth, async (req, res, next) => {
       Follow.findOne({ follower: currentUserId, following: userId })
     ]);
 
+    const auraPoints = user.auraPoints || 0;
+
     res.json({
       user: {
         _id: user._id,
         name: user.name,
-        // Only show email domain/mask for privacy unless admin/same user? 
-        // For now, let's just show it as is or maybe omitted if privacy is key.
-        // User requested showing uploader, so maybe just name is enough.
-        // Let's keep email for now as per Profile.jsx logic
         email: user.email, 
-        avatar: user.avatar, // You might need getAvatarByIndex logic on backend or frontend
+        avatar: user.avatar,
         avatarIndex: user.avatarIndex,
         university: user.university,
         branch: user.branch,
@@ -118,12 +118,14 @@ router.get("/profile/:userId", auth, async (req, res, next) => {
         rank: user.rank,
         role: user.role,
         customFlair: user.customFlair,
-        createdAt: user.createdAt
+        createdAt: user.createdAt,
+        auraPoints,
       },
       stats: {
         notesShared: notesCount,
         followers: followersCount,
-        following: followingCount
+        following: followingCount,
+        auraPoints,
       },
       isFollowing: !!isFollowing
     });

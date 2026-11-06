@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const env = require("../config/env");
+const { applyPendingTeamInvite } = require("./teamController");
 
 // Helper to create JWT (always with userId)
 const generateToken = (user) => {
@@ -27,11 +28,17 @@ exports.register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    let user = await User.create({
       name,
       email,
       password: hashedPassword,
     });
+
+    try {
+      user = await applyPendingTeamInvite(user);
+    } catch (inviteErr) {
+      console.warn("Pending team invite apply failed:", inviteErr.message);
+    }
 
     const token = generateToken(user);
 
@@ -42,6 +49,8 @@ exports.register = async (req, res) => {
         name: user.name,
         email: user.email,
         auraPoints: user.auraPoints || 0,
+        role: user.role || "user",
+        isAdmin: user.isAdmin || user.role === "admin" || user.role === "team",
       },
       token,
     });
@@ -99,6 +108,12 @@ exports.login = async (req, res) => {
     user.streak = streak;
     user.lastActiveDate = new Date();
     await user.save();
+
+    try {
+      await applyPendingTeamInvite(user);
+    } catch (inviteErr) {
+      console.warn("Pending team invite apply failed:", inviteErr.message);
+    }
 
     return res.json({
       message: "Login successful.",

@@ -2,7 +2,6 @@ const User = require("../models/User");
 const EmailLog = require("../models/EmailLog");
 const TeamInvitation = require("../models/TeamInvitation");
 const { sendEmail } = require("../utils/sendEmail");
-const crypto = require("crypto");
 const axios = require("axios");
 const FormData = require("form-data");
 const React = require("react");
@@ -432,7 +431,7 @@ exports.generateEmailContent = async (req, res) => {
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama-3.3-70b-versatile",
+        model: require("../config/groqModels").GROQ_CAPABLE,
         messages: [{ role: "user", content: systemPrompt }],
         max_tokens: 2500,
         temperature: 0.7,
@@ -491,7 +490,33 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// Update User Role
+function appBaseUrl() {
+  return (process.env.APP_BASE_URL || "https://medharevision.shopcampuskart.in").replace(
+    /\/$/,
+    ""
+  );
+}
+
+async function sendTeamWelcomeEmail({ email, firstName, alreadyMember }) {
+  const joinLink = alreadyMember
+    ? `${appBaseUrl()}/admin`
+    : `${appBaseUrl()}/join-team?email=${encodeURIComponent(email)}`;
+  const htmlBody = await renderEmail(
+    React.createElement(TeamInvitationEmail, {
+      firstName: firstName || "there",
+      joinLink,
+      alreadyMember: Boolean(alreadyMember),
+    })
+  );
+  await sendEmail({
+    to: email,
+    displayName: "Ayush Rathore | MEDHA",
+    subject: "You're on the Medha Revision team — early access",
+    html: htmlBody,
+  });
+}
+
+// Update User Role — super-admin only (also gated by fullAdminAuth on the route)
 exports.updateUserRole = async (req, res) => {
   const { id } = req.params;
   const { role } = req.body;
@@ -503,6 +528,14 @@ exports.updateUserRole = async (req, res) => {
   }
 
   try {
+    if (!req.isFullAdmin && !(req.staffUser && (req.staffUser.isAdmin || req.staffUser.role === "admin"))) {
+      // Fallback if middleware didn't set flags (adminAuth path without fullAdminAuth)
+      const actor = await User.findById(req.userId).select("role isAdmin");
+      if (!actor || !(actor.isAdmin || actor.role === "admin")) {
+        return res.status(403).json({ message: "Only admins can assign roles." });
+      }
+    }
+
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -515,13 +548,48 @@ exports.updateUserRole = async (req, res) => {
         .json({ message: "Cannot change role of the main admin." });
     }
 
+    // Team members must never promote anyone to admin (belt-and-suspenders)
+    if (role === "admin") {
+      const actor = await User.findById(req.userId).select("role isAdmin");
+      if (!actor || !(actor.isAdmin || actor.role === "admin")) {
+        return res.status(403).json({ message: "Only admins can grant admin role." });
+      }
+    }
+
+    const wasTeam =
+      user.role === "team" || user.role === "admin" || user.isAdmin;
     user.role = role;
     // Sync isAdmin flag for backward compatibility
     user.isAdmin = role === "admin";
 
     await user.save();
 
-    res.json({ message: "User role updated successfully", user });
+    if (role === "team" && !wasTeam) {
+      try {
+        await TeamInvitation.updateMany(
+          { email: user.email.toLowerCase(), used: false },
+          { $set: { used: true } }
+        );
+        await sendTeamWelcomeEmail({
+          email: user.email,
+          firstName: user.name?.split(" ")[0],
+          alreadyMember: true,
+        });
+      } catch (mailErr) {
+        console.error("Team welcome email failed:", mailErr);
+      }
+    }
+
+    res.json({
+      message: "User role updated successfully",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isAdmin: user.isAdmin,
+      },
+    });
   } catch (error) {
     console.error("Error updating user role:", error);
     res
@@ -543,7 +611,7 @@ exports.getTeamMembers = async (req, res) => {
   }
 };
 
-// Invite a new team member
+// Invite a new team member — no invite-code step (admin already approved)
 exports.inviteTeamMember = async (req, res) => {
   const { email } = req.body;
 
@@ -552,54 +620,66 @@ exports.inviteTeamMember = async (req, res) => {
   }
 
   try {
-    // Check if user is already in the team
-    const existingUser = await User.findOne({ email });
+    const normalized = String(email).trim().toLowerCase();
+    const existingUser = await User.findOne({ email: normalized });
     if (
       existingUser &&
-      (existingUser.role === "team" || existingUser.role === "admin")
+      (existingUser.role === "team" ||
+        existingUser.role === "admin" ||
+        existingUser.isAdmin)
     ) {
       return res
         .status(409)
         .json({ message: "User is already a team member or admin." });
     }
 
-    // Generate 6-digit alphanumeric code
-    const code = crypto.randomBytes(3).toString("hex").toUpperCase();
-
-    // Expiration: 48 hours
+    const invitedBy = req.user?._id || req.userId || req.staffUser?._id;
     const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 48);
+    expiresAt.setDate(expiresAt.getDate() + 14);
 
-    // Save invitation
-    await TeamInvitation.create({
-      email,
-      code,
-      expiresAt,
-      invitedBy: req.user._id, // Assuming admin is logged in
-    });
+    let alreadyMember = false;
 
-    // Send email
-    const joinLink = `${(process.env.APP_BASE_URL || "https://medharevision.shopcampuskart.in").replace(/\/$/, "")}/join-team?email=${encodeURIComponent(email)}`;
+    if (existingUser) {
+      existingUser.role = "team";
+      existingUser.isAdmin = false;
+      await existingUser.save();
+      alreadyMember = true;
+      await TeamInvitation.updateMany(
+        { email: normalized, used: false },
+        { $set: { used: true } }
+      );
+    } else {
+      await TeamInvitation.findOneAndUpdate(
+        { email: normalized, used: false },
+        {
+          $set: {
+            email: normalized,
+            code: null,
+            expiresAt,
+            invitedBy,
+            used: false,
+          },
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+    }
 
-    // Get first name or default
     const firstName = existingUser
       ? existingUser.name.split(" ")[0]
-      : "Candidate";
+      : "there";
 
-    // Render React Email component to HTML
-    const htmlBody = await renderEmail(
-      React.createElement(TeamInvitationEmail, { firstName, code, joinLink })
-    );
-
-    // Attempt to send email
-    await sendEmail({
-      to: email,
-      displayName: "Ayush Rathore | MEDHA",
-      subject: "You're invited to the Medha Revision team",
-      html: htmlBody,
+    await sendTeamWelcomeEmail({
+      email: normalized,
+      firstName,
+      alreadyMember,
     });
 
-    res.status(200).json({ message: "Invitation sent successfully.", code });
+    res.status(200).json({
+      message: alreadyMember
+        ? "User promoted to team and welcome email sent."
+        : "Invitation sent. They can join with this email — no code required.",
+      promoted: alreadyMember,
+    });
   } catch (error) {
     console.error("Error sending invitation:", error);
     res.status(500).json({ message: "Failed to send invitation." });

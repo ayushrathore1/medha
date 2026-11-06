@@ -3,8 +3,20 @@ import { Link, useSearchParams } from "react-router-dom";
 import RevisionShell from "../components/Revision/RevisionShell";
 import SearchBar from "../components/Revision/SearchBar";
 import ResourceBoard from "../components/Revision/ResourceBoard";
-import { POPULAR_TOPICS, findTopicMatch, getRecentSearches, saveRecentSearch, tagsForText } from "../data/subjectCatalog";
-import { SchemeTags } from "../components/Revision/SchemeTag";
+import { POPULAR_TOPICS, findTopicMatch, getRecentSearches, saveRecentSearch } from "../data/subjectCatalog";
+import "./DashboardHome.css";
+import "./RevisionSearch.css";
+
+const POPULAR_TONES = [
+  { bg: "#1BA34A", ink: "#fff" },
+  { bg: "#FF8A1A", ink: "#161616" },
+  { bg: "#2563EB", ink: "#fff" },
+  { bg: "#7C3AED", ink: "#fff" },
+  { bg: "#0D9488", ink: "#fff" },
+  { bg: "#E30613", ink: "#fff" },
+  { bg: "#F59E0B", ink: "#161616" },
+  { bg: "#DB2777", ink: "#fff" },
+];
 
 export default function RevisionSearch() {
   const [params, setParams] = useSearchParams();
@@ -24,82 +36,84 @@ export default function RevisionSearch() {
   };
 
   return (
-    <RevisionShell title={urlQuery || "Search"}>
-      <SearchBar value={query} onChange={setQuery} onSubmit={commit} autoFocus={!urlQuery} />
-
-      {!urlQuery && (
-        <div className="mt-8 space-y-10">
-          <p className="max-w-[52ch] text-[15px] leading-relaxed text-[#5A5A5A]">
-            Type a topic from the syllabus. We’ll pull notes, lectures, and GFG.
+    <RevisionShell title={urlQuery || "Search"} desk>
+      <div className="desk-page search-desk">
+        <header className="search-desk-top">
+          <p className="desk-eyebrow">Library search</p>
+          <h1 className="desk-title">{urlQuery ? "Results" : "Find a topic"}</h1>
+          <p className="desk-sub">
+            Type a topic from the syllabus. We’ll pull notes, lectures, and GFG into one place.
           </p>
-          {recents.length > 0 && (
-            <section>
-              <h2 className="mb-3.5 font-[family-name:var(--font-display)] text-[13px] font-semibold uppercase tracking-[.12em] text-[#5A5A5A]">
-                Recent
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {recents.map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    onClick={() => commit(item)}
-                    className="rounded-full border border-[var(--line)] bg-white px-4 py-2 text-left text-[13px] text-[#111] transition-colors hover:border-[#111]"
-                  >
-                    <span className="mb-1 block">
-                      <SchemeTags tags={tagsForText(item)} />
-                    </span>
-                    {item}
-                  </button>
-                ))}
+        </header>
+
+        <SearchBar value={query} onChange={setQuery} onSubmit={commit} autoFocus={!urlQuery} />
+
+        {!urlQuery && (
+          <div className="search-desk-sections">
+            {recents.length > 0 && (
+              <section className="desk-panel search-recent-panel">
+                <div className="desk-panel-head">
+                  <h2>Recent</h2>
+                </div>
+                <div className="search-recent-list">
+                  {recents.map((item) => (
+                    <button key={item} type="button" onClick={() => commit(item)} className="search-recent-chip">
+                      <span className="search-recent-label">{item}</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <section className="desk-panel search-popular-panel">
+              <div className="desk-panel-head">
+                <h2>Often searched</h2>
+              </div>
+              <div className="search-popular-list">
+                {POPULAR_TOPICS.map((topic, i) => {
+                  const tone = POPULAR_TONES[i % POPULAR_TONES.length];
+                  return (
+                    <button
+                      key={topic.label}
+                      type="button"
+                      onClick={() => commit(topic.query)}
+                      className="search-popular-chip"
+                      style={{ background: tone.bg, color: tone.ink }}
+                    >
+                      {topic.label}
+                    </button>
+                  );
+                })}
               </div>
             </section>
-          )}
-          <section>
-            <h2 className="mb-3.5 font-[family-name:var(--font-display)] text-[13px] font-semibold uppercase tracking-[.12em] text-[#5A5A5A]">
-              Often searched
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {POPULAR_TOPICS.map((topic) => (
-                <button
-                  key={topic.label}
-                  type="button"
-                  onClick={() => commit(topic.query)}
-                  className="rounded-full bg-[#111] px-4 py-2 text-[13px] font-medium text-white transition-opacity hover:opacity-85"
-                >
-                  {topic.label}
-                </button>
-              ))}
-            </div>
-          </section>
-        </div>
-      )}
+          </div>
+        )}
 
-      {urlQuery && (
-        <div className="mt-6">
-          {match?.subject && (
-            <div className="mb-6 border-b border-[var(--line)] pb-5">
-              <div className="mb-2">
-                <SchemeTags tags={tagsForText(urlQuery, match.subject.scheme)} />
+        {urlQuery && (
+          <div className="search-desk-results">
+            {match?.subject && (
+              <div className="desk-panel search-syllabus-hit">
+                <p className="desk-eyebrow" style={{ marginBottom: 6 }}>
+                  In the syllabus
+                </p>
+                <h2 className="search-hit-title">{urlQuery}</h2>
+                <p className="desk-sub" style={{ marginTop: 6 }}>
+                  {match.subject.name}
+                  {match.unit ? ` · ${match.unit.title}` : ""}
+                </p>
+                <Link
+                  to={match.unit ? `/subjects/${match.subject.slug}/${match.unit.slug}` : `/subjects/${match.subject.slug}`}
+                  className="desk-solid-btn"
+                  style={{ marginTop: 14, width: "fit-content" }}
+                >
+                  Open unit
+                </Link>
               </div>
-              <p className="text-[12px] font-semibold uppercase tracking-[.12em] text-[#5A5A5A]">In the syllabus</p>
-              <h2 className="mt-1 font-[family-name:var(--font-display)] text-[22px] font-extrabold tracking-[-0.03em] text-[#111]">
-                {urlQuery}
-              </h2>
-              <p className="mt-1 text-[14px] text-[#5A5A5A]">
-                {match.subject.name}
-                {match.unit ? ` · ${match.unit.title}` : ""}
-              </p>
-              <Link
-                to={match.unit ? `/subjects/${match.subject.slug}/${match.unit.slug}` : `/subjects/${match.subject.slug}`}
-                className="mt-3 inline-block border-b-2 border-[var(--cyan-soft)] pb-0.5 text-[13px] font-medium text-[#111] no-underline"
-              >
-                Open unit
-              </Link>
-            </div>
-          )}
-          <ResourceBoard query={urlQuery} extraTitles={match?.unit?.topics || []} />
-        </div>
-      )}
+            )}
+            <ResourceBoard query={urlQuery} extraTitles={match?.unit?.topics || []} />
+          </div>
+        )}
+      </div>
     </RevisionShell>
   );
 }

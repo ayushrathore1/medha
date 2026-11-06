@@ -1,93 +1,73 @@
 import React from "react";
-import axios from "axios";
 import {
-  FaInbox,
-  FaEnvelopeOpen,
-  FaBug,
-  FaLightbulb,
-  FaCircleCheck,
+  FaBookOpen,
+  FaFileLines,
   FaClock,
-  FaSpinner,
-  FaTrash,
-  FaXmark,
-  FaFilter,
-  FaArrowsRotate,
-  FaPaperPlane,
-  FaUser,
-  FaArrowDownAZ,
-  FaCalendarDays,
-  FaMagnifyingGlass,
-  FaWandMagicSparkles,
-  FaEye,
   FaUsers,
-  FaShieldHalved,
-  FaUserMinus,
-  FaPlus,
   FaMicrophone,
-  FaCopy,
-  FaCheck,
-  FaUpload,
-  FaFileAudio,
-  FaCommentDots,
+  FaEnvelopeOpenText,
 } from "react-icons/fa6";
-import Card from "../Common/Card";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-
+const TABS = [
+  { id: "curriculum", label: "Curriculum", icon: FaBookOpen },
+  { id: "notes-review", label: "Notes", icon: FaFileLines },
+  { id: "email", label: "Email", icon: FaEnvelopeOpenText },
+  { id: "history", label: "History", icon: FaClock },
+  { id: "team", label: "Team", icon: FaUsers },
+  { id: "transcribe", label: "Transcribe", icon: FaMicrophone },
+];
 
 export default function AdminTabBar({ admin }) {
-  const { activeTab, setActiveTab } = admin;
-  return (
-    <>
-        <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-red-400 to-orange-500 bg-clip-text text-transparent mb-2">
-              Admin Dashboard
-            </h1>
-            <p style={{ color: "var(--text-secondary)" }}>
-              Manage everything from here
-            </p>
-          </div>
+  const { activeTab, setActiveTab, isFullAdmin, teamMembers = [], users = [] } = admin;
 
-          <div className="admin-tabs">
+  return (
+    <div className="admin-dash-shell desk-page">
+      <header className="admin-dash-hero">
+        <p className="desk-eyebrow">Internal</p>
+        <h1 className="desk-title">Ops desk</h1>
+        <p className="desk-sub">
+          {isFullAdmin
+            ? "Curriculum, notes review, team roles, and day-to-day ops."
+            : "Edit curriculum and help with content."}
+        </p>
+      </header>
+
+      <div className="admin-dash-stats" aria-label="Quick stats">
+        <div className="admin-stat-card admin-stat-card--green">
+          <span>Workspace</span>
+          <strong>Ops</strong>
+        </div>
+        <div className="admin-stat-card admin-stat-card--violet">
+          <span>Team</span>
+          <strong>{teamMembers.length || "—"}</strong>
+        </div>
+        <div className="admin-stat-card admin-stat-card--amber">
+          <span>Users</span>
+          <strong>{users.length || "—"}</strong>
+        </div>
+        <div className="admin-stat-card admin-stat-card--blue">
+          <span>Your role</span>
+          <strong className="admin-stat-role">{isFullAdmin ? "Admin" : "Team"}</strong>
+        </div>
+      </div>
+
+      <nav className="desk-tabs admin-dash-tabs" aria-label="Ops sections">
+        {TABS.map((tab) => {
+          const Icon = tab.icon;
+          const active = activeTab === tab.id;
+          return (
             <button
-              onClick={() => setActiveTab("messages")}
-              className={`px-4 py-2 rounded-lg font-semibold transition-all border ${activeTab === "messages" ? "bg-purple-600 text-white border-purple-600" : "bg-white text-gray-500 hover:bg-gray-50 border-gray-200"}`}
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={`desk-tab admin-dash-tab${active ? " is-on" : ""}`}
             >
-              Messages & Feedback
+              <Icon size={13} aria-hidden />
+              {tab.label}
             </button>
-            <button
-              onClick={() => setActiveTab("email")}
-              className={`px-4 py-2 rounded-lg font-semibold transition-all border ${activeTab === "email" ? "bg-purple-600 text-white border-purple-600" : "bg-white text-gray-500 hover:bg-gray-50 border-gray-200"}`}
-            >
-              Email Console
-            </button>
-            <button
-              onClick={() => setActiveTab("history")}
-              className={`px-4 py-2 rounded-lg font-semibold transition-all border ${activeTab === "history" ? "bg-purple-600 text-white border-purple-600" : "bg-white text-gray-500 hover:bg-gray-50 border-gray-200"}`}
-            >
-              <FaClock className="inline mr-2" /> History
-            </button>
-            <button
-              onClick={() => setActiveTab("team")}
-              className={`px-4 py-2 rounded-lg font-semibold transition-all border ${activeTab === "team" ? "bg-purple-600 text-white border-purple-600" : "bg-white text-gray-500 hover:bg-gray-50 border-gray-200"}`}
-            >
-              <FaUsers className="inline mr-2" /> Team
-            </button>
-            <button
-              onClick={() => setActiveTab("transcribe")}
-              className={`px-4 py-2 rounded-lg font-semibold transition-all border ${activeTab === "transcribe" ? "bg-purple-600 text-white border-purple-600" : "bg-white text-gray-500 hover:bg-gray-50 border-gray-200"}`}
-            >
-              <FaMicrophone className="inline mr-2" /> Transcribe
-            </button>
-            <button
-              onClick={() => setActiveTab("suggestions")}
-              className={`px-4 py-2 rounded-lg font-semibold transition-all border ${activeTab === "suggestions" ? "bg-purple-600 text-white border-purple-600" : "bg-white text-gray-500 hover:bg-gray-50 border-gray-200"}`}
-            >
-              <FaCommentDots className="inline mr-2" /> Suggestions
-            </button>
-          </div>
-        </header>
-    </>
+          );
+        })}
+      </nav>
+    </div>
   );
 }

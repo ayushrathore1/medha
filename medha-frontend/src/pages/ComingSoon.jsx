@@ -3,6 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { AuthContext } from "../AuthContext";
 import BrandMark, { CAMPUSKART_URL } from "../components/Common/BrandMark";
+import { isTeamUser } from "../config/appMode";
 import "../styles/ComingSoon.css";
 
 const ease = [0.22, 1, 0.36, 1];
@@ -179,7 +180,7 @@ export default function ComingSoon() {
   const { user } = useContext(AuthContext);
 
   if (user) {
-    return <Navigate to="/inside" replace />;
+    return <Navigate to={isTeamUser(user) ? "/" : "/inside"} replace />;
   }
 
   return (
@@ -191,9 +192,14 @@ export default function ComingSoon() {
 
       <header className="coming-soon-header">
         <BrandMark variant="coming-soon" />
-        <Link to="/login" className="coming-soon-signin">
-          Sign in
-        </Link>
+        <div className="coming-soon-header-actions">
+          <Link to="/login?next=/" className="coming-soon-team-link">
+            Ops
+          </Link>
+          <Link to="/login" className="coming-soon-signin">
+            Sign in
+          </Link>
+        </div>
       </header>
 
       <section className="coming-soon-hero">
@@ -243,6 +249,8 @@ export default function ComingSoon() {
           <a href={CAMPUSKART_URL} target="_blank" rel="noreferrer">
             www.shopcampuskart.in
           </a>
+          {" · "}
+          <Link to="/login?next=/">Team access</Link>
         </p>
       </footer>
     </main>

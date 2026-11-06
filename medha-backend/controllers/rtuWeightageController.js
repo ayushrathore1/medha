@@ -338,7 +338,7 @@ Return the topic assignment for EVERY question. Be specific but consistent — i
 
     const chatCompletion = await groq.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "llama-3.3-70b-versatile",
+      model: require("../config/groqModels").GROQ_CAPABLE,
       temperature: 0.1,
       max_tokens: 4000,
       response_format: { type: "json_object" },
@@ -649,7 +649,7 @@ exports.predictImportantTopics = async (req, res) => {
 
     prompt += `\n## Task:\nReturn a JSON object with "predictions" array of exactly 8 entries. Each entry must have:\n- "topic": specific topic name\n- "unit": unit number (integer)\n- "unitName": unit name\n- "confidence": percentage 0-100\n- "priority": "high" | "medium" | "low"\n- "reason": one-line explanation\n\nSort by confidence descending. Respond with ONLY the JSON, no markdown fences.\n`;
 
-    // ── Call Groq (llama-3.3-70b) ──
+    // ── Call Groq (capable production model) ──
     const axios = require("axios");
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
     if (!GROQ_API_KEY) {
@@ -661,7 +661,7 @@ exports.predictImportantTopics = async (req, res) => {
     const groqResponse = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama-3.3-70b-versatile",
+        model: require("../config/groqModels").GROQ_CAPABLE,
         messages: [{ role: "user", content: prompt }],
         max_tokens: 1500,
         temperature: 0.2,

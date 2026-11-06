@@ -432,7 +432,7 @@ RESPOND IN THIS EXACT JSON FORMAT:
 
   try {
     const response = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: require("../config/groqModels").GROQ_CAPABLE,
       messages: [
         {
           role: "system",

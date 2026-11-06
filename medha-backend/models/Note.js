@@ -78,7 +78,8 @@ const NoteSchema = new mongoose.Schema(
     ],
     verificationStatus: {
       type: String,
-      enum: ["pending", "approved", "rejected"],
+      // pending = AI queued/scanning; awaiting_team = AI passed; approved = live; rejected = failed
+      enum: ["pending", "awaiting_team", "approved", "rejected"],
       default: "pending",
     },
     verificationReason: {
@@ -88,6 +89,25 @@ const NoteSchema = new mongoose.Schema(
     moderationLabel: {
       type: String,
       default: "",
+    },
+    pipelineStage: {
+      type: String,
+      enum: ["none", "queued", "compressing", "uploading", "scanning", "awaiting_team", "done", "failed"],
+      default: "none",
+    },
+    scanAttempts: { type: Number, default: 0 },
+    nextScanAt: { type: Date, default: null },
+    scanLockUntil: { type: Date, default: null },
+    cloudinaryPublicId: { type: String, default: null },
+    compressedBytes: { type: Number, default: null },
+    moderationCriteria: { type: Object, default: {} },
+    moderationConfidence: { type: Number, default: null },
+    teamReviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    teamReviewedAt: { type: Date, default: null },
+    localFilePath: { type: String, default: null, select: false },
+    emailsSent: {
+      live: { type: Boolean, default: false },
+      rejected: { type: Boolean, default: false },
     },
     downloadCount: {
       type: Number,

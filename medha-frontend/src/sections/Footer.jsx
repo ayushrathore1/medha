@@ -46,7 +46,7 @@ const Footer = () => {
           <div>
             <div style={{ fontSize: 12, fontWeight: 700, color: '#1F1F1F', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 16 }}>Product</div>
             {['Dashboard', 'Notes', 'PYQ Analysis', 'Exam Prep', 'Visualizations'].map(item => (
-              <Link key={item} to="/dashboard" style={{ display: 'block', fontSize: 14, color: '#6B6B6B', textDecoration: 'none', marginBottom: 10, transition: 'color 150ms' }}
+              <Link key={item} to="/" style={{ display: 'block', fontSize: 14, color: '#6B6B6B', textDecoration: 'none', marginBottom: 10, transition: 'color 150ms' }}
                 onMouseEnter={e => e.currentTarget.style.color = '#111'}
                 onMouseLeave={e => e.currentTarget.style.color = '#6B6B6B'}
               >{item}</Link>

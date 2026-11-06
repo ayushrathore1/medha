@@ -7,6 +7,7 @@ import Loader from "../components/Common/Loader";
 import RevisionShell from "../components/Revision/RevisionShell";
 import { AuthContext } from "../AuthContext"; // Assuming this exists for auth state
 import { generateAvatarOptions, getAvatarByIndex } from "../utils/avatarUtils";
+import { getAuraTier } from "../utils/auraUtils";
 import { 
   FaMars, 
   FaVenus, 
@@ -19,29 +20,6 @@ import {
   FaBuildingColumns,
   FaAward
 } from "react-icons/fa6";
-
-// AURA Tier Calculator based on notes shared
-const getAuraTier = (notesCount) => {
-  // 🟣 ADVANCED TIER — RADIANCE
-  if (notesCount >= 701) return { tier: "RADIANCE", rank: "Beacon", emoji: "🟣" };
-  if (notesCount >= 401) return { tier: "RADIANCE", rank: "Luminary", emoji: "🟣" };
-  if (notesCount >= 251) return { tier: "RADIANCE", rank: "Scholar", emoji: "🟣" };
-  if (notesCount >= 151) return { tier: "RADIANCE", rank: "Mentor", emoji: "🟣" };
-  
-  // 🔵 INTERMEDIATE TIER — GLOW
-  if (notesCount >= 101) return { tier: "GLOW", rank: "Anchor", emoji: "🔵" };
-  if (notesCount >= 61) return { tier: "GLOW", rank: "Guide", emoji: "🔵" };
-  if (notesCount >= 36) return { tier: "GLOW", rank: "Solver", emoji: "🔵" };
-  if (notesCount >= 21) return { tier: "GLOW", rank: "Thinker", emoji: "🔵" };
-  
-  // 🌱 BEGINNER TIER — SPARK
-  if (notesCount >= 11) return { tier: "SPARK", rank: "Builder", emoji: "🌱" };
-  if (notesCount >= 6) return { tier: "SPARK", rank: "Initiate", emoji: "🌱" };
-  if (notesCount >= 3) return { tier: "SPARK", rank: "Seeker", emoji: "🌱" };
-  if (notesCount >= 1) return { tier: "SPARK", rank: "Flicker", emoji: "🌱" };
-  
-  return { tier: "SPARK", rank: "New", emoji: "✨" };
-};
 
 const PublicProfile = () => {
   const { userId } = useParams();
@@ -119,6 +97,8 @@ const PublicProfile = () => {
 
   const { user, stats } = profileData;
   const isMe = currentUser && currentUser._id === user._id;
+  const auraPoints = stats?.auraPoints ?? user?.auraPoints ?? 0;
+  const aura = getAuraTier(auraPoints);
 
   // Helper to get avatar URL (reuse generic or custom logic)
   const getAvatarUrl = () => {
@@ -214,11 +194,10 @@ const PublicProfile = () => {
             {/* AURA Card */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="bg-[var(--bg-secondary)] border border-[var(--border-default)] relative overflow-hidden">
-                    {/* Animated glow background */}
                     <div className="absolute inset-0 opacity-20" style={{
-                        background: getAuraTier(stats.notesShared).tier === "RADIANCE" 
+                        background: aura.tier === "RADIANCE" 
                             ? "radial-gradient(circle at 30% 30%, #a855f7 0%, transparent 50%)"
-                            : getAuraTier(stats.notesShared).tier === "GLOW"
+                            : aura.tier === "GLOW"
                             ? "radial-gradient(circle at 30% 30%, #3b82f6 0%, transparent 50%)"
                             : "radial-gradient(circle at 30% 30%, #22c55e 0%, transparent 50%)"
                     }} />
@@ -226,9 +205,9 @@ const PublicProfile = () => {
                     <div className="relative z-10">
                         <div className="flex items-center gap-4 mb-4">
                             <div className={`p-3 rounded-xl ${
-                                getAuraTier(stats.notesShared).tier === "RADIANCE" 
+                                aura.tier === "RADIANCE" 
                                     ? "bg-purple-100 text-purple-600"
-                                    : getAuraTier(stats.notesShared).tier === "GLOW"
+                                    : aura.tier === "GLOW"
                                     ? "bg-blue-100 text-blue-600"
                                     : "bg-green-100 text-green-600"
                             }`}>
@@ -238,37 +217,37 @@ const PublicProfile = () => {
                                 <h3 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2">
                                     AURA
                                     <span className={`text-xs px-2 py-0.5 rounded-full uppercase tracking-wide ${
-                                        getAuraTier(stats.notesShared).tier === "RADIANCE" 
+                                        aura.tier === "RADIANCE" 
                                             ? "bg-purple-100 text-purple-700 border border-purple-200"
-                                            : getAuraTier(stats.notesShared).tier === "GLOW"
+                                            : aura.tier === "GLOW"
                                             ? "bg-blue-100 text-blue-700 border border-blue-200"
                                             : "bg-green-100 text-green-700 border border-green-200"
                                     }`}>
-                                        {getAuraTier(stats.notesShared).tier}
+                                        {aura.tier}
                                     </span>
                                 </h3>
-                                <p className="text-sm text-[var(--text-secondary)]">Contribution Level</p>
+                                <p className="text-sm text-[var(--text-secondary)]">From note downloads</p>
                             </div>
                         </div>
                         <div className="flex items-end gap-2">
                             <span className={`text-4xl font-black ${
-                                getAuraTier(stats.notesShared).tier === "RADIANCE" 
+                                aura.tier === "RADIANCE" 
                                     ? "text-purple-600"
-                                    : getAuraTier(stats.notesShared).tier === "GLOW"
+                                    : aura.tier === "GLOW"
                                     ? "text-blue-600"
                                     : "text-green-600"
-                            }`}>{stats.notesShared}</span>
-                            <span className="text-sm font-bold text-[var(--text-tertiary)] mb-2">Notes Shared</span>
+                            }`}>{auraPoints}</span>
+                            <span className="text-sm font-bold text-[var(--text-tertiary)] mb-2">Aura points</span>
                         </div>
                         <div className={`mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold ${
-                            getAuraTier(stats.notesShared).tier === "RADIANCE" 
+                            aura.tier === "RADIANCE" 
                                 ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-700 border border-purple-200"
-                                : getAuraTier(stats.notesShared).tier === "GLOW"
+                                : aura.tier === "GLOW"
                                 ? "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-700 border border-blue-200"
                                 : "bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-700 border border-green-200"
                         }`}>
-                            <span>{getAuraTier(stats.notesShared).emoji}</span>
-                            <span>{getAuraTier(stats.notesShared).rank}</span>
+                            <span>{aura.emoji}</span>
+                            <span>{aura.rank}</span>
                         </div>
                     </div>
                 </Card>

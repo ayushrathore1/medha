@@ -4,6 +4,7 @@ const multer = require("multer");
 const adminController = require("../controllers/adminController");
 const auth = require("../middleware/auth");
 const adminAuth = require("../middleware/adminAuth");
+const { fullAdminAuth } = require("../middleware/staffAuth");
 
 // Memory storage for audio file uploads (no need to persist)
 const audioUpload = multer({
@@ -57,17 +58,13 @@ router.post("/send-email", adminController.sendAdminEmail);
 // Generate Email Content (AI)
 router.post("/generate-email", adminController.generateEmailContent);
 
-// Delete user (admin only)
-router.delete("/users/:id", adminController.deleteUser);
+// Super-admin only: delete users, assign roles, invite team
+router.delete("/users/:id", fullAdminAuth, adminController.deleteUser);
+router.put("/users/:id/role", fullAdminAuth, adminController.updateUserRole);
+router.post("/invite-team", fullAdminAuth, adminController.inviteTeamMember);
 
-// Team management (admin only)
-router.put("/users/:id/role", adminController.updateUserRole);
-
-// Get team members
+// Team roster — visible to staff (adminAuth already allows team)
 router.get("/team", adminController.getTeamMembers);
-
-// Invite Team Member
-router.post("/invite-team", adminController.inviteTeamMember);
 
 // Get Email History
 router.get("/history", adminController.getEmailHistory);

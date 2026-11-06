@@ -8,6 +8,7 @@ const React = require("react");
 const User = require("../models/User");
 const Otp = require("../models/Otp");
 const auth = require("../middleware/auth");
+const { applyPendingTeamInvite } = require("../controllers/teamController");
 const {
   sendWelcomeEmail,
   generateAccessiblePassword,
@@ -30,6 +31,26 @@ const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 const OTP_EXPIRY_MINUTES = 10;
 const OTP_COOLDOWN_SECONDS = 60;
 const MAX_OTP_ATTEMPTS = 5;
+
+/** Public user payload for the client (includes team unlock flags). */
+function publicAuthUser(user) {
+  const role = user.role || "user";
+  const isStaff = Boolean(user.isAdmin || role === "admin" || role === "team");
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    university: user.university,
+    branch: user.branch,
+    gender: user.gender,
+    role,
+    isAdmin: isStaff,
+    streak: user.streak,
+    emailVerified: user.emailVerified || false,
+    auraPoints: user.auraPoints || 0,
+    avatar: user.avatar,
+  };
+}
 
 // ── Generate 6-digit OTP ──
 function generateOTP() {
@@ -283,6 +304,11 @@ router.post("/login-otp", async (req, res) => {
     }
 
     await user.save();
+    try {
+      await applyPendingTeamInvite(user);
+    } catch (inviteErr) {
+      console.warn("Pending team invite apply failed:", inviteErr.message);
+    }
 
     const payload = { userId: user._id, email: user.email };
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
@@ -291,17 +317,7 @@ router.post("/login-otp", async (req, res) => {
     res.json({
       message: "Login successful",
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        university: user.university,
-        branch: user.branch,
-        gender: user.gender,
-        isAdmin: user.isAdmin,
-        streak: user.streak,
-        emailVerified: true,
-      },
+      user: { ...publicAuthUser(user), emailVerified: true },
     });
   } catch (err) {
     console.error("❌ OTP login error:", err);
@@ -387,6 +403,12 @@ router.post("/register", async (req, res, next) => {
     await user.save();
     console.log("✅ User saved to database:", user.email, emailVerified ? "(email verified)" : "");
 
+    try {
+      await applyPendingTeamInvite(user);
+    } catch (inviteErr) {
+      console.warn("Pending team invite apply failed:", inviteErr.message);
+    }
+
     // Welcome only — no password/credentials email (point users to reset if needed)
     sendWelcomeEmail(user)
       .then(() => {
@@ -404,12 +426,7 @@ router.post("/register", async (req, res, next) => {
     res.status(201).json({
       message: "User registered successfully",
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        emailVerified: user.emailVerified || false,
-      },
+      user: publicAuthUser(user),
     });
   } catch (err) {
     console.error("❌ Registration error:", err);
@@ -495,6 +512,11 @@ router.post("/login", async (req, res, next) => {
     }
     
     await user.save();
+    try {
+      await applyPendingTeamInvite(user);
+    } catch (inviteErr) {
+      console.warn("Pending team invite apply failed:", inviteErr.message);
+    }
 
     const payload = { userId: user._id, email: user.email };
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
@@ -502,17 +524,7 @@ router.post("/login", async (req, res, next) => {
     res.json({
       message: "Login successful",
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        university: user.university,
-        branch: user.branch,
-        gender: user.gender,
-        isAdmin: user.isAdmin,
-        streak: user.streak,
-        emailVerified: user.emailVerified || false,
-      },
+      user: publicAuthUser(user),
     });
   } catch (err) {
     console.error("[LOGIN ERROR]", err);
@@ -757,18 +769,7 @@ router.get("/google/callback", async (req, res) => {
     // 5. Generate JWT and a one-time code. Never put the JWT in the redirect URL.
     const payload = { userId: user._id, email: user.email };
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
-    const userPayload = {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      university: user.university,
-      branch: user.branch,
-      gender: user.gender,
-      isAdmin: user.isAdmin,
-      streak: user.streak,
-      emailVerified: true,
-      avatar: user.avatar,
-    };
+    const userPayload = { ...publicAuthUser(user), emailVerified: true };
     const loginCode = await issueLoginCode({ token, user: userPayload });
 
     return redirectOAuth(res, "/auth/google/success", { code: loginCode });

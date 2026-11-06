@@ -162,6 +162,12 @@ function createApp() {
 
   app.use("/api/auth", authLimiter, authRoutes);
   app.use("/api/auth", authLimiter, authExtraRoutes);
+
+  // NODE_ENV=production: only team/admin may use the live platform APIs
+  // (auth + /users/me + team join remain open for the coming-soon flow).
+  const platformTeamOnly = require("./middleware/platformTeamOnly");
+  app.use("/api", platformTeamOnly);
+
   app.use("/api/users", userRoutes);
   app.use("/api/subjects", subjectRoutes);
   app.use("/api/notes", noteRoutes);
@@ -173,6 +179,7 @@ function createApp() {
   app.use("/api/learn", learnRoutes);
   app.use("/api/practice", practiceRoutes);
   app.use("/api/search", require("./routes/searchRoutes"));
+  app.use("/api/resources", require("./routes/resourceRoutes"));
   app.use("/api/chatbot", aiLimiter, chatbotRoutes);
   app.use("/api/chat", aiLimiter, chatStreamRoutes);
   app.use("/api/voice", aiLimiter, voiceRoutes);
@@ -192,9 +199,26 @@ function createApp() {
   }
 
   app.use("/api/admin", require("./routes/adminRoutes"));
+  app.use("/api/curriculum", require("./routes/curriculumRoutes"));
   app.use("/api/suggestions", require("./routes/suggestionRoutes"));
   app.use("/api/team", require("./routes/teamRoutes"));
   app.use("/api/seed", require("./routes/seedRoutes"));
+
+  // Public landing stats (alias for /api/users/stats)
+  app.get("/api/stats", async (_req, res) => {
+    try {
+      const User = require("./models/User");
+      const totalUsers = await User.countDocuments();
+      res.json({
+        totalStudents: totalUsers,
+        totalUsers,
+        studentsOnline: Math.min(Math.max(12, Math.floor(totalUsers * 0.08)), 400),
+        topicsAvailable: 250,
+      });
+    } catch {
+      res.json({ totalStudents: 0, totalUsers: 0, studentsOnline: 12, topicsAvailable: 250 });
+    }
+  });
 
   app.use((req, res) => {
     res.status(404).json({

@@ -23,8 +23,10 @@ console.log(
 );
 
 // Supported AI models
+const { GROQ_CAPABLE } = require("../config/groqModels");
+
 const SUPPORTED_MODELS = {
-  groq: { name: "Groq (Llama 3)", model: "llama-3.3-70b-versatile" },
+  groq: { name: "Groq (GPT-OSS 120B)", model: GROQ_CAPABLE },
   gemini: { name: "Gemini", model: "gemini-2.0-pro-exp" },
 };
 

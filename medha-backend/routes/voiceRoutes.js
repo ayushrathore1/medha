@@ -418,7 +418,7 @@ Focus your answer on this topic.`;
     const aiResponse = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama-3.3-70b-versatile",
+        model: require("../config/groqModels").GROQ_CAPABLE,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userQuestion },
@@ -521,7 +521,7 @@ Focus your answer on this topic.`;
     const aiResponse = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama-3.3-70b-versatile",
+        model: require("../config/groqModels").GROQ_CAPABLE,
         messages,
         max_tokens: 300,
         temperature: 0.7,
@@ -570,7 +570,7 @@ router.get("/status", (req, res) => {
     },
     models: {
       stt: "whisper-large-v3-turbo",
-      ai: "llama-3.3-70b-versatile",
+      ai: require("../config/groqModels").GROQ_CAPABLE,
       tts: "browser-native",
     },
   });

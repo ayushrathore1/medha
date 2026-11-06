@@ -5,6 +5,7 @@
 
 const axios = require("axios");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GROQ_CAPABLE, GROQ_FAST } = require("../config/groqModels");
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -15,9 +16,9 @@ const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
 
 // AI Models configuration
 const MODELS = {
-  fast: "llama-3.1-8b-instant",      // Fast model for quick decisions
-  standard: "llama-3.3-70b-versatile", // Standard model for generation
-  gemini: "gemini-2.0-flash-exp"      // Gemini flash for speed
+  fast: GROQ_FAST,
+  standard: GROQ_CAPABLE,
+  gemini: "gemini-2.0-flash-exp",
 };
 
 /**

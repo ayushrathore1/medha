@@ -16,7 +16,7 @@ export function useAdminDashboard() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isFullAdmin, setIsFullAdmin] = useState(false); // True only for actual admins, not team members
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("messages"); // 'messages', 'email', 'history', 'team', 'transcribe', 'suggestions'
+  const [activeTab, setActiveTab] = useState("curriculum"); // curriculum | notes-review | email | history | team | transcribe
 
   // Suggestions State
   const [suggestions, setSuggestions] = useState([]);
@@ -83,25 +83,24 @@ export function useAdminDashboard() {
     try {
       const res = await axios.get(`${BACKEND_URL}/api/messages/check-admin`, {
         headers,
+        timeout: 15000,
       });
       if (!res.data.isAdmin) {
-        navigate("/dashboard");
+        setLoading(false);
+        navigate("/subjects");
         return;
       }
       setIsAdmin(true);
-      setIsFullAdmin(res.data.isFullAdmin || false); // Track if user is a full admin
-      fetchMessages();
-      fetchStats();
-      // We'll fetch users only when Email tab is active or pre-fetch now
-      fetchStats();
-      // We'll fetch users only when Email tab is active or pre-fetch now
-      // We'll fetch users only when Email tab is active or pre-fetch now
-      fetchUsers();
-      fetchEmailHistory();
-      fetchTeamMembers();
-      fetchSuggestions();
+      setIsFullAdmin(res.data.isFullAdmin || false);
+      await Promise.allSettled([
+        fetchUsers(),
+        fetchEmailHistory(),
+        fetchTeamMembers(),
+      ]);
     } catch (error) {
-      navigate("/dashboard");
+      navigate("/subjects");
+    } finally {
+      setLoading(false);
     }
   };
 

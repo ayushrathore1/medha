@@ -328,7 +328,7 @@ RESPOND IN THIS EXACT JSON FORMAT:
 If semester number is unclear, use 0. Do NOT skip any subject or topic.`;
 
   const response = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: require("../config/groqModels").GROQ_CAPABLE,
     messages: [
       { role: "system", content: "You are a precise syllabus parser. Extract ALL topics granularly. Always respond with valid JSON only." },
       { role: "user", content: prompt },

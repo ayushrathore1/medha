@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function BrandMark({ to = "/dashboard", compact = false }) {
+export default function BrandMark({ to = "/", compact = false }) {
   return (
     <Link to={to} className={`revision-wordmark shrink-0 ${compact ? "" : ""}`} aria-label="Medha Revision home">
       <span className="revision-wordmark-name" style={compact ? { fontSize: 16 } : undefined}>

@@ -4,13 +4,15 @@ import DeleteUserModal from "../components/Admin/DeleteUserModal";
 import InviteTeamModal from "../components/Admin/InviteTeamModal";
 import { useAdminDashboard } from "../hooks/useAdminDashboard";
 import AdminTabBar from "../components/AdminDashboard/AdminTabBar";
-import MessagesPanel from "../components/AdminDashboard/MessagesPanel";
 import EmailPanel from "../components/AdminDashboard/EmailPanel";
 import HistoryPanel from "../components/AdminDashboard/HistoryPanel";
 import TeamPanel from "../components/AdminDashboard/TeamPanel";
 import TranscribePanel from "../components/AdminDashboard/TranscribePanel";
-import SuggestionsPanel from "../components/AdminDashboard/SuggestionsPanel";
+import CurriculumPanel from "../components/AdminDashboard/CurriculumPanel";
+import NotesReviewPanel from "../components/AdminDashboard/NotesReviewPanel";
+import RevisionShell from "../components/Revision/RevisionShell";
 import "../styles/responsive-pages.css";
+import "../styles/admin-dashboard.css";
 
 const AdminDashboard = () => {
   const admin = useAdminDashboard();
@@ -34,41 +36,40 @@ const AdminDashboard = () => {
   if (!isAdmin) return null;
 
   return (
-    <div
-      className="min-h-screen pt-20 px-4 sm:px-6 pb-12"
-      style={{ backgroundColor: "var(--bg-primary)" }}
-    >
-      <div className="max-w-7xl mx-auto">
+    <RevisionShell title="Ops" wide desk>
+      <div className="admin-dash desk-page max-w-[1100px]">
         <AdminTabBar admin={admin} />
 
-        <InviteTeamModal
-          isOpen={inviteModalOpen}
-          onClose={() => {
-            setInviteModalOpen(false);
-            setInviteEmail("");
-          }}
-          token={token}
-          initialEmail={inviteEmail}
-        />
+        <div className="mt-4">
+          <InviteTeamModal
+            isOpen={inviteModalOpen}
+            onClose={() => {
+              setInviteModalOpen(false);
+              setInviteEmail("");
+            }}
+            token={token}
+            initialEmail={inviteEmail}
+          />
 
-        <DeleteUserModal
-          isOpen={!!deleteModalUser}
-          onClose={() => setDeleteModalUser(null)}
-          onConfirm={handleDeleteUser}
-          userName={deleteModalUser?.name}
-          confirmText={deleteConfirmation}
-          setConfirmText={setDeleteConfirmation}
-          isDeleting={isDeleting}
-        />
+          <DeleteUserModal
+            isOpen={!!deleteModalUser}
+            onClose={() => setDeleteModalUser(null)}
+            onConfirm={handleDeleteUser}
+            userName={deleteModalUser?.name}
+            confirmText={deleteConfirmation}
+            setConfirmText={setDeleteConfirmation}
+            isDeleting={isDeleting}
+          />
 
-        <MessagesPanel admin={admin} />
-        <EmailPanel admin={admin} />
-        <HistoryPanel admin={admin} />
-        <TeamPanel admin={admin} />
-        <TranscribePanel admin={admin} />
-        <SuggestionsPanel admin={admin} />
+          <CurriculumPanel admin={admin} />
+          <NotesReviewPanel admin={admin} />
+          <EmailPanel admin={admin} />
+          <HistoryPanel admin={admin} />
+          <TeamPanel admin={admin} />
+          <TranscribePanel admin={admin} />
+        </div>
       </div>
-    </div>
+    </RevisionShell>
   );
 };
 

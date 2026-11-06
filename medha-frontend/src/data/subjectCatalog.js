@@ -27,9 +27,10 @@ export function slugify(value = "") {
     .replace(/(^-|-$)/g, "");
 }
 
+// Labels intentionally blank — do not surface university/scheme brand tags in UI.
 export const SCHEME = {
-  rtu: { id: "rtu", label: "RTU" },
-  arya: { id: "arya", label: "RTU · Arya Autonomous" },
+  rtu: { id: "rtu", label: "" },
+  arya: { id: "arya", label: "" },
 };
 
 export function schemeTag(id, label) {
@@ -92,29 +93,29 @@ const META = {
 
 const EXTRA_UNITS = {
   "Data Structures and Algorithms": [
-    { unitNumber: 1, title: "Arrays, Pointers & Recursion", topics: ["Array representations and operations", "Pointers and dynamic memory allocation", "Time and Space complexity, Big-O notation", "Recursion principles, Tower of Hanoi"], videos: [{ videoId: "AT14lCXuMKI", title: "Data Structures & Algorithms | Arrays & Complexity", thumbnail: "https://i.ytimg.com/vi/AT14lCXuMKI/mqdefault.jpg", duration: "30m 10s", channelTitle: "Jenny's Lectures CS IT" }] },
-    { unitNumber: 2, title: "Linked Lists, Stacks & Queues", topics: ["Singly, Doubly, and Circular Linked Lists", "Stack operations: Push, Pop, Infix to Postfix", "Queue operations: Linear, Circular, Deque, Priority queue"], videos: [{ videoId: "RDPGLmvpt6Q", title: "Linked List in Data Structures", thumbnail: "https://i.ytimg.com/vi/RDPGLmvpt6Q/mqdefault.jpg", duration: "26m", channelTitle: "Jenny's Lectures CS IT" }] },
-    { unitNumber: 3, title: "Trees & Binary Search Trees", topics: ["Binary Tree properties and traversals", "Binary Search Trees: Insertion, Deletion, Search", "AVL Tree rotations", "B-Trees, Heaps"], videos: [{ videoId: "qH6yxkw0s0Y", title: "Binary Search Tree Explained", thumbnail: "https://i.ytimg.com/vi/qH6yxkw0s0Y/mqdefault.jpg", duration: "24m", channelTitle: "Jenny's Lectures CS IT" }] },
-    { unitNumber: 4, title: "Graphs & Graph Algorithms", topics: ["Adjacency Matrix and Adjacency List", "BFS and DFS", "Dijkstra and Bellman-Ford", "Kruskal and Prim MST"], videos: [{ videoId: "tWVWeR8JqSk", title: "Graph Algorithms", thumbnail: "https://i.ytimg.com/vi/tWVWeR8JqSk/mqdefault.jpg", duration: "25m", channelTitle: "Jenny's Lectures CS IT" }] },
-    { unitNumber: 5, title: "Sorting & Searching", topics: ["Bubble, Selection, Insertion Sort", "Merge Sort, Quick Sort, Heap Sort", "Linear Search, Binary Search", "Hashing and collision resolution"], videos: [{ videoId: "oSQbwlepoCU", title: "Binary Search", thumbnail: "https://i.ytimg.com/vi/oSQbwlepoCU/mqdefault.jpg", duration: "18m", channelTitle: "Jenny's Lectures CS IT" }] },
+    { unitNumber: 1, title: "Arrays, Pointers & Recursion", topics: ["Array representations and operations", "Pointers and dynamic memory allocation", "Time and Space complexity, Big-O notation", "Recursion principles, Tower of Hanoi"] },
+    { unitNumber: 2, title: "Linked Lists, Stacks & Queues", topics: ["Singly, Doubly, and Circular Linked Lists", "Stack operations: Push, Pop, Infix to Postfix", "Queue operations: Linear, Circular, Deque, Priority queue"] },
+    { unitNumber: 3, title: "Trees & Binary Search Trees", topics: ["Binary Tree properties and traversals", "Binary Search Trees: Insertion, Deletion, Search", "AVL Tree rotations", "B-Trees, Heaps"] },
+    { unitNumber: 4, title: "Graphs & Graph Algorithms", topics: ["Adjacency Matrix and Adjacency List", "BFS and DFS", "Dijkstra and Bellman-Ford", "Kruskal and Prim MST"] },
+    { unitNumber: 5, title: "Sorting & Searching", topics: ["Bubble, Selection, Insertion Sort", "Merge Sort, Quick Sort, Heap Sort", "Linear Search, Binary Search", "Hashing and collision resolution"] },
   ],
   "Digital Electronics": [
-    { unitNumber: 1, title: "Number Systems & Boolean Algebra", topics: ["Binary, Octal, Decimal, Hexadecimal", "Complements and binary arithmetic", "Boolean algebra, DeMorgan's laws", "SOP and POS forms"], videos: [{ videoId: "M0ox87LNd60", title: "Number Systems Conversion", thumbnail: "https://i.ytimg.com/vi/M0ox87LNd60/mqdefault.jpg", duration: "23m", channelTitle: "Code Smashers" }] },
-    { unitNumber: 2, title: "Karnaugh Map & Logic Minimization", topics: ["2 to 5 variable K-Maps", "Prime implicants", "Don't care conditions", "NAND and NOR implementation"], videos: [{ videoId: "RO5alU6PpSU", title: "Karnaugh Map Simplification", thumbnail: "https://i.ytimg.com/vi/RO5alU6PpSU/mqdefault.jpg", duration: "25m", channelTitle: "Code Smashers" }] },
-    { unitNumber: 3, title: "Combinational Logic Circuits", topics: ["Adders and Subtractors", "Multiplexers and Demultiplexers", "Decoders and Encoders", "Parity Generator and Checker"], videos: [{ videoId: "4BQuJ4vM6qE", title: "Multiplexer Design", thumbnail: "https://i.ytimg.com/vi/4BQuJ4vM6qE/mqdefault.jpg", duration: "22m", channelTitle: "Code Smashers" }] },
-    { unitNumber: 4, title: "Sequential Logic & Flip Flops", topics: ["Latches vs Flip-Flops", "SR, D, JK, T Flip-Flops", "Shift Registers", "Counters"], videos: [] },
-    { unitNumber: 5, title: "Memories & Programmable Logic", topics: ["RAM and ROM families", "PAL, PLA, FPGA", "DAC and ADC converters"], videos: [] },
+    { unitNumber: 1, title: "Number Systems & Boolean Algebra", topics: ["Binary, Octal, Decimal, Hexadecimal", "Complements and binary arithmetic", "Boolean algebra, DeMorgan's laws", "SOP and POS forms"] },
+    { unitNumber: 2, title: "Karnaugh Map & Logic Minimization", topics: ["2 to 5 variable K-Maps", "Prime implicants", "Don't care conditions", "NAND and NOR implementation"] },
+    { unitNumber: 3, title: "Combinational Logic Circuits", topics: ["Adders and Subtractors", "Multiplexers and Demultiplexers", "Decoders and Encoders", "Parity Generator and Checker"] },
+    { unitNumber: 4, title: "Sequential Logic & Flip Flops", topics: ["Latches vs Flip-Flops", "SR, D, JK, T Flip-Flops", "Shift Registers", "Counters"] },
+    { unitNumber: 5, title: "Memories & Programmable Logic", topics: ["RAM and ROM families", "PAL, PLA, FPGA", "DAC and ADC converters"] },
   ],
   "Object Oriented Programming": [
-    { unitNumber: 1, title: "OOP Paradigm & C++ Basics", topics: ["Procedural vs Object-Oriented Programming", "Encapsulation, Abstraction, Inheritance, Polymorphism", "C++ functions and inline functions"], videos: [{ videoId: "j8nAHeVKL08", title: "Object Oriented Programming in C++", thumbnail: "https://i.ytimg.com/vi/j8nAHeVKL08/mqdefault.jpg", duration: "31m", channelTitle: "CodeWithHarry" }] },
-    { unitNumber: 2, title: "Classes, Objects & Constructors", topics: ["Class declaration and access specifiers", "Static members", "Friend functions", "Constructors and Destructors"], videos: [] },
-    { unitNumber: 3, title: "Inheritance & Polymorphism", topics: ["Types of inheritance", "Function and operator overloading", "Virtual functions and abstract classes", "Early vs late binding"], videos: [] },
-    { unitNumber: 4, title: "Templates, Exceptions & Files", topics: ["Function and class templates", "try, catch, throw", "File streams", "STL overview"], videos: [] },
+    { unitNumber: 1, title: "OOP Paradigm & C++ Basics", topics: ["Procedural vs Object-Oriented Programming", "Encapsulation, Abstraction, Inheritance, Polymorphism", "C++ functions and inline functions"] },
+    { unitNumber: 2, title: "Classes, Objects & Constructors", topics: ["Class declaration and access specifiers", "Static members", "Friend functions", "Constructors and Destructors"] },
+    { unitNumber: 3, title: "Inheritance & Polymorphism", topics: ["Types of inheritance", "Function and operator overloading", "Virtual functions and abstract classes", "Early vs late binding"] },
+    { unitNumber: 4, title: "Templates, Exceptions & Files", topics: ["Function and class templates", "try, catch, throw", "File streams", "STL overview"] },
   ],
   "Software Engineering": [
-    { unitNumber: 1, title: "Software Process Models", topics: ["Software engineering paradigms", "Waterfall, Prototype, Spiral, Incremental, RAD", "Agile, Scrum, Extreme Programming"], videos: [] },
-    { unitNumber: 2, title: "Requirements & Design", topics: ["Software Requirements Specification", "Functional and non-functional requirements", "DFD and use case diagrams", "Cohesion and Coupling"], videos: [] },
-    { unitNumber: 3, title: "Testing & Maintenance", topics: ["Verification and Validation", "Black-box and White-box testing", "Unit to Acceptance testing", "Maintenance and reverse engineering"], videos: [] },
+    { unitNumber: 1, title: "Software Process Models", topics: ["Software engineering paradigms", "Waterfall, Prototype, Spiral, Incremental, RAD", "Agile, Scrum, Extreme Programming"] },
+    { unitNumber: 2, title: "Requirements & Design", topics: ["Software Requirements Specification", "Functional and non-functional requirements", "DFD and use case diagrams", "Cohesion and Coupling"] },
+    { unitNumber: 3, title: "Testing & Maintenance", topics: ["Verification and Validation", "Black-box and White-box testing", "Unit to Acceptance testing", "Maintenance and reverse engineering"] },
   ],
   ...Object.fromEntries(RTU_SEM5_SUBJECTS.map((s) => [s.name, s.units])),
 };
@@ -122,13 +123,15 @@ const EXTRA_UNITS = {
 function decorateUnits(units = []) {
   return units.map((unit) => {
     const topics = unit.topics || [];
-    const videos = unit.videos || [];
+    const videoCount = Array.isArray(unit.videos) ? unit.videos.length : 0;
+    // Strip video ids / URLs from the client bundle — lectures resolve via /api/resources
+    const { videos: _videos, ...rest } = unit;
     return {
-      ...unit,
+      ...rest,
       slug: slugify(unit.title),
       topicCount: topics.length,
-      videoCount: videos.length,
-      resourceCount: topics.length + videos.length + 1,
+      videoCount,
+      resourceCount: topics.length + videoCount + 1,
     };
   });
 }
@@ -197,17 +200,13 @@ for (const subject of SUBJECTS) {
   }
 }
 
-export function tagsForText(text, fallbackScheme, extraLabel) {
-  const found = SCHEME_INDEX.get(normalizeTagKey(text));
-  if (found?.length) return found;
-  if (fallbackScheme && SCHEME[fallbackScheme]) return [SCHEME[fallbackScheme]];
-  const extra = schemeTag(null, extraLabel);
-  return extra ? [{ id: extra.id, label: extra.label }] : [];
+export function tagsForText() {
+  // Scheme brand tags (RTU / Autonomous) are not shown in the product UI.
+  return [];
 }
 
-export function tagsForSubject(subject, extraLabel) {
-  if (subject?.scheme && SCHEME[subject.scheme]) return [SCHEME[subject.scheme]];
-  return tagsForText(subject?.name, null, extraLabel);
+export function tagsForSubject() {
+  return [];
 }
 
 export const POPULAR_TOPICS = [
@@ -242,7 +241,7 @@ export function getSelectedUniversity() {
 export const UNIVERSITY_OPTIONS = [
   {
     key: "Rajasthan Technical University, Kota",
-    label: "Rajasthan Technical University, Kota (RTU)",
+    label: "Curriculum · Semester V",
     scheme: "rtu",
     year: "III",
     semester: 5,
@@ -250,7 +249,7 @@ export const UNIVERSITY_OPTIONS = [
   },
   {
     key: "Rajasthan Technical University, Kota (Arya Autonomous)",
-    label: "RTU — Arya Autonomous (II Year / III Sem)",
+    label: "Curriculum · Semester III",
     scheme: "arya",
     year: "II",
     semester: 3,
@@ -262,7 +261,36 @@ export function getUniversityOption(key) {
   return UNIVERSITY_OPTIONS.find((item) => item.key === key) || null;
 }
 
+function yearToSemester(year) {
+  const y = String(year || "").trim().toUpperCase();
+  if (!y) return "";
+  if (y === "1" || y === "I" || y === "1ST" || y.includes("FIRST")) return 1;
+  if (y === "2" || y === "II" || y === "2ND" || y.includes("SECOND")) return 3;
+  if (y === "3" || y === "III" || y === "3RD" || y.includes("THIRD")) return 5;
+  if (y === "4" || y === "IV" || y === "4TH" || y.includes("FOURTH")) return 7;
+  const n = Number(y);
+  if (n >= 1 && n <= 4) return n * 2 - 1;
+  return "";
+}
+
 export function getAcademicContext(user) {
+  // Guests: never invent a personal semester/branch from stale localStorage.
+  // "Mine" and profile banners require a logged-in account.
+  if (!user) {
+    return {
+      university: "",
+      storedKey: "",
+      branch: "",
+      course: "",
+      curriculum: "",
+      year: "",
+      semester: "",
+      scheme: "",
+      hasContext: false,
+      isGuest: true,
+    };
+  }
+
   let stored = "";
   try {
     stored = localStorage.getItem(SELECTED_UNIVERSITY_KEY) || "";
@@ -273,16 +301,23 @@ export function getAcademicContext(user) {
   const option = getUniversityOption(stored);
   const university = String(user?.university || "").trim() || selected;
   const branch = String(user?.branch || "").trim() || (option ? "CSE" : "");
+  const year = String(user?.year || "").trim() || option?.year || "";
+  const semester =
+    Number(user?.semester) ||
+    option?.semester ||
+    yearToSemester(year) ||
+    "";
   return {
     university,
     storedKey: stored,
     branch,
     course: branch || university ? "B.Tech" : "",
-    curriculum: option ? SCHEME[option.scheme]?.label || "" : "",
-    year: option?.year || "",
-    semester: option?.semester || "",
+    curriculum: "",
+    year,
+    semester,
     scheme: option?.scheme || "",
-    hasContext: Boolean(university || branch),
+    hasContext: Boolean(university || branch || semester),
+    isGuest: false,
   };
 }
 

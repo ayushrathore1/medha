@@ -25,7 +25,7 @@ export default function ResourceBoard({ query, subject, extraTitles = [], emptyL
               type="button"
               onClick={() => setTab(item.id)}
               className={`whitespace-nowrap rounded-full px-4 py-1.5 text-[13px] ${
-                active ? "bg-[#111] font-semibold text-white" : "border border-[#E8E8E8] text-[#5A5A5A]"
+                active ? "bg-[var(--wama-green)] font-semibold text-white" : "border border-[var(--line)] text-[#5A5A5A]"
               }`}
             >
               {item.label}
@@ -53,7 +53,7 @@ export default function ResourceBoard({ query, subject, extraTitles = [], emptyL
 
         {!loading && showNotes && notes.map((note) => <NoteCard key={note.id} note={note} />)}
         {!loading && showVideos && youtube.map((video) => <VideoCard key={video.id} video={video} />)}
-        {!loading && showGfg && gfg.map((article) => <GfgCard key={article.url} article={article} />)}
+        {!loading && showGfg && gfg.map((article) => <GfgCard key={article.id || article.title} article={article} />)}
       </div>
     </div>
   );

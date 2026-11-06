@@ -46,7 +46,7 @@ Respond with ONLY "YES" or "NO" - nothing else.`;
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama-3.1-8b-instant", // Fast, cheap model for classification
+        model: require("../config/groqModels").GROQ_FAST,
         messages: [{ role: "user", content: decisionPrompt }],
         max_tokens: 5,
         temperature: 0,
