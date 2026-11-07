@@ -32,7 +32,7 @@ const HeroSection = () => {
           <Link className="wama-pill" to="/subjects">
             Open subjects
           </Link>
-          <Link className="wama-text-link" to="/rtu-exams">
+          <Link className="wama-text-link" to="/past-papers">
             Browse past papers
           </Link>
         </motion.div>

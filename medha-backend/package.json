@@ -14,7 +14,11 @@
     "test:load": "node tests/load.test.js",
     "test:load:heavy": "node tests/load.test.js --users=500 --duration=60",
     "test:coverage": "cross-env NODE_ENV=test jest --coverage --detectOpenHandles --forceExit",
-    "ci": "npm run test:prod"
+    "ci": "npm run test:prod",
+    "pyq:clean": "node scripts/cleanPyqPdf.js",
+    "pyq:manifest": "node scripts/seedPastPapers.js --manifest",
+    "pyq:seed": "node scripts/seedPastPapers.js --upload --mirror-aids",
+    "pyq:dry": "node scripts/seedPastPapers.js --semesters=1,3,5,7"
   },
   "dependencies": {
     "@ai-sdk/groq": "^3.0.29",

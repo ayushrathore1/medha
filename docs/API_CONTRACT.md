@@ -32,6 +32,9 @@
 | `/api/learn` | `learnRoutes.js` | general |
 | `/api/practice` | `practiceRoutes.js` | general |
 | `/api/search` | `searchRoutes.js` | general |
+| `/api/resources` | `resourceRoutes.js` | general |
+| `/api/past-papers` | `pastPaperRoutes.js` | general (public; allowlisted in early-access gate) |
+| `/api/curriculum` | `curriculumRoutes.js` | general |
 | `/api/chatbot` | `chatbotRoutes.js` | `aiLimiter` |
 | `/api/chat` | `chatStreamRoutes.js` | `aiLimiter` |
 | `/api/voice` | `voiceRoutes.js` | `aiLimiter` |
@@ -70,6 +73,18 @@ Owned by `medha-backend/routes/authRoutes.js` and `authExtraRoutes.js`.
 | POST | `/api/auth/admin/trigger-reset` | Admin |
 
 **Duplicates (not production):** `medha-next/backend/routes/authRoutes.js` (frozen copy) and `medha-next/src/app/api/auth/{login,login-otp,register,send-otp,me,forgot-password}/route.ts` (rewrite, no Google routes).
+
+## Past papers (canonical)
+
+Owned by `medha-backend/routes/pastPaperRoutes.js`. Live UI: Vite `/past-papers` (public).
+
+| Method | Path | Auth | Notes |
+| --- | --- | --- | --- |
+| GET | `/api/past-papers/meta` | public | Catalog shell + availability for CSE / AIDS |
+| GET | `/api/past-papers` | public | Filter `branch`, `semester`, `subject`, `year` |
+| GET | `/api/past-papers/:id/download` | public | Increments counter; redirects to hosted PDF (`?redirect=0` returns JSON) |
+
+Seed via `npm run pyq:manifest` / `npm run pyq:seed` in `medha-backend` after dropping PDFs under `content/pyq/rtu/cse/`.
 
 ## Search (canonical)
 
