@@ -4,6 +4,7 @@ import { ExternalLink } from "lucide-react";
 import { AuthContext } from "../../AuthContext";
 import { loginPath } from "./revisionUtils";
 import { openCuratedResource, resourceThumbUrl } from "./openResource";
+import SafeThumb from "./SafeThumb";
 
 export default function VideoCard({ video }) {
   const navigate = useNavigate();
@@ -36,11 +37,13 @@ export default function VideoCard({ video }) {
       className="flex w-full gap-3 border-b border-[var(--line)] py-4 text-left transition-colors hover:bg-[color-mix(in_srgb,var(--wama-green)_6%,white)]"
     >
       <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded-lg bg-[var(--navy)]">
-        {thumb ? (
-          <img src={thumb} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" width={112} height={64} />
-        ) : (
-          <div className="flex h-full items-center justify-center text-[11px] text-white">Play</div>
-        )}
+        <SafeThumb
+          src={thumb}
+          className="h-full w-full object-cover"
+          width={112}
+          height={64}
+          placeholderLabel="Play"
+        />
       </div>
       <div className="min-w-0 flex-1">
         <h3 className="line-clamp-2 text-[14px] font-medium text-[var(--navy)]">{video.title}</h3>

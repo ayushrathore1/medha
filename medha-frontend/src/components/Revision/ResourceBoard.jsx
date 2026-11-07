@@ -3,19 +3,35 @@ import { TABS, useResourceSearch } from "./useResourceSearch";
 import NoteCard from "./NoteCard";
 import VideoCard from "./VideoCard";
 import GfgCard from "./GfgCard";
+import "./ResourceBoard.css";
 
-export default function ResourceBoard({ query, subject, extraTitles = [], emptyLabel = "Try another topic, or open Subjects." }) {
-  const { tab, setTab, loading, notes, youtube, gfg, counts } = useResourceSearch({ query, subject, extraTitles });
+export default function ResourceBoard({
+  query = "",
+  subject,
+  semester = "all",
+  extraTitles = [],
+  emptyLabel = "Try another topic, or open Subjects.",
+}) {
+  const search = useResourceSearch({ query, subject, semester, extraTitles });
+  const tab = search.tab;
+  const setTab = search.setTab;
+  const loading = Boolean(search.loading);
+  const notes = Array.isArray(search.notes) ? search.notes : [];
+  const youtube = Array.isArray(search.youtube) ? search.youtube : [];
+  const gfg = Array.isArray(search.gfg) ? search.gfg : [];
+  const counts = search.counts || {};
 
   const showNotes = tab === "all" || tab === "notes";
   const showVideos = tab === "all" || tab === "youtube";
   const showGfg = tab === "all" || tab === "gfg";
   const visibleCount =
-    (showNotes ? notes.length : 0) + (showVideos ? youtube.length : 0) + (showGfg ? gfg.length : 0);
+    (showNotes ? notes.length : 0) +
+    (showVideos ? youtube.length : 0) +
+    (showGfg ? gfg.length : 0);
 
   return (
-    <div>
-      <div className="flex flex-wrap gap-2">
+    <div className="resource-board">
+      <div className="resource-board-tabs" role="tablist" aria-label="Resource type">
         {TABS.map((item) => {
           const count = counts[item.id] || 0;
           const active = tab === item.id;
@@ -23,37 +39,45 @@ export default function ResourceBoard({ query, subject, extraTitles = [], emptyL
             <button
               key={item.id}
               type="button"
+              role="tab"
+              aria-selected={active}
               onClick={() => setTab(item.id)}
-              className={`whitespace-nowrap rounded-full px-4 py-1.5 text-[13px] ${
-                active ? "bg-[var(--wama-green)] font-semibold text-white" : "border border-[var(--line)] text-[#5A5A5A]"
-              }`}
+              className={`resource-tab${active ? " is-on" : ""}`}
             >
               {item.label}
-              {query ? ` ${count}` : ""}
+              {query ? <span className="resource-tab-count">{count}</span> : null}
             </button>
           );
         })}
       </div>
 
-      <div className="mt-4">
-        {loading && (
-          <div className="space-y-3">
+      <div className={`resource-board-panel${loading ? " is-loading" : ""}`}>
+        {loading && visibleCount === 0 ? (
+          <div className="resource-skeleton" aria-hidden>
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 animate-pulse bg-[#F4F4F4]" />
+              <div key={i} className="resource-skeleton-row" />
             ))}
           </div>
-        )}
+        ) : null}
 
-        {!loading && query && visibleCount === 0 && (
-          <div className="py-10">
-            <p className="text-[15px] font-medium">Nothing for this topic yet.</p>
-            <p className="mt-1 text-[14px] text-[#5C5C5C]">{emptyLabel}</p>
+        {!loading && query && visibleCount === 0 ? (
+          <div className="resource-empty">
+            <p className="resource-empty-title">Nothing for this topic yet.</p>
+            <p className="resource-empty-sub">{emptyLabel}</p>
           </div>
-        )}
+        ) : null}
 
-        {!loading && showNotes && notes.map((note) => <NoteCard key={note.id} note={note} />)}
-        {!loading && showVideos && youtube.map((video) => <VideoCard key={video.id} video={video} />)}
-        {!loading && showGfg && gfg.map((article) => <GfgCard key={article.id || article.title} article={article} />)}
+        {showNotes
+          ? notes.map((note) => <NoteCard key={note.id || note._id} note={note} />)
+          : null}
+        {showVideos
+          ? youtube.map((video) => <VideoCard key={video.id || video._id} video={video} />)
+          : null}
+        {showGfg
+          ? gfg.map((article) => (
+              <GfgCard key={article.id || article.title} article={article} />
+            ))
+          : null}
       </div>
     </div>
   );

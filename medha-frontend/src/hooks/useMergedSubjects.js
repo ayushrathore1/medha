@@ -67,9 +67,28 @@ function mergeSubjects(staticList, curriculumList) {
     });
   }
 
-  // Curriculum overrides matching semester + branch + name.
+  // Curriculum overrides matching semester + branch + name, but keep catalog short
+  // codes (OS, DSA, AOA…) when the API only has a course code.
   for (const subject of mapped) {
-    byKey.set(subjectKey(subject), subject);
+    const key = subjectKey(subject);
+    const prev = byKey.get(key);
+    const curriculumShort = String(subject.short || "").trim();
+    const prevShort = String(prev?.short || "").trim();
+    const shortLooksLikeCode =
+      !curriculumShort ||
+      curriculumShort === String(subject.code || "").trim() ||
+      /^\d/.test(curriculumShort) ||
+      (/\d/.test(curriculumShort) && curriculumShort.includes("-"));
+    byKey.set(key, {
+      ...prev,
+      ...subject,
+      slug: prev?.slug || subject.slug,
+      slugAliases: [
+        ...new Set([...(prev?.slugAliases || []), ...(subject.slugAliases || []), prev?.slug, subject.slug].filter(Boolean)),
+      ],
+      short: shortLooksLikeCode && prevShort ? prevShort : curriculumShort || prevShort || subject.code,
+      color: prev?.color || subject.color,
+    });
   }
 
   return [...byKey.values()].sort((a, b) => {
