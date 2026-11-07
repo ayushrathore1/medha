@@ -30,6 +30,7 @@ const Subjects = React.lazy(() => import("./pages/Subjects"));
 const SubjectTopics = React.lazy(() => import("./pages/SubjectTopics"));
 const TopicDetail = React.lazy(() => import("./pages/TopicDetail"));
 const RevisionSearch = React.lazy(() => import("./pages/RevisionSearch"));
+const PastPapers = React.lazy(() => import("./pages/PastPapers"));
 const NotePreview = React.lazy(() => import("./pages/NotePreview"));
 const UploadNotes = React.lazy(() => import("./pages/UploadNotes"));
 const MyUploads = React.lazy(() => import("./pages/MyUploads"));
@@ -105,7 +106,7 @@ const RouteFallback = () => (
 /**
  * Full platform tree.
  *
- * PUBLIC:  /  (landing), /subjects/*, /search
+ * PUBLIC:  /  (landing), /subjects/*, /search, /past-papers
  * AUTH:    desk home (via HomeGate), /dashboard, /upload(s), /profile, /note/*, /join-team
  * STAFF:   /admin, /team-dashboard
  */
@@ -130,6 +131,9 @@ const InsideAppTree = () => {
             <Route path="/" element={<HomeGate />} />
             <Route path="/home" element={<Navigate to="/" replace />} />
             <Route path="/search" element={<RevisionSearch />} />
+            <Route path="/past-papers" element={<PastPapers />} />
+            <Route path="/rtu-exams" element={<Navigate to="/past-papers" replace />} />
+            <Route path="/exams" element={<Navigate to="/past-papers" replace />} />
             <Route path="/subjects" element={<Subjects />} />
             <Route path="/subjects/:subjectSlug" element={<SubjectTopics />} />
             <Route path="/subjects/:subjectSlug/:unitSlug" element={<TopicDetail />} />

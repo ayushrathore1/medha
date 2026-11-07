@@ -1,21 +1,49 @@
+import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
+import { AuthContext } from "../AuthContext";
 import AdminDashboard from "../pages/AdminDashboard";
 
-vi.mock("axios", () => ({
-  default: {
+const { axiosMock } = vi.hoisted(() => {
+  const mock = {
     get: vi.fn(),
     post: vi.fn(),
     patch: vi.fn(),
     delete: vi.fn(),
-  },
+    interceptors: {
+      request: { use: vi.fn() },
+      response: { use: vi.fn() },
+    },
+  };
+  mock.create = vi.fn(() => mock);
+  return { axiosMock: mock };
+});
+
+vi.mock("axios", () => ({
+  default: axiosMock,
 }));
 
 vi.mock("../components/Common/Loader", () => ({
   default: () => <div>Loading admin</div>,
 }));
+
+function renderAdmin() {
+  return render(
+    <AuthContext.Provider
+      value={{
+        user: { name: "Admin", email: "admin@example.com", role: "admin" },
+        login: vi.fn(),
+        logout: vi.fn(),
+      }}
+    >
+      <MemoryRouter>
+        <AdminDashboard />
+      </MemoryRouter>
+    </AuthContext.Provider>
+  );
+}
 
 describe("AdminDashboard permission split", () => {
   beforeEach(() => {
@@ -26,11 +54,7 @@ describe("AdminDashboard permission split", () => {
   it("redirects away when check-admin says the user is not an admin", async () => {
     axios.get.mockResolvedValue({ data: { isAdmin: false } });
 
-    render(
-      <MemoryRouter>
-        <AdminDashboard />
-      </MemoryRouter>
-    );
+    renderAdmin();
 
     await waitFor(() => {
       expect(axios.get).toHaveBeenCalledWith(
@@ -50,14 +74,12 @@ describe("AdminDashboard permission split", () => {
       return Promise.resolve({ data: {} });
     });
 
-    render(
-      <MemoryRouter>
-        <AdminDashboard />
-      </MemoryRouter>
-    );
+    renderAdmin();
 
-    expect(await screen.findByText("Admin Dashboard")).toBeInTheDocument();
-    expect(screen.getByText("Messages & Feedback")).toBeInTheDocument();
-    expect(screen.getByText("Email Console")).toBeInTheDocument();
+    expect(await screen.findByText(/ops desk/i)).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: /ops sections/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /email/i })
+    ).toBeInTheDocument();
   });
 });

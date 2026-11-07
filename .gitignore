@@ -76,3 +76,8 @@ desktop.ini
 *.sqlite3
 **/uploads/
 **/storage/
+
+# ─── Local past-paper binaries (seed from disk; do not commit PDFs) ──
+content/pyq/**/*.pdf
+content/pyq/_cleaned/
+content/pyq/_tmp/
