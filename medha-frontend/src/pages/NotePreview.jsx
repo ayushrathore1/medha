@@ -1,10 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import RevisionShell from "../components/Revision/RevisionShell";
 import { formatDate, formatFileMeta, loginPath } from "../components/Revision/revisionUtils";
 import { requestNoteDownload } from "../components/Revision/noteDownload";
 import api from "../api/api";
+import "./NotePreview.css";
+
+function subjectLabel(note) {
+  if (!note) return "Notes";
+  if (typeof note.subject === "object" && note.subject) {
+    return note.subject.name || note.subject.code || "Notes";
+  }
+  return note.subject || note.subjectTag || "Notes";
+}
 
 export default function NotePreview() {
   const { noteId } = useParams();
@@ -15,6 +24,7 @@ export default function NotePreview() {
   const [note, setNote] = useState(passed);
   const [loading, setLoading] = useState(!passed);
   const [fileUrl, setFileUrl] = useState("");
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -39,70 +49,130 @@ export default function NotePreview() {
       navigate(loginPath(`/note/${noteId}`));
       return;
     }
+    setBusy(true);
     try {
       const data = await requestNoteDownload(noteId);
       if (data.fileUrl) {
         setFileUrl(data.fileUrl);
         window.open(data.fileUrl, "_blank", "noopener,noreferrer");
-        setNote((prev) => prev ? { ...prev, downloadCount: data.downloadCount } : prev);
+        setNote((prev) => (prev ? { ...prev, downloadCount: data.downloadCount } : prev));
       }
     } catch (err) {
-      setNote((prev) => prev);
       console.warn(err);
+    } finally {
+      setBusy(false);
     }
   };
 
   const previewUrl = fileUrl;
+  const fileKind = formatFileMeta(note);
+  const isPdf = /pdf/i.test(note?.fileType || note?.fileUrl || previewUrl || "");
+  const author = note?.author || note?.owner?.name || "Student";
+  const downloads = Number(note?.downloadCount) || 0;
+
+  const chips = useMemo(() => {
+    if (!note) return [];
+    const list = [{ label: fileKind, tone: "ink" }];
+    list.push({ label: subjectLabel(note) });
+    if (note.semester) list.push({ label: `${String(note.semester).replace(/[^0-9]/g, "") || note.semester} sem` });
+    if (downloads) list.push({ label: `${downloads} download${downloads === 1 ? "" : "s"}` });
+    if (note.verificationStatus === "approved") list.push({ label: "Verified", tone: "ok" });
+    return list;
+  }, [note, fileKind, downloads]);
 
   return (
-    <RevisionShell title="Note" showBack>
-      {loading ? (
-        <div className="h-48 animate-pulse bg-[#F4F4F4]" />
-      ) : !note ? (
-        <p className="text-[14px] text-[#5C5C5C]">This note is not available.</p>
-      ) : (
-        <div>
-          <p className="text-[12px] text-[#8A8A8A]">
-            {formatFileMeta(note)} ·{" "}
-            {typeof note.subject === "object" && note.subject
-              ? note.subject.name || note.subject.code || "Notes"
-              : note.subject || note.subjectTag || "Notes"}
-            {note.downloadCount ? ` · ${note.downloadCount} downloads` : ""}
-          </p>
-          <h1 className="mt-1 break-words text-[24px] font-semibold leading-tight tracking-[-0.03em] text-[#1F1F1F]">
-            {note.title}
-          </h1>
-          <p className="mt-2 text-[13px] text-[#5C5C5C]">
-            {note.author || note.owner?.name || "Student"}
-            {note.createdAt ? ` · ${formatDate(note.createdAt)}` : ""}
-          </p>
-          {note.verificationStatus === "approved" && (
-            <p className="mt-2 text-[12px] text-[#5C5C5C]">Checked as study material.</p>
-          )}
-
-          <button
-            type="button"
-            onClick={handleDownload}
-            className="mt-6 rounded-full bg-[#111] px-5 py-2.5 text-[13px] font-semibold text-white"
-          >
-            {user ? "Download" : "Sign in to download"}
-          </button>
-
-          <div className="mt-8 min-h-[320px] overflow-hidden rounded-[22px] border border-[#E8E8E8]">
-            {previewUrl && /pdf/i.test(note.fileType || note.fileUrl || previewUrl) ? (
-              <iframe title={note.title} src={previewUrl} className="h-[70vh] w-full" />
-            ) : (
-              <div className="flex h-[280px] flex-col items-center justify-center px-6 text-center">
-                <p className="text-[14px] text-[#5C5C5C]">
-                  {user
-                    ? "Download the file to read it."
-                    : "Sign in to download. Aura goes to the student who uploaded it."}
-                </p>
-              </div>
-            )}
+    <RevisionShell title="Note" showBack desk>
+      <div className="desk-page note-desk">
+        {loading ? (
+          <div className="note-desk-skeleton" aria-hidden>
+            <div className="note-desk-skeleton-line" style={{ width: "30%" }} />
+            <div className="note-desk-skeleton-line is-title" />
+            <div className="note-desk-skeleton-line" style={{ width: "45%" }} />
+            <div className="note-desk-skeleton-line is-block" />
           </div>
-        </div>
-      )}
+        ) : !note ? (
+          <div className="note-desk-miss">
+            <p className="desk-eyebrow" style={{ marginBottom: 6 }}>
+              Library
+            </p>
+            <h1 className="desk-title" style={{ fontSize: 24 }}>
+              Note unavailable
+            </h1>
+            <p className="desk-sub">This note may be private, removed, or still in review.</p>
+            <div className="note-desk-actions">
+              <Link to="/search" className="desk-solid-btn">
+                Back to search
+              </Link>
+              <Link to="/subjects" className="desk-ghost-btn">
+                Browse subjects
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <>
+            <header className="mb-1">
+              <p className="desk-eyebrow">Shared notes</p>
+              <h1 className="desk-title" style={{ fontSize: "clamp(26px, 4vw, 34px)" }}>
+                {note.title}
+              </h1>
+              <p className="desk-sub" style={{ marginTop: 10 }}>
+                {author}
+                {note.createdAt ? ` · ${formatDate(note.createdAt)}` : ""}
+              </p>
+            </header>
+
+            <div className="note-desk-meta" aria-label="Note details">
+              {chips.map((chip) => (
+                <span
+                  key={`${chip.label}-${chip.tone || "default"}`}
+                  className={`note-desk-chip${chip.tone === "ink" ? " note-desk-chip--ink" : ""}${
+                    chip.tone === "ok" ? " note-desk-chip--ok" : ""
+                  }`}
+                >
+                  {chip.label}
+                </span>
+              ))}
+            </div>
+
+            <div className="note-desk-actions">
+              <button type="button" className="desk-solid-btn" onClick={handleDownload} disabled={busy}>
+                {busy ? "Opening…" : user ? "Download" : "Sign in to download"}
+              </button>
+              {previewUrl ? (
+                <a
+                  href={previewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="desk-ghost-btn"
+                >
+                  Open in new tab
+                </a>
+              ) : null}
+            </div>
+
+            <section className="note-desk-preview" aria-label="Note preview">
+              {previewUrl && isPdf ? (
+                <iframe title={note.title} src={previewUrl} />
+              ) : (
+                <div className="note-desk-empty">
+                  <div className="note-desk-empty-mark">{fileKind}</div>
+                  <p className="note-desk-empty-title">
+                    {user ? "Ready when you are" : "Sign in to open this note"}
+                  </p>
+                  <p className="note-desk-empty-copy">
+                    {user
+                      ? "Download to read the full file. Aura goes to the student who uploaded it."
+                      : "Sign in to download. Aura goes to the student who uploaded it."}
+                  </p>
+                  <button type="button" className="desk-solid-btn" onClick={handleDownload} disabled={busy}>
+                    {busy ? "Opening…" : user ? "Download to preview" : "Sign in to download"}
+                  </button>
+                </div>
+              )}
+            </section>
+          </>
+        )}
+      </div>
     </RevisionShell>
   );
 }

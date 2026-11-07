@@ -107,9 +107,53 @@ exports.openResource = async (req, res) => {
   }
 };
 
+const YT_ID_RE = /^[a-zA-Z0-9_-]{11}$/;
+
+/** Tiny SVG placeholder — always 200 so browsers never log ytimg 404s. */
+const THUMB_PLACEHOLDER_SVG = Buffer.from(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180">
+  <rect width="320" height="180" fill="#111827"/>
+  <circle cx="160" cy="90" r="28" fill="#1f2937"/>
+  <polygon points="152,74 152,106 180,90" fill="#9ca3af"/>
+</svg>`
+);
+
+function sendThumbPlaceholder(res, maxAge = 3600) {
+  res.set({
+    "Content-Type": "image/svg+xml; charset=utf-8",
+    "Cache-Control": `public, max-age=${maxAge}`,
+  });
+  return res.status(200).send(THUMB_PLACEHOLDER_SVG);
+}
+
+async function fetchThumbBuffer(url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 4000);
+  try {
+    const upstream = await fetch(url, {
+      method: "GET",
+      redirect: "follow",
+      signal: controller.signal,
+      headers: { Accept: "image/*,*/*;q=0.8" },
+    });
+    if (!upstream.ok) return null;
+    const type = String(upstream.headers.get("content-type") || "");
+    if (type && !type.startsWith("image/")) return null;
+    const buf = Buffer.from(await upstream.arrayBuffer());
+    // YouTube sometimes returns a tiny error GIF; treat empty/tiny as miss
+    if (!buf.length || buf.length < 200) return null;
+    return { buf, type: type || "image/jpeg" };
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 /**
  * GET /api/resources/:id/thumb
- * Redirects to the thumbnail without exposing the video id in search JSON.
+ * Proxies the thumbnail (or a placeholder). Never 302 to ytimg — that spams
+ * the browser console with 404s when video ids are missing/invalid.
  */
 exports.thumbResource = async (req, res) => {
   try {
@@ -118,17 +162,35 @@ exports.thumbResource = async (req, res) => {
       .lean();
 
     if (!doc || doc.kind !== "youtube") {
-      return res.status(404).end();
+      return sendThumbPlaceholder(res);
     }
 
-    const thumb =
-      doc.thumbnailUrl ||
-      (doc.videoId ? `https://i.ytimg.com/vi/${doc.videoId}/mqdefault.jpg` : null);
+    const videoId = String(doc.videoId || "").trim();
+    const candidates = [];
 
-    if (!thumb) return res.status(404).end();
-    return res.redirect(302, thumb);
+    if (doc.thumbnailUrl && /^https?:\/\//i.test(doc.thumbnailUrl)) {
+      candidates.push(doc.thumbnailUrl);
+    }
+    if (YT_ID_RE.test(videoId)) {
+      // Prefer hq over mq — fewer dead ids, same proxy path either way
+      candidates.push(`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`);
+      candidates.push(`https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`);
+      candidates.push(`https://i.ytimg.com/vi/${videoId}/default.jpg`);
+    }
+
+    for (const url of candidates) {
+      const hit = await fetchThumbBuffer(url);
+      if (!hit) continue;
+      res.set({
+        "Content-Type": hit.type,
+        "Cache-Control": "public, max-age=86400",
+      });
+      return res.status(200).send(hit.buf);
+    }
+
+    return sendThumbPlaceholder(res, 7200);
   } catch {
-    return res.status(404).end();
+    return sendThumbPlaceholder(res);
   }
 };
 

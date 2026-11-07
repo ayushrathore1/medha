@@ -134,7 +134,7 @@ export default function Subjects() {
   }, [draft, params, query, setParams]);
 
   const matched = useMemo(
-    () => subjects.filter((subject) => subjectMatchesQuery(subject, draft)),
+    () => subjects.filter((subject) => subjectMatchesQuery(subject, draft, subjects)),
     [draft, subjects]
   );
 

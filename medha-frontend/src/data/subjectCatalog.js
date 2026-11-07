@@ -415,28 +415,6 @@ export function getSubjectsBySlugs(slugs = []) {
   return slugs.map(getSubjectBySlug).filter(Boolean);
 }
 
-export function subjectMatchesQuery(subject, query) {
-  const q = String(query || "").toLowerCase().trim();
-  if (!q) return true;
-  const schemeLabel = SCHEME[subject.scheme]?.label || "";
-  const haystack = [
-    subject.name,
-    subject.short,
-    subject.code,
-    subject.course,
-    subject.branch,
-    semesterLabel(subject.semester),
-    yearLabel(subject.semester),
-    schemeLabel,
-    subject.scheme,
-    ...(subject.units || []).flatMap((unit) => [unit.title, ...(unit.topics || [])]),
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-  return haystack.includes(q);
-}
-
 export function getSubjectBySlug(slug) {
   return SUBJECTS.find((s) => s.slug === slug) || null;
 }
@@ -464,18 +442,443 @@ export function saveRecentSearch(query) {
   localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(next));
 }
 
-export function findTopicMatch(query) {
+export function clearRecentSearches() {
+  try {
+    localStorage.removeItem(RECENT_SEARCH_KEY);
+  } catch {
+    /* ignore */
+  }
+  return [];
+}
+
+/** Topic / concept shorthand → syllabus phrases. */
+export const TOPIC_ALIASES = {
+  ipc: ["inter-process communication", "interprocess communication", "inter process communication"],
+  inter: ["inter-process communication"],
+  "inter process": ["inter-process communication"],
+  interprocess: ["inter-process communication"],
+  mutex: ["mutual exclusion"],
+  "cpu scheduling": ["process scheduling and algorithms", "cpu scheduling"],
+  "process scheduling": ["process scheduling and algorithms"],
+  thrashing: ["thrashing"],
+  paging: ["paging", "demand paging", "page replacement"],
+  "virtual memory": ["virtual memory"],
+  deadlock: ["deadlock detection", "deadlock avoidance", "deadlock prevention"],
+  bst: ["binary search trees", "binary search tree"],
+  "binary tree": ["binary tree properties and traversals", "binary search trees"],
+  dfs: ["bfs and dfs", "depth first"],
+  bfs: ["bfs and dfs", "breadth first"],
+  mst: ["kruskal and prim mst", "minimum spanning"],
+  dijkstra: ["dijkstra and bellman-ford"],
+  oops: ["object oriented programming", "oop paradigm"],
+  oop: ["object oriented programming"],
+  "o o p": ["object oriented programming"],
+  "oo ps": ["object oriented programming"],
+  dbms: ["database management system"],
+  db: ["database management system"],
+  database: ["database management system"],
+  os: ["operating system"],
+  "o s": ["operating system"],
+  dsa: ["data structures and algorithms"],
+  ds: ["data structures and algorithms"],
+  "d s a": ["data structures and algorithms"],
+  "data structures": ["data structures and algorithms"],
+  aoa: ["analysis of algorithms"],
+  daa: ["analysis of algorithms"],
+  "a o a": ["analysis of algorithms"],
+  "d a a": ["analysis of algorithms"],
+  "algo": ["analysis of algorithms"],
+  algorithms: ["analysis of algorithms"],
+  "analysis of algorithms": ["analysis of algorithms"],
+  cgmm: ["computer graphics & multimedia", "computer graphics and multimedia"],
+  cg: ["computer graphics & multimedia", "computer graphics and multimedia"],
+  "c g": ["computer graphics & multimedia", "computer graphics and multimedia"],
+  "c g m m": ["computer graphics & multimedia", "computer graphics and multimedia"],
+  graphics: ["computer graphics & multimedia", "computer graphics and multimedia"],
+  "computer graphics": ["computer graphics & multimedia", "computer graphics and multimedia"],
+  cd: ["compiler design"],
+  "c d": ["compiler design"],
+  compiler: ["compiler design"],
+  itc: ["information theory & coding", "information theory and coding"],
+  "i t c": ["information theory & coding", "information theory and coding"],
+  "info theory": ["information theory & coding", "information theory and coding"],
+  wc: ["wireless communication"],
+  "w c": ["wireless communication"],
+  wireless: ["wireless communication"],
+  mpi: ["microprocessor & interfaces", "microprocessor and interfaces"],
+  mp: ["microprocessor & interfaces", "microprocessor and interfaces"],
+  mup: ["microprocessor & interfaces", "microprocessor and interfaces"],
+  "mu p": ["microprocessor & interfaces", "microprocessor and interfaces"],
+  "m p": ["microprocessor & interfaces", "microprocessor and interfaces"],
+  "m u p": ["microprocessor & interfaces", "microprocessor and interfaces"],
+  micro: ["microprocessor & interfaces", "microprocessor and interfaces"],
+  microprocessor: ["microprocessor & interfaces", "microprocessor and interfaces"],
+  "micro processor": ["microprocessor & interfaces", "microprocessor and interfaces"],
+  dms: ["discrete mathematics structure"],
+  "d m s": ["discrete mathematics structure"],
+  discrete: ["discrete mathematics structure"],
+  "discrete maths": ["discrete mathematics structure"],
+  "discrete math": ["discrete mathematics structure"],
+  cn: ["data communication & computer networks", "computer networks"],
+  dccn: ["data communication & computer networks", "computer networks"],
+  dcnn: ["data communication & computer networks", "computer networks"],
+  "d c c n": ["data communication & computer networks", "computer networks"],
+  "c n": ["data communication & computer networks", "computer networks"],
+  networking: ["data communication & computer networks", "computer networks"],
+  networks: ["data communication & computer networks", "computer networks"],
+  "computer networks": ["data communication & computer networks", "computer networks"],
+  toc: ["theory of computation"],
+  "t o c": ["theory of computation"],
+  "theory of computation": ["theory of computation"],
+  automata: ["theory of computation"],
+  se: ["software engineering"],
+  "s e": ["software engineering"],
+  "soft engg": ["software engineering"],
+  "software engg": ["software engineering"],
+  de: ["digital electronics"],
+  "d e": ["digital electronics"],
+  "digi elec": ["digital electronics"],
+  "digital elec": ["digital electronics"],
+  py: ["python programming"],
+  python: ["python programming"],
+  tc: ["technical communication"],
+  "t c": ["technical communication"],
+  "tech comm": ["technical communication"],
+  "k map": ["karnaugh map", "2 to 5 variable k-maps"],
+  kmap: ["karnaugh map", "2 to 5 variable k-maps"],
+  "k-map": ["karnaugh map", "2 to 5 variable k-maps"],
+  normalization: ["normalization"],
+  "er diagram": ["er model", "entity relationship"],
+  tcp: ["tcp handshake", "tcp"],
+  udp: ["udp"],
+  "osi model": ["osi"],
+};
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function tokenize(value = "") {
+  return String(value)
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+}
+
+const INITIAL_STOPWORDS = new Set(["and", "of", "the", "a", "an", "for", "in", "to", "with", "on"]);
+
+/** "Data Communication & Computer Networks" → dccn (skips "and"). */
+function nameInitials(name) {
+  return tokenize(name)
+    .filter((w) => !INITIAL_STOPWORDS.has(w))
+    .map((w) => w[0])
+    .join("");
+}
+
+function uniqStrings(values) {
+  const out = [];
+  const seen = new Set();
+  for (const value of values) {
+    const v = String(value || "").toLowerCase().trim();
+    if (!v || seen.has(v)) continue;
+    seen.add(v);
+    out.push(v);
+  }
+  return out;
+}
+
+function shortLooksLikeCourseCode(short) {
+  const s = String(short || "").trim();
+  if (!s) return true;
+  if (/^\d/.test(s)) return true;
+  if (/\d/.test(s) && s.includes("-")) return true;
+  return false;
+}
+
+/**
+ * Global short-form index: hardcoded topic aliases + every subject.short / SHORT_NAMES entry.
+ * Pass a live/merged subject list so curriculum shorts stay searchable.
+ */
+export function buildSearchAliasIndex(subjects = SUBJECTS) {
+  const index = Object.create(null);
+
+  const add = (key, ...phrases) => {
+    const k = String(key || "").toLowerCase().trim();
+    if (!k || shortLooksLikeCourseCode(k)) return;
+    index[k] = uniqStrings([...(index[k] || []), ...phrases]);
+  };
+
+  for (const [alias, phrases] of Object.entries(TOPIC_ALIASES)) {
+    add(alias, ...phrases);
+  }
+
+  for (const [name, short] of Object.entries(SHORT_NAMES)) {
+    add(short, name);
+  }
+
+  for (const subject of subjects || []) {
+    const name = subject?.name;
+    if (!name) continue;
+    add(subject.short, name);
+    // Always index initials so DCCN, DBMS-style queries resolve even when short is CN/etc.
+    const initials = nameInitials(name);
+    if (initials.length >= 2 && initials.length <= 6) add(initials, name);
+  }
+
+  // Static catalog names (covers subjects not yet in the live/merged list)
+  for (const name of Object.keys(SHORT_NAMES)) {
+    const initials = nameInitials(name);
+    if (initials.length >= 2 && initials.length <= 6) add(initials, name);
+  }
+
+  return index;
+}
+
+/** Expand a query into subject names / topic phrases (global short-form support). */
+export function expandSearchTerms(query, subjects = SUBJECTS) {
   const q = String(query || "").toLowerCase().trim();
-  if (!q) return null;
-  for (const subject of SUBJECTS) {
-    if (subject.name.toLowerCase().includes(q) || subject.short.toLowerCase() === q) {
-      return { subject, unit: null };
+  if (!q) return [];
+  const index = buildSearchAliasIndex(subjects);
+  const compact = q.replace(/\s+/g, " ");
+  const nospace = q.replace(/\s+/g, "");
+  const tokens = tokenize(q);
+
+  const out = [];
+  if (index[q]) out.push(...index[q]);
+  if (index[compact]) out.push(...index[compact]);
+  // "mu p" / "d a a" / "c g" → mup / daa / cg
+  if (nospace && index[nospace]) out.push(...index[nospace]);
+
+  // "os deadlock" / "dsa trees" — expand the leading subject short
+  if (tokens.length >= 1 && tokens.length <= 4) {
+    if (index[tokens[0]]) out.push(...index[tokens[0]]);
+    const leadJoin = tokens.slice(0, Math.min(3, tokens.length)).join("");
+    if (leadJoin && index[leadJoin]) out.push(...index[leadJoin]);
+  }
+
+  // Exact subject short match from the live list
+  for (const subject of subjects || []) {
+    const short = String(subject.short || "").toLowerCase().trim();
+    if (short && (short === q || short === nospace || short === compact)) {
+      out.push(String(subject.name || "").toLowerCase());
     }
-    for (const unit of subject.units) {
-      if (unit.title.toLowerCase().includes(q) || unit.topics.some((t) => t.toLowerCase().includes(q))) {
-        return { subject, unit };
+  }
+
+  return uniqStrings(out);
+}
+
+/** True when `needle` appears as its own token / hyphen-separated word — not inside "pointers". */
+function hasWordBoundaryMatch(haystack, needle) {
+  if (!needle) return false;
+  const re = new RegExp(`(?:^|[^a-z0-9])${escapeRegExp(needle)}(?:[^a-z0-9]|$)`, "i");
+  return re.test(haystack);
+}
+
+function scoreAgainstText(haystack, query, expansions = []) {
+  const hay = String(haystack || "").toLowerCase().trim();
+  if (!hay) return 0;
+  const hayTokens = tokenize(hay);
+  let best = 0;
+
+  const variants = [query, ...expansions]
+    .map((v) => String(v || "").toLowerCase().trim())
+    .filter(Boolean);
+
+  for (const variant of variants) {
+    if (hay === variant) {
+      best = Math.max(best, 100);
+      continue;
+    }
+    if (hay.startsWith(variant) && variant.length >= 3) {
+      best = Math.max(best, 94);
+    }
+
+    const qTokens = tokenize(variant);
+    if (!qTokens.length) continue;
+
+    if (qTokens.length === 1) {
+      const token = qTokens[0];
+      if (hayTokens.includes(token)) best = Math.max(best, 90);
+      else if (hayTokens.some((ht) => ht.startsWith(token) && token.length >= 3)) {
+        best = Math.max(best, token.length >= 4 ? 78 : 68);
+      }
+    } else {
+      const covered = qTokens.filter((qt) =>
+        hayTokens.some((ht) => ht === qt || (qt.length >= 3 && ht.startsWith(qt)))
+      ).length;
+      if (covered === qTokens.length) best = Math.max(best, 88);
+      else if (covered >= Math.ceil(qTokens.length * 0.66)) best = Math.max(best, 70);
+    }
+
+    // Substring only with a real word boundary (blocks "inter" ⊂ "pointers")
+    if (variant.length >= 3 && hasWordBoundaryMatch(hay, variant)) {
+      best = Math.max(best, variant.length >= 6 ? 72 : 64);
+    }
+  }
+
+  return best;
+}
+
+/** Subject list filter — understands OS, DSA, IPC, AOA, and full names. */
+export function subjectMatchesQuery(subject, query, allSubjects = SUBJECTS) {
+  const q = String(query || "").toLowerCase().trim();
+  if (!q) return true;
+  if (!subject) return false;
+
+  const index = buildSearchAliasIndex(allSubjects);
+  const expansions = expandSearchTerms(q, allSubjects);
+  const short = String(subject.short || "").toLowerCase().trim();
+  const name = String(subject.name || "").toLowerCase().trim();
+
+  if (short && short === q) return true;
+  if (name && expansions.includes(name)) return true;
+
+  // Known short forms / aliases: match the expanded subject/topic, not the raw stub
+  // (prevents "cd" hitting random subjects, "inter" hitting "Interfaces").
+  if (index[q]) {
+    for (const unit of subject.units || []) {
+      for (const exp of expansions) {
+        if (scoreAgainstText(unit.title, exp, []) >= 90) return true;
+        for (const topic of unit.topics || []) {
+          if (scoreAgainstText(topic, exp, []) >= 90) return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  const fieldThreshold = q.length <= 5 ? 90 : 64;
+  const topicThreshold = q.length <= 5 ? 90 : 70;
+
+  const fields = [subject.name, subject.short, subject.code, subject.course, subject.branch];
+  for (const field of fields) {
+    if (scoreAgainstText(field, q, expansions) >= fieldThreshold) return true;
+  }
+
+  for (const unit of subject.units || []) {
+    if (scoreAgainstText(unit.title, q, expansions) >= topicThreshold) return true;
+    for (const topic of unit.topics || []) {
+      if (scoreAgainstText(topic, q, expansions) >= topicThreshold) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Ranked syllabus hits for a library query.
+ * Pass `subjects` (e.g. merged curriculum list) for global short-form coverage.
+ */
+export function findTopicMatches(query, { limit = 5, subjects = SUBJECTS } = {}) {
+  const raw = String(query || "").trim();
+  if (!raw) return [];
+  const list = Array.isArray(subjects) && subjects.length ? subjects : SUBJECTS;
+  const q = raw.toLowerCase();
+  const expansions = expandSearchTerms(q, list);
+  const hits = [];
+
+  for (const subject of list) {
+    const short = String(subject.short || "").toLowerCase().trim();
+    const exactShort = short && short === q;
+
+    const subjectScore = exactShort
+      ? 120
+      : Math.max(
+          scoreAgainstText(subject.name, q, expansions),
+          scoreAgainstText(subject.short, q, expansions) >= 90
+            ? 110
+            : scoreAgainstText(subject.short, q, expansions),
+          scoreAgainstText(subject.code, q, expansions),
+          expansions.includes(String(subject.name || "").toLowerCase()) ? 108 : 0
+        );
+
+    if (subjectScore >= 88) {
+      hits.push({
+        subject,
+        unit: null,
+        topic: null,
+        score: subjectScore,
+        matchType: "subject",
+        expansions,
+      });
+    }
+
+    // Exact subject short → don't drown the subject hit with weak topic noise
+    if (exactShort) continue;
+
+    for (const unit of subject.units || []) {
+      const unitScore = scoreAgainstText(unit.title, q, expansions);
+      if (unitScore >= 64) {
+        hits.push({
+          subject,
+          unit,
+          topic: null,
+          score: unitScore + 2,
+          matchType: "unit",
+          expansions,
+        });
+      }
+      for (const topic of unit.topics || []) {
+        const topicScore = scoreAgainstText(topic, q, expansions);
+        if (topicScore >= 64) {
+          hits.push({
+            subject,
+            unit,
+            topic,
+            score: topicScore + 6,
+            matchType: "topic",
+            expansions,
+          });
+        }
       }
     }
   }
-  return null;
+
+  hits.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    const rank = { subject: 0, topic: 1, unit: 2 };
+    // Prefer subject hits when query is a subject short/name; else prefer topics
+    const qIsSubjectish = expansions.some(Boolean) && a.matchType === "subject";
+    if (qIsSubjectish || b.matchType === "subject") {
+      return (rank[a.matchType] ?? 9) - (rank[b.matchType] ?? 9);
+    }
+    const topicFirst = { topic: 0, unit: 1, subject: 2 };
+    return (topicFirst[a.matchType] ?? 9) - (topicFirst[b.matchType] ?? 9);
+  });
+
+  const seen = new Set();
+  const unique = [];
+  for (const hit of hits) {
+    const key = `${hit.subject.slug}|${hit.unit?.slug || ""}|${hit.topic || ""}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(hit);
+    if (unique.length >= limit) break;
+  }
+  return unique;
+}
+
+export function findTopicMatch(query, subjectsOrOpts) {
+  const opts = Array.isArray(subjectsOrOpts)
+    ? { subjects: subjectsOrOpts, limit: 1 }
+    : { ...(subjectsOrOpts || {}), limit: 1 };
+  const [best] = findTopicMatches(query, opts);
+  return best || null;
+}
+
+/** Query string to send to the resource API (prefer resolved syllabus topic / alias). */
+export function resolveSearchQuery(query, subjects = SUBJECTS) {
+  const raw = String(query || "").trim();
+  if (!raw) return "";
+  const list = Array.isArray(subjects) && subjects.length ? subjects : SUBJECTS;
+  const match = findTopicMatch(raw, { subjects: list });
+  if (match?.topic) return match.topic;
+  const expansions = expandSearchTerms(raw.toLowerCase(), list);
+  if (match?.matchType === "subject" && match.subject?.name) return match.subject.name;
+  if (expansions[0]) return expansions[0];
+  if (match?.unit?.title) return match.unit.title;
+  if (match?.subject?.name) return match.subject.name;
+  return raw;
 }

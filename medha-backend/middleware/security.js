@@ -211,6 +211,10 @@ const suspiciousActivityDetector = (req, res, next) => {
     "/api/rtu/imagekit-auth",
     "/api/learn/admin", // Learn admin routes for ImageKit uploads
     "/api/learn/", // Learn routes - slide updates contain ObjectIds and note content
+    // Curriculum / curated resources — staff-only; GFG/YouTube URLs often include # fragments,
+    // and titles/descriptions routinely use apostrophes (blocked by the SQL-ish # / ' rules).
+    "/api/curriculum",
+    "/api/resources",
     // Auth routes - passwords may contain SQL-like characters (', #, --)
     // This is safe because passwords are bcrypt-compared, never used in queries
     "/api/auth/register",
