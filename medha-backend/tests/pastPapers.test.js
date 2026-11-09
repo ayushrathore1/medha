@@ -38,7 +38,7 @@ describe("GET /api/past-papers", () => {
       branch: "CSE",
       semester: 3,
       subjectName: "Data Structures and Algorithms",
-      subjectCode: "3CS4-04",
+      subjectCode: "3CS4-05",
       year: 2024,
       examType: "main",
       fileUrl:

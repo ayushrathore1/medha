@@ -38,6 +38,8 @@ function hasFlag(flag) {
 }
 
 function argValue(flag) {
+  const eq = process.argv.find((a) => a.startsWith(`${flag}=`));
+  if (eq) return eq.slice(flag.length + 1) || null;
   const i = process.argv.indexOf(flag);
   if (i === -1) return null;
   return process.argv[i + 1] || null;
@@ -126,8 +128,7 @@ function discoverFromMedhaPyq(root, semesterFilter) {
       if (!fs.statSync(subjectPath).isDirectory()) continue;
       if (codeDir.startsWith(".")) continue;
 
-      const meta = resolveSubjectCode(codeDir);
-      if (!meta) {
+      if (!resolveSubjectCode(codeDir)) {
         console.warn(`Unknown subject folder ${entry}/${codeDir} — skipping`);
         continue;
       }
@@ -144,6 +145,7 @@ function discoverFromMedhaPyq(root, semesterFilter) {
           continue;
         }
         const semester = parseSemester(folderSem, file);
+        const meta = resolveSubjectCode(codeDir, semester);
         found.push({
           university: "RTU",
           branch: "CSE",
