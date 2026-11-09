@@ -60,17 +60,20 @@ const LandingNavbar = () => {
         { label: "Home", to: "/" },
         { label: "Subjects", to: "/subjects" },
         { label: "Search", to: "/search" },
+        { label: "Papers", to: "/past-papers" },
         { label: "Upload", to: "/upload" },
         ...(showOps ? [{ label: "Ops", to: "/admin" }] : []),
       ]
     : [
         { label: "Subjects", to: "/subjects" },
         { label: "Search", to: "/search" },
+        { label: "Papers", to: "/past-papers" },
       ];
 
   const guestMobileLinks = [
     { label: "Subjects", to: "/subjects" },
     { label: "Search", to: "/search" },
+    { label: "Papers", to: "/past-papers" },
   ];
 
   return (
