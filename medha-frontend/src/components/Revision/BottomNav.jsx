@@ -1,12 +1,23 @@
 import React, { useContext, memo, useCallback } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, Search, BookOpen, Upload, UserRound } from "lucide-react";
+import { Home, Search, BookOpen, FileText, Upload, UserRound } from "lucide-react";
 import { AuthContext } from "../../AuthContext";
 
 export const REVISION_TABS = [
   { to: "/", label: "Home", icon: Home, match: (path) => path === "/", preload: () => import("../../pages/HomeGate") },
   { to: "/search", label: "Search", icon: Search, match: (path) => path === "/search", preload: () => import("../../pages/RevisionSearch") },
   { to: "/subjects", label: "Subjects", icon: BookOpen, match: (path) => path.startsWith("/subjects"), preload: () => import("../../pages/Subjects") },
+  {
+    to: "/past-papers",
+    label: "Papers",
+    icon: FileText,
+    match: (path) =>
+      path === "/past-papers" ||
+      path.startsWith("/past-papers/") ||
+      path === "/exams" ||
+      path === "/rtu-exams",
+    preload: () => import("../../pages/PastPapers"),
+  },
   {
     to: "/upload",
     label: "Upload",
