@@ -15,16 +15,29 @@ exports.getProfile = async (req, res) => {
 // Update the current user's profile (no password update here)
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, college, university, branch, year, gender, avatar } = req.body;
+    const {
+      name,
+      college,
+      university,
+      branch,
+      year,
+      semester,
+      gender,
+      avatar,
+      avatarIndex,
+    } = req.body;
     const updateFields = {};
 
     if (name) updateFields.name = name;
-    if (college) updateFields.college = college;
+    if (college !== undefined) updateFields.college = college;
     if (university) updateFields.university = university;
     if (branch) updateFields.branch = branch;
-    if (year) updateFields.year = year;
+    // Register stores semester in `year`; accept either key from the client
+    const yearValue = String(year || semester || "").trim();
+    if (yearValue) updateFields.year = yearValue;
     if (gender) updateFields.gender = gender;
-    if (avatar) updateFields.avatar = avatar;
+    if (avatar !== undefined) updateFields.avatar = avatar;
+    if (typeof avatarIndex === "number") updateFields.avatarIndex = avatarIndex;
 
     const user = await User.findByIdAndUpdate(
       req.user.id,

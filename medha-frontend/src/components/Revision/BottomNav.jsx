@@ -1,6 +1,6 @@
 import React, { useContext, memo, useCallback } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, Search, BookOpen, FileText, Upload, UserRound } from "lucide-react";
+import { Home, Search, BookOpen, FileText, NotebookPen, UserRound } from "lucide-react";
 import { AuthContext } from "../../AuthContext";
 
 export const REVISION_TABS = [
@@ -19,12 +19,16 @@ export const REVISION_TABS = [
     preload: () => import("../../pages/PastPapers"),
   },
   {
-    to: "/upload",
-    label: "Upload",
-    icon: Upload,
-    authTo: "/login",
-    match: (path) => path === "/upload" || path === "/uploads",
-    preload: () => import("../../pages/UploadNotes"),
+    to: "/notes",
+    label: "Notes",
+    icon: NotebookPen,
+    match: (path) =>
+      path === "/notes" ||
+      path.startsWith("/notes/") ||
+      path === "/upload" ||
+      path === "/uploads" ||
+      path.startsWith("/note/"),
+    preload: () => import("../../pages/NotesHub"),
   },
   {
     to: "/profile",

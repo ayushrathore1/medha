@@ -1,13 +1,29 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FileImage, FileUp } from "lucide-react";
 import { AuthContext } from "../AuthContext";
 import RevisionShell from "../components/Revision/RevisionShell";
 import { loginPath } from "../components/Revision/revisionUtils";
+import { FileUpload } from "@/components/extend/file-upload";
 import { SUBJECTS, getSubjectBySlug } from "../data/subjectCatalog";
 import { useMergedSubjects } from "../hooks/useMergedSubjects";
 import api from "../api/api";
 
 const SEMESTERS = ["3rd", "4th", "5th", "6th"];
+const MAX_BYTES = 25 * 1024 * 1024;
+const NOTE_ACCEPT = [
+  ".pdf",
+  ".png",
+  ".jpg",
+  ".jpeg",
+  "application/pdf",
+  "image/png",
+  "image/jpeg",
+].join(",");
+const NOTE_FILE_TYPES = [
+  { label: "PDF", icon: FileUp },
+  { label: "Image", icon: FileImage },
+];
 
 export default function UploadNotes() {
   const { user } = useContext(AuthContext);
@@ -28,6 +44,22 @@ export default function UploadNotes() {
 
   const subject = subjectOptions.find((s) => s.slug === subjectSlug) || getSubjectBySlug(subjectSlug);
 
+  const handleFilesAccepted = useCallback((files) => {
+    const next = files?.[0] || null;
+    if (!next) {
+      setFile(null);
+      return;
+    }
+    if (next.size > MAX_BYTES) {
+      setFile(null);
+      setError("File too large. Maximum size is 25MB.");
+      return;
+    }
+    setError("");
+    setFile(next);
+    setTitle((prev) => prev || next.name.replace(/\.[^.]+$/, ""));
+  }, []);
+
   const submit = async (e) => {
     e.preventDefault();
     if (!user) {
@@ -38,7 +70,7 @@ export default function UploadNotes() {
       setError("Add a file, a title, and a subject.");
       return;
     }
-    if (file.size > 25 * 1024 * 1024) {
+    if (file.size > MAX_BYTES) {
       setError("File too large. Maximum size is 25MB.");
       return;
     }
@@ -112,22 +144,19 @@ export default function UploadNotes() {
             </div>
           ) : (
             <form onSubmit={submit} className="space-y-5">
-              <label className="desk-dropzone">
-                <input
-                  type="file"
-                  accept="application/pdf,image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    const next = e.target.files?.[0];
-                    setFile(next || null);
-                    if (next && !title) setTitle(next.name.replace(/\.[^.]+$/, ""));
-                  }}
+              <div className="rounded-xl border border-[#e8e8e8] bg-white p-3 sm:p-4">
+                <FileUpload
+                  multiple={false}
+                  accept={NOTE_ACCEPT}
+                  acceptedFileTypes={NOTE_FILE_TYPES}
+                  title="Drop notes or browse"
+                  description="PDF or image · up to 25MB"
+                  browseLabel="Browse files"
+                  showBorderBeam
+                  showFileList
+                  onFilesAccepted={handleFilesAccepted}
                 />
-                <p className="text-[15px] font-semibold text-[#111]">
-                  {file ? file.name : "Choose a PDF or image"}
-                </p>
-                <p className="mt-1 text-[12px] text-[#8A8A8A]">Up to 25MB.</p>
-              </label>
+              </div>
 
               <label className="desk-field">
                 <span>Title</span>

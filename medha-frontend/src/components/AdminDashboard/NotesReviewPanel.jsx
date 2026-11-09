@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import api from "../../api/api";
+import { requestNoteDownload } from "../Revision/noteDownload";
+import InAppPdfViewer from "../Common/InAppPdfViewer";
 
 export default function NotesReviewPanel({ admin }) {
   const { activeTab, isFullAdmin } = admin;
@@ -7,6 +9,7 @@ export default function NotesReviewPanel({ admin }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [forms, setForms] = useState({});
+  const [activePDF, setActivePDF] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -93,15 +96,26 @@ export default function NotesReviewPanel({ admin }) {
                 {note.verificationReason ? (
                   <p className="mt-2 text-sm text-[var(--ad-muted)]">{note.verificationReason}</p>
                 ) : null}
-                {note.fileUrl ? (
-                  <a
-                    href={note.fileUrl.startsWith("http") ? note.fileUrl : `${import.meta.env.VITE_BACKEND_URL}${note.fileUrl}`}
-                    target="_blank"
-                    rel="noreferrer"
+                {note.fileUrl || note._id ? (
+                  <button
+                    type="button"
                     className="mt-2 inline-block text-sm font-semibold text-[var(--ad-aura)] underline"
+                    onClick={async () => {
+                      try {
+                        const data = await requestNoteDownload(note._id);
+                        setActivePDF({
+                          pdfUrl: data.fileUrl,
+                          title: note.title || "Review file",
+                          revoke: data.revoke,
+                          sharePath: `/note/${note._id}`,
+                        });
+                      } catch (err) {
+                        setError(err.response?.data?.error || "Could not open file");
+                      }
+                    }}
                   >
                     Open file
-                  </a>
+                  </button>
                 ) : null}
               </div>
               <div className="grid w-full gap-2 sm:w-[260px]">
@@ -136,6 +150,18 @@ export default function NotesReviewPanel({ admin }) {
           );
         })}
       </div>
+      <InAppPdfViewer
+        isOpen={!!activePDF}
+        onClose={() => {
+          activePDF?.revoke?.();
+          setActivePDF(null);
+        }}
+        pdfUrl={activePDF?.pdfUrl}
+        title={activePDF?.title}
+        revokeOnClose={activePDF?.revoke}
+        sharePath={activePDF?.sharePath}
+        shareTitle={activePDF?.title}
+      />
     </section>
   );
 }

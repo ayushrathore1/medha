@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const env = require("../config/env");
 const { applyPendingTeamInvite } = require("./teamController");
+const { applyDailyActivity } = require("../utils/streak");
 
 // Helper to create JWT (always with userId)
 const generateToken = (user) => {
@@ -79,34 +80,7 @@ exports.login = async (req, res) => {
 
     const token = generateToken(user);
 
-    // Streak Logic
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    let streak = user.streak || 0;
-    let lastActive = user.lastActiveDate ? new Date(user.lastActiveDate) : null;
-
-    if (lastActive) {
-      lastActive.setHours(0, 0, 0, 0);
-      const diffTime = Math.abs(today - lastActive);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      if (diffDays === 1) {
-        // Consecutive day
-        streak += 1;
-      } else if (diffDays > 1) {
-        // Missed a day or more
-        streak = 1;
-      }
-      // If diffDays === 0 (same day), do nothing
-    } else {
-      // First time login or no previous record
-      streak = 1;
-    }
-
-    // Update user
-    user.streak = streak;
-    user.lastActiveDate = new Date();
+    applyDailyActivity(user);
     await user.save();
 
     try {

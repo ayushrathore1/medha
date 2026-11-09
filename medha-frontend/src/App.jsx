@@ -32,8 +32,7 @@ const TopicDetail = React.lazy(() => import("./pages/TopicDetail"));
 const RevisionSearch = React.lazy(() => import("./pages/RevisionSearch"));
 const PastPapers = React.lazy(() => import("./pages/PastPapers"));
 const NotePreview = React.lazy(() => import("./pages/NotePreview"));
-const UploadNotes = React.lazy(() => import("./pages/UploadNotes"));
-const MyUploads = React.lazy(() => import("./pages/MyUploads"));
+const NotesHub = React.lazy(() => import("./pages/NotesHub"));
 const Profile = React.lazy(() => import("./pages/Profile"));
 const AdminDashboard = React.lazy(() => import("./pages/AdminDashboard"));
 const TeamDashboard = React.lazy(() => import("./pages/TeamDashboard"));
@@ -44,7 +43,8 @@ const TAB_IMPORTS = [
   () => import("./pages/Dashboard"),
   () => import("./pages/Subjects"),
   () => import("./pages/RevisionSearch"),
-  () => import("./pages/UploadNotes"),
+  () => import("./pages/PastPapers"),
+  () => import("./pages/NotesHub"),
   () => import("./pages/Profile"),
 ];
 
@@ -107,7 +107,7 @@ const RouteFallback = () => (
  * Full platform tree.
  *
  * PUBLIC:  /  (landing), /subjects/*, /search, /past-papers
- * AUTH:    desk home (via HomeGate), /dashboard, /upload(s), /profile, /note/*, /join-team
+ * AUTH:    desk home (via HomeGate), /dashboard, /notes?scope=mine, /profile, /note/*, /join-team
  * STAFF:   /admin, /team-dashboard
  */
 const InsideAppTree = () => {
@@ -140,9 +140,10 @@ const InsideAppTree = () => {
 
             {/* AUTH desk */}
             <Route path="/dashboard" element={auth(<Dashboard />)} />
+            <Route path="/notes" element={<NotesHub />} />
             <Route path="/note/:noteId" element={auth(<NotePreview />)} />
-            <Route path="/upload" element={auth(<UploadNotes />)} />
-            <Route path="/uploads" element={auth(<MyUploads />)} />
+            <Route path="/upload" element={<Navigate to="/notes?panel=upload" replace />} />
+            <Route path="/uploads" element={<Navigate to="/notes?scope=mine" replace />} />
             <Route path="/profile" element={auth(<Profile />)} />
           </Route>
 

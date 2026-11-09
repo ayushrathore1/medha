@@ -5,7 +5,9 @@ const mongoose = require("mongoose");
 const notifications = require("./notificationController");
 const fs = require("fs");
 const path = require("path");
+const axios = require("axios");
 const { uploadToCloudinary, CLOUDINARY_MAX_BYTES } = require("../utils/cloudinaryUpload");
+const { signedNoteUrl, isCloudinaryUrl } = require("../utils/noteDelivery");
 const { compressPdfIfNeeded } = require("../utils/pdfCompressor");
 const { enqueueNoteScan } = require("../utils/noteScanWorker");
 const { sendNotePipelineEmail } = require("../utils/noteEmails");
@@ -16,6 +18,59 @@ const {
   paginationMeta,
   escapeRegex,
 } = require("../utils/notePagination");
+
+async function loadNoteForViewer(noteId, userId) {
+  const note = await Note.findById(noteId);
+  if (!note) {
+    const err = new Error("Note not found.");
+    err.status = 404;
+    throw err;
+  }
+  const isOwner = String(note.owner) === String(userId);
+  if (!isOwner) {
+    const viewer = await User.findById(userId).select("role isAdmin").lean();
+    const isStaff =
+      viewer?.isAdmin === true ||
+      viewer?.role === "admin" ||
+      viewer?.role === "team";
+    const isApprovedPublic =
+      note.isPublic === true && note.verificationStatus === "approved";
+    // Staff may open public notes awaiting review; private notes stay owner-only
+    const staffCanReview =
+      isStaff &&
+      note.isPublic === true &&
+      (note.verificationStatus === "pending" ||
+        note.verificationStatus === "awaiting_team" ||
+        note.verificationStatus === "rejected" ||
+        note.verificationStatus === "approved");
+    if (!isApprovedPublic && !staffCanReview) {
+      const err = new Error("Note not found.");
+      err.status = 404;
+      throw err;
+    }
+  }
+  return { note, isOwner };
+}
+
+async function awardDownloadIfNeeded(note, userId, isOwner) {
+  // Atomic: only first download by this user increments + awards
+  const updated = await Note.findOneAndUpdate(
+    { _id: note._id, downloadedBy: { $ne: userId } },
+    { $addToSet: { downloadedBy: userId }, $inc: { downloadCount: 1 } },
+    { new: true }
+  );
+  if (!updated) {
+    const fresh = await Note.findById(note._id).select("downloadCount");
+    if (fresh) note.downloadCount = fresh.downloadCount;
+    return 0;
+  }
+  note.downloadCount = updated.downloadCount;
+  note.downloadedBy = updated.downloadedBy;
+  if (isOwner) return 0;
+  const awarded = AURA_PER_DOWNLOAD;
+  await User.findByIdAndUpdate(note.owner, { $inc: { auraPoints: awarded } });
+  return awarded;
+}
 
 const NOTE_LIST_SELECT = [
   "title",
@@ -637,41 +692,118 @@ exports.recordDownload = async (req, res) => {
   try {
     const { noteId } = req.params;
     const userId = req.user._id;
+    const { note, isOwner } = await loadNoteForViewer(noteId, userId);
+    const awarded = await awardDownloadIfNeeded(note, userId, isOwner);
 
-    const note = await Note.findById(noteId);
-    if (!note) {
-      return res.status(404).json({ error: "Note not found." });
-    }
-
-    const isOwner = String(note.owner) === String(userId);
-    if (!isOwner) {
-      if (!note.isPublic || note.verificationStatus !== "approved") {
-        return res.status(404).json({ error: "Note not found." });
-      }
-    }
-
-    const already = (note.downloadedBy || []).some((id) => String(id) === String(userId));
-    let awarded = 0;
-
-    if (!already) {
-      note.downloadedBy = note.downloadedBy || [];
-      note.downloadedBy.push(userId);
-      note.downloadCount = (note.downloadCount || 0) + 1;
-      await note.save();
-
-      if (!isOwner) {
-        awarded = AURA_PER_DOWNLOAD;
-        await User.findByIdAndUpdate(note.owner, { $inc: { auraPoints: awarded } });
-      }
+    const attachment =
+      req.query.attachment === "1" ||
+      req.query.attachment === "true" ||
+      req.body?.attachment === true;
+    const fileUrl = signedNoteUrl(note, { attachment });
+    if (!fileUrl) {
+      return res.status(404).json({ error: "Note file missing or unavailable." });
     }
 
     res.json({
-      fileUrl: note.fileUrl,
+      fileUrl,
+      // Prefer same-origin stream for in-app viewers (avoids Cloudinary 401/CORS)
+      streamPath: `/api/notes/${note._id}/file`,
       downloadCount: note.downloadCount,
       awarded,
     });
   } catch (err) {
     console.error("Download record error:", err);
-    res.status(500).json({ error: err.message });
+    res.status(err.status || 500).json({ error: err.message });
+  }
+};
+
+/**
+ * GET /api/notes/:noteId/file
+ * Streams the PDF through Medha so EmbedPDF/react-pdf never hit Cloudinary ACL 401s.
+ */
+exports.streamNoteFile = async (req, res) => {
+  try {
+    const { noteId } = req.params;
+    const userId = req.user._id;
+    const { note } = await loadNoteForViewer(noteId, userId);
+    // Viewing via stream must not award aura — that stays on POST /download
+
+    const attachment =
+      req.query.attachment === "1" || req.query.attachment === "true";
+    const fileUrl = signedNoteUrl(note, { attachment });
+    if (!fileUrl) {
+      return res.status(404).json({ error: "Note file missing or unavailable." });
+    }
+
+    const contentType = note.fileType || "application/pdf";
+    const disposition = attachment ? "attachment" : "inline";
+    const safeName = String(note.title || "note")
+      .replace(/[^\w.\- ]+/g, "")
+      .trim() || "note";
+    const ext = /\.pdf$/i.test(safeName)
+      ? ""
+      : contentType.includes("png")
+        ? ".png"
+        : contentType.includes("jpeg") || contentType.includes("jpg")
+          ? ".jpg"
+          : ".pdf";
+
+    // Local disk path
+    if (fileUrl.startsWith("/uploads/")) {
+      const abs = path.join(__dirname, "..", fileUrl.replace(/^\//, ""));
+      if (!fs.existsSync(abs)) {
+        return res.status(404).json({ error: "Note file missing on disk." });
+      }
+      res.setHeader("Content-Type", contentType);
+      res.setHeader("Content-Disposition", `${disposition}; filename="${safeName}${ext}"`);
+      res.setHeader("Cache-Control", "private, max-age=60");
+      const stream = fs.createReadStream(abs);
+      stream.on("error", (err) => {
+        console.error("[streamNoteFile] local:", err.message);
+        if (!res.headersSent) res.status(502).end();
+        else res.destroy(err);
+      });
+      return stream.pipe(res);
+    }
+
+    // Absolute local-style URL via resolve — Cloudinary or remote
+    const remote = isCloudinaryUrl(fileUrl) || /^https?:\/\//i.test(fileUrl)
+      ? fileUrl
+      : null;
+    if (!remote) {
+      return res.status(404).json({ error: "Note file unavailable." });
+    }
+
+    const upstream = await axios.get(remote, {
+      responseType: "stream",
+      timeout: 60000,
+      maxRedirects: 5,
+      validateStatus: (s) => s >= 200 && s < 400,
+    });
+
+    res.setHeader("Content-Type", upstream.headers["content-type"] || contentType);
+    res.setHeader("Content-Disposition", `${disposition}; filename="${safeName}${ext}"`);
+    res.setHeader("Cache-Control", "private, max-age=60");
+    upstream.data.on("error", (err) => {
+      console.error("[streamNoteFile] upstream error:", err.message);
+      if (!res.headersSent) res.status(502).end();
+      else res.destroy(err);
+    });
+    res.on("close", () => {
+      try {
+        upstream.data.destroy();
+      } catch {
+        /* ignore */
+      }
+    });
+    return upstream.data.pipe(res);
+  } catch (err) {
+    console.error("Stream note file error:", err.message || err);
+    if (!res.headersSent) {
+      const status = err.status || 502;
+      res.status(status).json({
+        error: status === 404 ? "Note not found." : "Failed to stream note file.",
+      });
+    }
   }
 };
