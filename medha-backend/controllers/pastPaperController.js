@@ -1,4 +1,5 @@
 const PastPaper = require("../models/PastPaper");
+const axios = require("axios");
 const {
   CSE_SUBJECTS_BY_SEMESTER,
   SUPPORTED_BRANCHES,
@@ -165,6 +166,7 @@ async function downloadPaper(req, res) {
       return res.json({
         success: true,
         fileUrl,
+        streamPath: `/api/past-papers/${paper._id}/file`,
         paper: publicPaper(paper),
       });
     }
@@ -176,10 +178,70 @@ async function downloadPaper(req, res) {
   }
 }
 
+/**
+ * GET /api/past-papers/:id/file
+ * Proxy stream so in-app PDF viewers avoid Cloudinary ACL 401 / CORS.
+ */
+async function streamPaperFile(req, res) {
+  try {
+    const paper = await PastPaper.findById(req.params.id);
+    if (!paper || !(paper.fileUrl || paper.cloudinaryPublicId)) {
+      return res.status(404).json({ success: false, message: "Paper not found" });
+    }
+
+    const attachment = req.query.attachment === "1" || req.query.attachment === "true";
+    const fileUrl = signedPastPaperUrl(paper, { attachment });
+    if (!fileUrl) {
+      return res.status(404).json({ success: false, message: "Paper file missing" });
+    }
+
+    // Count only explicit downloads, not every in-app view
+    if (attachment) {
+      paper.downloadCount = (paper.downloadCount || 0) + 1;
+      await paper.save();
+    }
+
+    const safeName = `${paper.subjectName || "paper"}-${paper.year || ""}`
+      .replace(/[^\w.\- ]+/g, "")
+      .trim() || "paper";
+    const disposition = attachment ? "attachment" : "inline";
+
+    const upstream = await axios.get(fileUrl, {
+      responseType: "stream",
+      timeout: 60000,
+      maxRedirects: 5,
+      validateStatus: (s) => s >= 200 && s < 400,
+    });
+
+    res.setHeader("Content-Type", upstream.headers["content-type"] || "application/pdf");
+    res.setHeader("Content-Disposition", `${disposition}; filename="${safeName}.pdf"`);
+    res.setHeader("Cache-Control", "private, max-age=60");
+    upstream.data.on("error", (err) => {
+      console.error("[past-papers/file] upstream:", err.message);
+      if (!res.headersSent) res.status(502).end();
+      else res.destroy(err);
+    });
+    res.on("close", () => {
+      try {
+        upstream.data.destroy();
+      } catch {
+        /* ignore */
+      }
+    });
+    return upstream.data.pipe(res);
+  } catch (err) {
+    console.error("[past-papers/file]", err.message || err);
+    if (!res.headersSent) {
+      res.status(502).json({ success: false, message: "Failed to stream past paper" });
+    }
+  }
+}
+
 module.exports = {
   getMeta,
   listPapers,
   downloadPaper,
+  streamPaperFile,
   normalizeBranch,
   publicPaper,
 };

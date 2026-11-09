@@ -13,9 +13,9 @@ import {
   clearRecentSearches,
   getRecentSearches,
   resolveSearchQuery,
-  saveRecentSearch,
   semesterLabel,
 } from "../data/subjectCatalog";
+import { trackSearchOpened } from "../lib/studyActivity";
 import "./DashboardHome.css";
 import "./RevisionSearch.css";
 
@@ -193,7 +193,7 @@ export default function RevisionSearch() {
   useEffect(() => {
     if (liveQuery.length < 2) return undefined;
     const handle = window.setTimeout(() => {
-      saveRecentSearch(liveQuery);
+      trackSearchOpened(liveQuery);
       refreshRecents();
     }, RECENT_SAVE_MS);
     return () => window.clearTimeout(handle);
@@ -208,7 +208,7 @@ export default function RevisionSearch() {
       setParams(buildSearchParams({ q: next, scope: desiredScope }), { replace: true });
     });
     if (next.length >= 2) {
-      saveRecentSearch(next);
+      trackSearchOpened(next);
       refreshRecents();
     }
   };

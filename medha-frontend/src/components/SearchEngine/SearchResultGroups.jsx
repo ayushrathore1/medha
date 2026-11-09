@@ -252,16 +252,15 @@ export default function SearchResultGroups({ search }) {
                               </button>
                             )}
 
-                            {item.fileUrl && (
-                              <a
-                                href={item.fileUrl}
-                                target="_blank"
-                                rel="noreferrer"
+                            {(item.fileUrl || item.id) && (
+                              <button
+                                type="button"
+                                onClick={() => navigate(`/note/${item.id}`)}
                                 className="p-1.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--border-default)] text-[var(--text-primary)] transition-colors active:scale-[0.98]"
-                                title="Download PDF"
+                                title="View notes"
                               >
                                 <Download size={13} />
-                              </a>
+                              </button>
                             )}
                           </div>
 
@@ -361,16 +360,15 @@ export default function SearchResultGroups({ search }) {
                               <ChevronRight size={13} />
                             </button>
 
-                            {note.redirects.fileDirect && (
-                              <a
-                                href={note.redirects.fileDirect}
-                                target="_blank"
-                                rel="noreferrer"
+                            {note.id && (
+                              <button
+                                type="button"
+                                onClick={() => navigate(`/note/${note.id}`)}
                                 className="p-1.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--border-default)] text-[var(--text-primary)] transition-colors active:scale-[0.98]"
-                                title="Download PDF"
+                                title="View notes"
                               >
                                 <Download size={13} />
-                              </a>
+                              </button>
                             )}
 
                             <button
@@ -441,16 +439,15 @@ export default function SearchResultGroups({ search }) {
                               <span>Subject notes</span>
                             </button>
 
-                            {note.redirects.fileDirect && (
-                              <a
-                                href={note.redirects.fileDirect}
-                                target="_blank"
-                                rel="noreferrer"
+                            {note.id && (
+                              <button
+                                type="button"
+                                onClick={() => navigate(`/note/${note.id}`)}
                                 className="p-1.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--border-default)] text-[var(--text-primary)] transition-colors active:scale-[0.98]"
-                                title="Download PDF"
+                                title="View notes"
                               >
                                 <Download size={13} />
-                              </a>
+                              </button>
                             )}
 
                             <button

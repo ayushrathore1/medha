@@ -263,16 +263,29 @@ export function getUniversityOption(key) {
   return UNIVERSITY_OPTIONS.find((item) => item.key === key) || null;
 }
 
+/** Map academic year labels (I–IV) to a default odd semester. */
 function yearToSemester(year) {
   const y = String(year || "").trim().toUpperCase();
   if (!y) return "";
-  if (y === "1" || y === "I" || y === "1ST" || y.includes("FIRST")) return 1;
-  if (y === "2" || y === "II" || y === "2ND" || y.includes("SECOND")) return 3;
-  if (y === "3" || y === "III" || y === "3RD" || y.includes("THIRD")) return 5;
-  if (y === "4" || y === "IV" || y === "4TH" || y.includes("FOURTH")) return 7;
-  const n = Number(y);
-  if (n >= 1 && n <= 4) return n * 2 - 1;
+  if (y === "I" || y.includes("FIRST")) return 1;
+  if (y === "II" || y.includes("SECOND")) return 3;
+  if (y === "III" || y.includes("THIRD")) return 5;
+  if (y === "IV" || y.includes("FOURTH")) return 7;
   return "";
+}
+
+/** Profile stores semester in User.year as "5th" / "5" / etc. */
+function parseSemesterValue(value) {
+  if (value == null || value === "") return "";
+  const raw = String(value).trim();
+  const direct = Number(raw);
+  if (Number.isFinite(direct) && direct >= 1 && direct <= 8) return direct;
+  // "1st"…"8th", "Sem 5", "5th Semester"
+  if (/\d/.test(raw)) {
+    const digits = Number(raw.replace(/[^0-9]/g, ""));
+    if (Number.isFinite(digits) && digits >= 1 && digits <= 8) return digits;
+  }
+  return yearToSemester(raw) || "";
 }
 
 export function getAcademicContext(user) {
@@ -303,11 +316,12 @@ export function getAcademicContext(user) {
   const option = getUniversityOption(stored);
   const university = String(user?.university || "").trim() || selected;
   const branch = String(user?.branch || "").trim() || (option ? "CSE" : "");
-  const year = String(user?.year || "").trim() || option?.year || "";
+  // Profile UI persists semester into User.year ("5th"); keep that as display year/sem source
+  const year = String(user?.year || user?.semester || "").trim() || option?.year || "";
   const semester =
-    Number(user?.semester) ||
+    parseSemesterValue(user?.semester) ||
+    parseSemesterValue(user?.year) ||
     option?.semester ||
-    yearToSemester(year) ||
     "";
   return {
     university,
@@ -404,10 +418,16 @@ export function getRecentTopics() {
 
 export function saveRecentTopic(entry) {
   if (!entry?.subjectSlug || !entry?.unitSlug) return;
+  const normalized = {
+    subjectSlug: entry.subjectSlug,
+    unitSlug: entry.unitSlug,
+    topic: entry.topic || "",
+    at: entry.at || new Date().toISOString(),
+  };
   const next = [
-    entry,
+    normalized,
     ...getRecentTopics().filter(
-      (item) => !(item.subjectSlug === entry.subjectSlug && item.unitSlug === entry.unitSlug)
+      (item) => !(item.subjectSlug === normalized.subjectSlug && item.unitSlug === normalized.unitSlug)
     ),
   ].slice(0, 6);
   localStorage.setItem(RECENT_TOPICS_KEY, JSON.stringify(next));

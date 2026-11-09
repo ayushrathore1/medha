@@ -192,7 +192,7 @@ export default function Subjects() {
               <strong>{bannerLine || "Set your course"}</strong>
               <span>{bannerSub}</span>
             </div>
-            <span className="shrink-0 text-[13px] font-semibold">Change</span>
+            <span className="desk-banner-action">Change</span>
           </Link>
         ) : (
           <Link to="/login?next=%2Fsubjects" className="desk-banner desk-banner--blue mb-4">
@@ -200,7 +200,7 @@ export default function Subjects() {
               <strong>Sign in for your semester</strong>
               <span>Mine filters subjects to your branch and year after you log in.</span>
             </div>
-            <span className="shrink-0 text-[13px] font-semibold">Login</span>
+            <span className="desk-banner-action">Login</span>
           </Link>
         )}
 

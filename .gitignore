@@ -81,3 +81,6 @@ desktop.ini
 content/pyq/**/*.pdf
 content/pyq/_cleaned/
 content/pyq/_tmp/
+
+# Local archived frontend (do not ship)
+old frontend/

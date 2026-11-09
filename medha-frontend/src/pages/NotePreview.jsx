@@ -4,6 +4,8 @@ import { AuthContext } from "../AuthContext";
 import RevisionShell from "../components/Revision/RevisionShell";
 import { formatDate, formatFileMeta, loginPath } from "../components/Revision/revisionUtils";
 import { requestNoteDownload } from "../components/Revision/noteDownload";
+import InAppPdfViewer from "../components/Common/InAppPdfViewer";
+import { trackNoteOpened } from "../lib/studyActivity";
 import api from "../api/api";
 import "./NotePreview.css";
 
@@ -24,7 +26,9 @@ export default function NotePreview() {
   const [note, setNote] = useState(passed);
   const [loading, setLoading] = useState(!passed);
   const [fileUrl, setFileUrl] = useState("");
+  const [revokeUrl, setRevokeUrl] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [viewerOpen, setViewerOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -44,7 +48,11 @@ export default function NotePreview() {
     };
   }, [noteId, passed]);
 
-  const handleDownload = async () => {
+  useEffect(() => {
+    if (note) trackNoteOpened(note);
+  }, [note]);
+
+  const openInViewer = async () => {
     if (!user) {
       navigate(loginPath(`/note/${noteId}`));
       return;
@@ -53,8 +61,10 @@ export default function NotePreview() {
     try {
       const data = await requestNoteDownload(noteId);
       if (data.fileUrl) {
+        revokeUrl?.();
+        setRevokeUrl(() => data.revoke || null);
         setFileUrl(data.fileUrl);
-        window.open(data.fileUrl, "_blank", "noopener,noreferrer");
+        setViewerOpen(true);
         setNote((prev) => (prev ? { ...prev, downloadCount: data.downloadCount } : prev));
       }
     } catch (err) {
@@ -135,41 +145,47 @@ export default function NotePreview() {
             </div>
 
             <div className="note-desk-actions">
-              <button type="button" className="desk-solid-btn" onClick={handleDownload} disabled={busy}>
-                {busy ? "Opening…" : user ? "Download" : "Sign in to download"}
+              <button type="button" className="desk-solid-btn" onClick={openInViewer} disabled={busy}>
+                {busy ? "Opening…" : user ? (isPdf ? "View notes" : "Open file") : "Sign in to view"}
               </button>
               {previewUrl ? (
-                <a
-                  href={previewUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="desk-ghost-btn"
-                >
-                  Open in new tab
+                <a href={previewUrl} download className="desk-ghost-btn">
+                  Download
                 </a>
               ) : null}
             </div>
 
             <section className="note-desk-preview" aria-label="Note preview">
-              {previewUrl && isPdf ? (
-                <iframe title={note.title} src={previewUrl} />
-              ) : (
-                <div className="note-desk-empty">
-                  <div className="note-desk-empty-mark">{fileKind}</div>
-                  <p className="note-desk-empty-title">
-                    {user ? "Ready when you are" : "Sign in to open this note"}
-                  </p>
-                  <p className="note-desk-empty-copy">
-                    {user
-                      ? "Download to read the full file. Aura goes to the student who uploaded it."
-                      : "Sign in to download. Aura goes to the student who uploaded it."}
-                  </p>
-                  <button type="button" className="desk-solid-btn" onClick={handleDownload} disabled={busy}>
-                    {busy ? "Opening…" : user ? "Download to preview" : "Sign in to download"}
-                  </button>
-                </div>
-              )}
+              <div className="note-desk-empty">
+                <div className="note-desk-empty-mark">{fileKind}</div>
+                <p className="note-desk-empty-title">
+                  {user ? "Read in Medha" : "Sign in to open this paper"}
+                </p>
+                <p className="note-desk-empty-copy">
+                  {user
+                    ? "Opens in the built-in viewer — zoom, pages, and download without leaving the desk."
+                    : "Sign in to view. Aura goes to the student who uploaded it."}
+                </p>
+                <button type="button" className="desk-solid-btn" onClick={openInViewer} disabled={busy}>
+                  {busy ? "Opening…" : user ? (isPdf ? "View notes" : "Open file") : "Sign in to view"}
+                </button>
+              </div>
             </section>
+
+            <InAppPdfViewer
+              isOpen={viewerOpen && Boolean(previewUrl)}
+              onClose={() => {
+                setViewerOpen(false);
+                revokeUrl?.();
+                setRevokeUrl(null);
+                setFileUrl("");
+              }}
+              pdfUrl={previewUrl}
+              title={note.title}
+              revokeOnClose={revokeUrl || undefined}
+              sharePath={`/note/${noteId}`}
+              shareTitle={note.title}
+            />
           </>
         )}
       </div>

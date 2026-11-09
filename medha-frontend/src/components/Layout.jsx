@@ -15,6 +15,8 @@ const MainLayout = ({ children }) => {
     "/dashboard",
     "/search",
     "/subjects",
+    "/notes",
+    "/past-papers",
     "/upload",
     "/uploads",
     "/profile",

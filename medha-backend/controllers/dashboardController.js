@@ -7,6 +7,7 @@ const Topic = require("../models/Topic");
 const DailyQuote = require("../models/DailyQuote");
 const axios = require("axios");
 const { performWebSearch, formatSearchContext } = require("../utils/webSearch");
+const { getEffectiveStreak } = require("../utils/streak");
 
 // Get Dashboard Stats
 exports.getDashboardStats = async (req, res) => {
@@ -48,7 +49,7 @@ exports.getDashboardStats = async (req, res) => {
     const accuracy = totalQuestions > 0 ? Math.round(totalCorrect / totalQuestions) : 0;
 
     res.status(200).json({
-      streak: user.streak || 0,
+      streak: getEffectiveStreak(user),
       cardsLearned: flashcardCount,
       notesCreated: noteCount,
       quizzesTaken: quizCount,

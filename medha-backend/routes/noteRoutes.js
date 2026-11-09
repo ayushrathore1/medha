@@ -32,6 +32,9 @@ router.post("/:noteId/like", auth, noteController.toggleLike);
 // Record a download and award Aura
 router.post("/:noteId/download", auth, noteController.recordDownload);
 
+// Stream file for in-app PDF viewer (same-origin; avoids Cloudinary ACL 401)
+router.get("/:noteId/file", auth, noteController.streamNoteFile);
+
 // Update/Edit a note by ID
 router.put("/:noteId", auth, noteController.updateNote);
 

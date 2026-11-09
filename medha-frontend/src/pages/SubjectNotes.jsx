@@ -13,6 +13,8 @@ import { FileText, Search } from "lucide-react";
 import api from "../api/api";
 import Button from "../components/Common/Button";
 import Loader from "../components/Common/Loader";
+import InAppPdfViewer from "../components/Common/InAppPdfViewer";
+import { requestNoteDownload } from "../components/Revision/noteDownload";
 import "../styles/responsive-pages.css";
 
 const SubjectNotes = () => {
@@ -25,6 +27,28 @@ const SubjectNotes = () => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [activePDF, setActivePDF] = useState(null);
+  const [openingId, setOpeningId] = useState(null);
+
+  const openNotePdf = async (item) => {
+    const id = item._id || item.id;
+    if (!id) return;
+    setOpeningId(id);
+    try {
+      const data = await requestNoteDownload(id);
+      setActivePDF({
+        pdfUrl: data.fileUrl,
+        title: item.title || "Paper",
+        revoke: data.revoke,
+        sharePath: `/note/${id}`,
+      });
+    } catch (err) {
+      console.warn(err);
+      navigate(`/note/${id}`, { state: { note: item } });
+    } finally {
+      setOpeningId(null);
+    }
+  };
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -162,7 +186,13 @@ const SubjectNotes = () => {
         {filteredNotes.length > 0 ? (
           <div className="notes-grid">
             {filteredNotes.map((note, idx) => (
-              <NoteCard key={note._id || idx} note={note} index={idx} />
+              <NoteCard
+                key={note._id || idx}
+                note={note}
+                index={idx}
+                opening={openingId === (note._id || note.id)}
+                onOpenPdf={openNotePdf}
+              />
             ))}
           </div>
         ) : (
@@ -213,15 +243,29 @@ const SubjectNotes = () => {
             </button>
           </motion.div>
         )}
+
+        <InAppPdfViewer
+          isOpen={!!activePDF}
+          onClose={() => {
+            activePDF?.revoke?.();
+            setActivePDF(null);
+          }}
+          pdfUrl={activePDF?.pdfUrl}
+          title={activePDF?.title}
+          revokeOnClose={activePDF?.revoke}
+          sharePath={activePDF?.sharePath}
+          shareTitle={activePDF?.title}
+        />
       </div>
     </div>
   );
 };
 
 /* ─── Note Card ─────────────────────────────────────────────── */
-const NoteCard = ({ note, index }) => {
+const NoteCard = ({ note, index, onOpenPdf, opening }) => {
   const isPDF =
-    note.fileUrl?.endsWith(".pdf") || note.type === "pdf";
+    note.fileUrl?.endsWith(".pdf") || note.type === "pdf" || /pdf/i.test(note.fileType || "");
+  const noteKey = note._id || note.id;
 
   return (
     <motion.div
@@ -238,13 +282,17 @@ const NoteCard = ({ note, index }) => {
         border: "1.5px solid var(--border-default)",
         borderRadius: 16,
         padding: 18,
-        cursor: "pointer",
+        cursor: opening ? "wait" : "pointer",
         transition: "all 0.2s ease",
+        opacity: opening ? 0.7 : 1,
       }}
       onClick={() => {
-        if (note.fileUrl) {
-          window.open(note.fileUrl, "_blank");
+        if (!noteKey || opening) return;
+        if (isPDF && onOpenPdf) {
+          onOpenPdf(note);
+          return;
         }
+        if (noteKey) onOpenPdf?.(note);
       }}
     >
       {/* Icon + type */}
@@ -275,12 +323,13 @@ const NoteCard = ({ note, index }) => {
             <FaFileLines size={18} style={{ color: "#8B5CF6" }} />
           )}
         </div>
-        {note.fileUrl && (
-          <a
-            href={note.fileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
+        {noteKey ? (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenPdf?.(note);
+            }}
             style={{
               padding: "4px 10px",
               borderRadius: 8,
@@ -289,15 +338,16 @@ const NoteCard = ({ note, index }) => {
               color: "var(--action-primary)",
               fontSize: 10,
               fontWeight: 700,
-              textDecoration: "none",
               display: "flex",
               alignItems: "center",
               gap: 4,
+              cursor: "pointer",
+              fontFamily: "inherit",
             }}
           >
-            <FaDownload size={9} /> Download
-          </a>
-        )}
+            <FaDownload size={9} /> {opening ? "…" : "View notes"}
+          </button>
+        ) : null}
       </div>
 
       {/* Title */}
