@@ -1,6 +1,7 @@
 const PastPaper = require("../models/PastPaper");
 const {
   CSE_SUBJECTS_BY_SEMESTER,
+  AIDS_SUBJECTS_BY_SEMESTER,
   SUPPORTED_BRANCHES,
   targetYears,
   subjectsForSemester,
@@ -67,11 +68,13 @@ async function getMeta(req, res) {
       };
     }
 
-    const semesters = Object.keys(CSE_SUBJECTS_BY_SEMESTER)
+    const semesterMap =
+      branch === "AIDS" ? AIDS_SUBJECTS_BY_SEMESTER : CSE_SUBJECTS_BY_SEMESTER;
+    const semesters = Object.keys(semesterMap)
       .map(Number)
       .sort((a, b) => a - b)
       .map((semester) => {
-        const subjects = subjectsForSemester(semester).map((s) => {
+        const subjects = subjectsForSemester(semester, branch).map((s) => {
           const avail = availability[semester]?.[s.subjectName];
           return {
             ...s,

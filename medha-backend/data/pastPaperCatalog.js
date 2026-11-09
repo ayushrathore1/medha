@@ -190,6 +190,19 @@ const SUBJECT_BY_CODE = {
     slug: "wireless-communication",
     semesters: [5],
   },
+  // AI / AIDS Sem 5 electives (replace ITC / WC)
+  DMC: {
+    subjectName: "Data Mining Concepts and Techniques",
+    subjectCode: "5E1821",
+    slug: "dmc",
+    semesters: [5],
+  },
+  BLOCKCHAIN: {
+    subjectName: "Fundamentals of Blockchain",
+    subjectCode: "5E1826",
+    slug: "blockchain",
+    semesters: [5],
+  },
 
   // Sem 6 — CS.pdf (B.Tech. VI Semester CSE)
   DIP: {
@@ -301,14 +314,29 @@ const CSE_SUBJECTS_BY_SEMESTER = {
   8: [],
 };
 
+/** AI / AIDS reuses CSE map except Sem 5 electives: DMC + Blockchain replace ITC + WC. */
+const AIDS_SUBJECTS_BY_SEMESTER = {
+  ...CSE_SUBJECTS_BY_SEMESTER,
+  5: mapSemesterSubjects(
+    ["DMC", "CD", "OS", "CG", "AOA", "BLOCKCHAIN"],
+    5
+  ),
+};
+
 const SUPPORTED_BRANCHES = [
   { id: "CSE", label: "CSE" },
   { id: "AIDS", label: "AI / AIDS" },
 ];
 
-function subjectsForSemester(semester) {
+function subjectsForSemester(semester, branch = "CSE") {
   const sem = Number(semester);
-  return CSE_SUBJECTS_BY_SEMESTER[sem] || [];
+  const raw = String(branch || "CSE")
+    .trim()
+    .toUpperCase();
+  const isAids =
+    raw === "AIDS" || raw === "AI" || raw.includes("ARTIFICIAL");
+  const map = isAids ? AIDS_SUBJECTS_BY_SEMESTER : CSE_SUBJECTS_BY_SEMESTER;
+  return map[sem] || [];
 }
 
 function resolveSubjectCode(code, semester) {
@@ -329,6 +357,7 @@ module.exports = {
   targetYears,
   SUBJECT_BY_CODE,
   CSE_SUBJECTS_BY_SEMESTER,
+  AIDS_SUBJECTS_BY_SEMESTER,
   SUPPORTED_BRANCHES,
   subjectsForSemester,
   resolveSubjectCode,
