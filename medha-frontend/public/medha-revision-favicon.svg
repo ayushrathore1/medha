@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Medha Revision">
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="#FFFFFF"/>
+  <path d="M14 47V17h7.2l10.8 15.1L42.8 17H50v30h-7.4V29.2L32 43.6 21.4 29.2V47H14Z" fill="#111827"/>
+  <circle cx="51" cy="49" r="5" fill="#2E9B72"/>
+</svg>

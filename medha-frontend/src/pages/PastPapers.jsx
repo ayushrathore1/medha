@@ -1,7 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Download, Eye } from "lucide-react";
 import RevisionShell from "../components/Revision/RevisionShell";
+import DeskFilterSelect from "../components/Revision/DeskFilterSelect";
+import InAppPdfViewer from "../components/Common/InAppPdfViewer";
+import { openPastPaperPdfBlob } from "../lib/pdfDelivery";
+import { trackPaperOpened } from "../lib/studyActivity";
 import { apiUrl } from "../config/api";
 
 function updateParams(params, setParams, patch) {
@@ -27,6 +31,10 @@ export default function PastPapers() {
   const [papers, setPapers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activePDF, setActivePDF] = useState(null);
+  const [openingId, setOpeningId] = useState(null);
+  const [viewError, setViewError] = useState("");
+  const deepLinkedPaperRef = useRef(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -88,6 +96,71 @@ export default function PastPapers() {
     { id: "AIDS", label: "AI / AIDS" },
   ];
 
+  const openPaperViewer = useCallback(
+    async (paper, { syncUrl = true } = {}) => {
+      if (!paper?.id) return;
+      setOpeningId(paper.id);
+      setViewError("");
+      try {
+        const data = await openPastPaperPdfBlob(paper.id);
+        const sharePath = `/past-papers?branch=${encodeURIComponent(
+          paper.branch || branch
+        )}&sem=${paper.semester || semester}&subject=${encodeURIComponent(
+          paper.subjectName || ""
+        )}&paper=${paper.id}`;
+        trackPaperOpened(paper, sharePath);
+        setActivePDF({
+          pdfUrl: data.fileUrl,
+          title: `${paper.subjectName} · ${paper.year}`,
+          revoke: data.revoke,
+          sharePath,
+        });
+        if (syncUrl) {
+          updateParams(params, setParams, {
+            branch: paper.branch || branch,
+            sem: paper.semester || semester,
+            subject: paper.subjectName || subjectFilter || "",
+            paper: paper.id,
+          });
+        }
+      } catch (err) {
+        setViewError(err.message || "Could not open paper");
+      } finally {
+        setOpeningId(null);
+      }
+    },
+    [branch, semester, subjectFilter, params, setParams]
+  );
+
+  // Deep-link: /past-papers?paper=<id> opens that PDF in the viewer
+  useEffect(() => {
+    const paperId = params.get("paper");
+    if (!paperId || loading) return;
+    if (deepLinkedPaperRef.current === paperId) return;
+    deepLinkedPaperRef.current = paperId;
+    const match = papers.find((p) => String(p.id) === String(paperId));
+    if (match) {
+      openPaperViewer(match, { syncUrl: false });
+      return;
+    }
+    // Paper may be outside current semester filter — still open by id
+    (async () => {
+      try {
+        const data = await openPastPaperPdfBlob(paperId);
+        const sharePath = `/past-papers?paper=${paperId}`;
+        trackPaperOpened({ id: paperId, subjectName: "Past paper" }, sharePath);
+        setActivePDF({
+          pdfUrl: data.fileUrl,
+          title: "Past paper",
+          revoke: data.revoke,
+          sharePath,
+        });
+      } catch {
+        deepLinkedPaperRef.current = null;
+      }
+    })();
+  }, [params, papers, loading, openPaperViewer]);
+
   return (
     <RevisionShell title="Past papers" desk showBack>
       <div className="desk-page">
@@ -95,60 +168,40 @@ export default function PastPapers() {
           <p className="desk-eyebrow">RTU archive</p>
           <h1 className="desk-title">Past papers</h1>
           <p className="desk-sub">
-            CSE and AI / AIDS · semesters 1–8 · last five years. Download hosted
-            PDFs when available; empty slots show Soon until we seed them.
+            CSE and AI / AIDS · semesters 1–8 · last five years. View hosted
+            PDFs in Medha; empty slots show Soon until we seed them.
           </p>
         </header>
 
-        <div className="desk-tabs" role="tablist" aria-label="Branch">
-          {branches.map((b) => {
-            const active = branch === b.id;
-            return (
-              <button
-                key={b.id}
-                type="button"
-                role="tab"
-                aria-pressed={active}
-                className={`desk-tab${active ? " is-on" : ""}`}
-                onClick={() =>
-                  updateParams(params, setParams, {
-                    branch: b.id,
-                    subject: "",
-                  })
-                }
-              >
-                {b.label}
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="desk-tabs mt-3" role="tablist" aria-label="Semester">
-          {Array.from({ length: 8 }, (_, i) => i + 1).map((sem) => {
-            const active = semester === sem;
-            const count =
-              meta?.semesters?.find((s) => s.semester === sem)?.paperCount || 0;
-            return (
-              <button
-                key={sem}
-                type="button"
-                role="tab"
-                aria-pressed={active}
-                className={`desk-tab${active ? " is-on" : ""}`}
-                onClick={() =>
-                  updateParams(params, setParams, {
-                    sem,
-                    subject: "",
-                  })
-                }
-              >
-                Sem {sem}
-                {count ? (
-                  <span className="ml-1 text-[11px] opacity-70">{count}</span>
-                ) : null}
-              </button>
-            );
-          })}
+        <div className="desk-panel mb-4">
+          <div className="desk-filter-grid">
+            <DeskFilterSelect
+              label="Branch"
+              value={branch}
+              onValueChange={(v) =>
+                updateParams(params, setParams, { branch: v, subject: "" })
+              }
+              options={branches.map((b) => ({ value: b.id, label: b.label }))}
+            />
+            <DeskFilterSelect
+              label="Semester"
+              value={String(semester)}
+              onValueChange={(v) =>
+                updateParams(params, setParams, { sem: v, subject: "" })
+              }
+              options={Array.from({ length: 8 }, (_, i) => i + 1).map((sem) => {
+                const count =
+                  meta?.semesters?.find((s) => s.semester === sem)?.paperCount || 0;
+                return {
+                  value: String(sem),
+                  label: `Semester ${sem}`,
+                  meta: count
+                    ? `${count} ${count === 1 ? "paper" : "papers"}`
+                    : undefined,
+                };
+              })}
+            />
+          </div>
         </div>
 
         {subjectFilter ? (
@@ -163,6 +216,10 @@ export default function PastPapers() {
 
         {loading ? (
           <p className="mt-6 text-[14px] text-[#6b6b6b]">Loading archive…</p>
+        ) : null}
+
+        {viewError ? (
+          <p className="mt-3 text-[13px] font-medium text-[#b91c1c]">{viewError}</p>
         ) : null}
 
         {error ? (
@@ -241,12 +298,10 @@ export default function PastPapers() {
                         paperKey(subject.subjectName, year, "main")
                       );
                       if (paper?.fileUrl || paper?.id) {
-                        const viewHref = apiUrl(
-                          `/api/past-papers/${paper.id}/download`
-                        );
                         const downloadHref = apiUrl(
-                          `/api/past-papers/${paper.id}/download?attachment=1`
+                          `/api/past-papers/${paper.id}/file?attachment=1`
                         );
+                        const isOpening = openingId === paper.id;
                         return (
                           <div
                             key={year}
@@ -256,20 +311,18 @@ export default function PastPapers() {
                               {year}
                             </span>
                             <div className="ml-auto flex items-center gap-1.5">
-                              <a
-                                className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-[#111] px-3 text-[12px] font-semibold text-white no-underline"
-                                href={viewHref}
-                                target="_blank"
-                                rel="noreferrer"
+                              <button
+                                type="button"
+                                className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-[#111] px-3 text-[12px] font-semibold text-white disabled:opacity-60"
+                                disabled={isOpening}
+                                onClick={() => openPaperViewer(paper)}
                               >
                                 <Eye size={14} aria-hidden="true" />
-                                View
-                              </a>
+                                {isOpening ? "Opening…" : "View paper"}
+                              </button>
                               <a
                                 className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[#111] bg-white px-3 text-[12px] font-semibold text-[#111] no-underline"
                                 href={downloadHref}
-                                target="_blank"
-                                rel="noreferrer"
                               >
                                 <Download size={14} aria-hidden="true" />
                                 Download
@@ -302,6 +355,21 @@ export default function PastPapers() {
           </Link>
         </p>
       </div>
+
+      <InAppPdfViewer
+        isOpen={!!activePDF}
+        onClose={() => {
+          activePDF?.revoke?.();
+          setActivePDF(null);
+          deepLinkedPaperRef.current = null;
+          updateParams(params, setParams, { paper: "" });
+        }}
+        pdfUrl={activePDF?.pdfUrl}
+        title={activePDF?.title}
+        revokeOnClose={activePDF?.revoke}
+        sharePath={activePDF?.sharePath}
+        shareTitle={activePDF?.title}
+      />
     </RevisionShell>
   );
 }

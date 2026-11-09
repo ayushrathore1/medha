@@ -26,6 +26,7 @@ const {
   consumeLoginCode,
   frontendPath,
 } = require("../utils/oauthCallback");
+const { applyDailyActivity } = require("../utils/streak");
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 const OTP_EXPIRY_MINUTES = 10;
@@ -272,30 +273,7 @@ router.post("/login-otp", async (req, res) => {
       else if (!user.authProvider) user.authProvider = "local";
     }
 
-    // Streak logic (same as password login)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    let streak = user.streak || 0;
-    let lastActive = user.lastActiveDate ? new Date(user.lastActiveDate) : null;
-    if (lastActive) {
-      lastActive.setHours(0, 0, 0, 0);
-      const diffDays = Math.ceil(Math.abs(today - lastActive) / (1000 * 60 * 60 * 24));
-      if (diffDays === 1) streak += 1;
-      else if (diffDays > 1) streak = 1;
-    } else {
-      streak = 1;
-    }
-    user.streak = streak;
-    user.lastActiveDate = new Date();
-
-    const todayStr = today.toISOString().split("T")[0];
-    const alreadyLogged = user.activityHistory?.some(
-      (d) => d.toISOString().split("T")[0] === todayStr
-    );
-    if (!alreadyLogged) {
-      user.activityHistory = user.activityHistory || [];
-      user.activityHistory.push(today);
-    }
+    applyDailyActivity(user);
 
     if (user.avatarIndex === undefined || user.avatarIndex === null || user.avatarIndex < 0) {
       user.avatarIndex = 0;
@@ -464,53 +442,15 @@ router.post("/login", async (req, res, next) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Streak Logic - calculate and update based on login date
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    let streak = user.streak || 0;
-    let lastActive = user.lastActiveDate ? new Date(user.lastActiveDate) : null;
-    
-    if (lastActive) {
-      lastActive.setHours(0, 0, 0, 0);
-      const diffTime = Math.abs(today - lastActive);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    applyDailyActivity(user);
 
-      if (diffDays === 1) {
-        // Consecutive day - increment streak
-        streak += 1;
-      } else if (diffDays > 1) {
-        // Missed a day or more - reset streak
-        streak = 1;
-      }
-      // If diffDays === 0 (same day), keep current streak
-    } else {
-      // First time login or no previous record
-      streak = 1;
-    }
-
-    // Update user with new streak and last active date
-    user.streak = streak;
-    user.lastActiveDate = new Date();
-    
-    // Record activity for calendar - add today if not already logged
-    const todayStr = today.toISOString().split('T')[0];
-    const alreadyLogged = user.activityHistory?.some(
-      d => d.toISOString().split('T')[0] === todayStr
-    );
-    if (!alreadyLogged) {
-      user.activityHistory = user.activityHistory || [];
-      user.activityHistory.push(today);
-    }
-    
     // Defensive validation: Ensure avatarIndex is valid before saving
-    // This prevents validation errors if database has invalid data
     if (user.avatarIndex === undefined || user.avatarIndex === null || user.avatarIndex < 0) {
       user.avatarIndex = 0;
     } else if (user.avatarIndex > 19) {
       user.avatarIndex = 19;
     }
-    
+
     await user.save();
     try {
       await applyPendingTeamInvite(user);
@@ -734,29 +674,7 @@ router.get("/google/callback", async (req, res) => {
     }
 
     // 4. Update streak & activity (same logic as password login)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    let streak = user.streak || 0;
-    let lastActive = user.lastActiveDate ? new Date(user.lastActiveDate) : null;
-    if (lastActive) {
-      lastActive.setHours(0, 0, 0, 0);
-      const diffDays = Math.ceil(Math.abs(today - lastActive) / (1000 * 60 * 60 * 24));
-      if (diffDays === 1) streak += 1;
-      else if (diffDays > 1) streak = 1;
-    } else {
-      streak = 1;
-    }
-    user.streak = streak;
-    user.lastActiveDate = new Date();
-
-    const todayStr = today.toISOString().split("T")[0];
-    const alreadyLogged = user.activityHistory?.some(
-      (d) => d.toISOString().split("T")[0] === todayStr
-    );
-    if (!alreadyLogged) {
-      user.activityHistory = user.activityHistory || [];
-      user.activityHistory.push(today);
-    }
+    applyDailyActivity(user);
 
     if (user.avatarIndex === undefined || user.avatarIndex === null || user.avatarIndex < 0) {
       user.avatarIndex = 0;

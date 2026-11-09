@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 
 const User = require("../models/User");
 const auth = require("../middleware/auth");
+const { applyDailyActivity, getEffectiveStreak } = require("../utils/streak");
 
 // @route   GET /api/users/stats
 // @desc    Get public stats (total users) for welcome page
@@ -39,13 +40,48 @@ router.get("/me", auth, async (req, res, next) => {
 // @access  Private
 router.get("/activity-history", auth, async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.userId).select("activityHistory streak");
+    const user = await User.findById(req.user.userId).select(
+      "activityHistory streak lastActiveDate"
+    );
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.json({ 
+    res.json({
       activityHistory: user.activityHistory || [],
-      streak: user.streak || 0
+      streak: getEffectiveStreak(user),
+      lastActiveDate: user.lastActiveDate || null,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// @route   POST /api/users/activity
+// @desc    Record today's study/login activity and update streak
+// @access  Private
+router.post("/activity", auth, async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const result = applyDailyActivity(user);
+    if (result.changed) {
+      if (user.avatarIndex === undefined || user.avatarIndex === null || user.avatarIndex < 0) {
+        user.avatarIndex = 0;
+      } else if (user.avatarIndex > 19) {
+        user.avatarIndex = 19;
+      }
+      await user.save();
+    }
+
+    res.json({
+      success: true,
+      streak: user.streak || 0,
+      recordedToday: true,
+      lastActiveDate: user.lastActiveDate || null,
+      activityHistory: user.activityHistory || [],
     });
   } catch (err) {
     next(err);
@@ -87,7 +123,7 @@ router.get("/profile/:userId", auth, async (req, res, next) => {
     const currentUserId = req.user.userId;
 
     const user = await User.findById(userId).select(
-      "name email avatar avatarIndex university branch gender karma rank role customFlair createdAt auraPoints"
+      "name email avatar avatarIndex university branch year gender karma rank role customFlair createdAt auraPoints"
     );
     
     if (!user) {
@@ -231,12 +267,14 @@ const cloudinary = require("../utils/cloudinary");
 router.patch("/me", auth, async (req, res, next) => {
   try {
     const userId = req.user.userId;
-    const { name, college, university, year, branch, gender, avatar, avatarIndex } = req.body;
+    const { name, college, university, year, semester, branch, gender, avatar, avatarIndex } = req.body;
     const updates = {};
     if (name !== undefined) updates.name = name;
     if (college !== undefined) updates.college = college;
     if (university !== undefined) updates.university = university;
-    if (year !== undefined) updates.year = year;
+    // Profile UI stores semester in `year` ("5th"); accept either key
+    const yearValue = year !== undefined ? year : semester;
+    if (yearValue !== undefined) updates.year = yearValue;
     if (branch !== undefined) updates.branch = branch;
     if (gender !== undefined) updates.gender = gender;
     

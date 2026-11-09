@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import RevisionShell from "../components/Revision/RevisionShell";
 import ResourceBoard from "../components/Revision/ResourceBoard";
 import TopicChip from "../components/Revision/TopicChip";
-import { saveRecentSearch, searchPath } from "../data/subjectCatalog";
+import { searchPath } from "../data/subjectCatalog";
+import { trackSearchOpened, trackUnitOpened } from "../lib/studyActivity";
 import { findMergedSubject, findMergedUnit, useMergedSubjects } from "../hooks/useMergedSubjects";
 
 const TABS = [
@@ -18,6 +19,10 @@ export default function TopicDetail() {
   const subject = findMergedSubject(subjects, subjectSlug);
   const unit = findMergedUnit(subject, unitSlug);
   const [tab, setTab] = useState("overview");
+
+  useEffect(() => {
+    if (subject && unit) trackUnitOpened(subject, unit);
+  }, [subject, unit]);
 
   if (loading) {
     return (
@@ -74,7 +79,7 @@ export default function TopicDetail() {
               aria-pressed={tab === item.id}
               onClick={() => {
                 setTab(item.id);
-                if (item.id === "resources") saveRecentSearch(query);
+                if (item.id === "resources") trackSearchOpened(query, searchPath(query, context));
               }}
               className={`desk-tab${tab === item.id ? " is-on" : ""}`}
             >
@@ -103,7 +108,7 @@ export default function TopicDetail() {
                 <TopicChip
                   key={topic}
                   to={searchPath(topic, context)}
-                  onClick={() => saveRecentSearch(topic)}
+                  onClick={() => trackSearchOpened(topic, searchPath(topic, context))}
                 >
                   {topic}
                 </TopicChip>

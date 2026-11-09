@@ -10,10 +10,13 @@
     "cssVariables": true,
     "prefix": ""
   },
+  "registries": {
+    "@extend": "https://www.extend.ai/ui/r/styles/{style}/{name}.json"
+  },
   "aliases": {
     "components": "@/components",
     "utils": "@/lib/utils",
-    "ui": "@/components/ui",
+    "ui": "@/components/UI",
     "lib": "@/lib",
     "hooks": "@/hooks"
   },

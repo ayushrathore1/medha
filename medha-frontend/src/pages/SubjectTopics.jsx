@@ -1,15 +1,15 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Search } from "lucide-react";
 import RevisionShell from "../components/Revision/RevisionShell";
 import CodeChip from "../components/Revision/CodeChip";
 import Ridgeline from "../components/Revision/Ridgeline";
 import {
-  saveRecentSearch,
   searchPath,
   semesterLabel,
   yearLabel,
 } from "../data/subjectCatalog";
+import { trackSearchOpened, trackSubjectOpened } from "../lib/studyActivity";
 import { findMergedSubject, useMergedSubjects } from "../hooks/useMergedSubjects";
 import "./SubjectTopics.css";
 
@@ -65,6 +65,10 @@ export default function SubjectTopics() {
     () => units.reduce((n, unit) => n + (unit.topics?.length || 0), 0),
     [units]
   );
+
+  useEffect(() => {
+    if (subject?.slug) trackSubjectOpened(subject);
+  }, [subject]);
 
   if (loading) {
     return (
@@ -194,7 +198,7 @@ export default function SubjectTopics() {
                         <Link
                           key={topic}
                           to={searchPath(topic, { ...context, unit: unit.title })}
-                          onClick={() => saveRecentSearch(topic)}
+                          onClick={() => trackSearchOpened(topic, searchPath(topic, { ...context, unit: unit.title }))}
                           className="st-topic"
                         >
                           <span>{highlight(topic, query)}</span>

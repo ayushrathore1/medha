@@ -61,19 +61,21 @@ const LandingNavbar = () => {
         { label: "Subjects", to: "/subjects" },
         { label: "Search", to: "/search" },
         { label: "Papers", to: "/past-papers" },
-        { label: "Upload", to: "/upload" },
+        { label: "Notes", to: "/notes" },
         ...(showOps ? [{ label: "Ops", to: "/admin" }] : []),
       ]
     : [
         { label: "Subjects", to: "/subjects" },
         { label: "Search", to: "/search" },
         { label: "Papers", to: "/past-papers" },
+        { label: "Notes", to: "/notes" },
       ];
 
   const guestMobileLinks = [
     { label: "Subjects", to: "/subjects" },
     { label: "Search", to: "/search" },
     { label: "Papers", to: "/past-papers" },
+    { label: "Notes", to: "/notes" },
   ];
 
   return (

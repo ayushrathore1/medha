@@ -21,13 +21,12 @@ import {
   getAcademicContext,
   getRecentSearches,
   getRecentSubjectSlugs,
-  getRecentTopics,
   getSubjectBySlug,
-  getUnitBySlug,
-  saveRecentSearch,
   searchPath,
   semesterLabel,
 } from "../data/subjectCatalog";
+import { getContinueStudying, trackSearchOpened } from "../lib/studyActivity";
+import { pingDailyActivity } from "../lib/dailyStreak";
 import "../styles/LandingPage.css";
 import "./DashboardHome.css";
 
@@ -72,9 +71,12 @@ export default function Dashboard() {
 
   const { subjects: catalogSubjects } = useMergedSubjects();
   const academic = useMemo(() => getAcademicContext(user), [user]);
+  const [activityTick, setActivityTick] = useState(0);
 
-  const recentTopics = useMemo(() => getRecentTopics(), []);
-  const recentSubjectSlugs = useMemo(() => getRecentSubjectSlugs(), []);
+  const recentSubjectSlugs = useMemo(
+    () => getRecentSubjectSlugs(),
+    [activityTick]
+  );
   const recentSubjects = useMemo(
     () =>
       recentSubjectSlugs
@@ -83,7 +85,7 @@ export default function Dashboard() {
         .slice(0, 6),
     [catalogSubjects, recentSubjectSlugs]
   );
-  const recentSearches = useMemo(() => getRecentSearches().slice(0, 8), []);
+  const recentSearches = useMemo(() => getRecentSearches().slice(0, 8), [activityTick]);
 
   const mySubjects = useMemo(() => {
     const list = catalogSubjects.length ? catalogSubjects : [];
@@ -103,83 +105,24 @@ export default function Dashboard() {
     (asText(user?.branch) || asText(academic.branch))
   );
 
-  const activity = useMemo(() => {
-    const items = [];
-
-    uploads.slice(0, 8).forEach((note) => {
-      items.push({
-        id: `note-${note._id}`,
-        kind: "upload",
-        at: note.updatedAt || note.createdAt,
-        title: note.title || "Untitled note",
-        meta: [
-          noteStatus(note).label,
-          subjectLabel(note),
-          note.isPublic ? "Public" : "Private",
-          formatFileMeta(note),
-        ]
-          .filter(Boolean)
-          .join(" · "),
-        to: `/note/${note._id}`,
-        tone: noteStatus(note).tone,
-        badge: noteStatus(note).label,
-      });
-    });
-
-    recentTopics.forEach((entry) => {
-      const { subject, unit } = getUnitBySlug(entry.subjectSlug, entry.unitSlug);
-      if (!subject || !unit) return;
-      items.push({
-        id: `topic-${entry.subjectSlug}-${entry.unitSlug}`,
-        kind: "topic",
-        at: entry.at || null,
-        title: entry.topic || unit.title,
-        meta: `${subject.short} · ${unit.title}`,
-        to: `/subjects/${subject.slug}/${unit.slug}`,
-        tone: "quiet",
-        badge: "Topic",
-      });
-    });
-
-    recentSubjects.forEach((subject) => {
-      items.push({
-        id: `subject-${subject.slug}`,
-        kind: "subject",
-        at: null,
-        title: subject.name,
-        meta: subject.branch || "Subject",
-        to: `/subjects/${subject.slug}`,
-        tone: "quiet",
-        badge: "Subject",
-      });
-    });
-
-    recentSearches.forEach((term) => {
-      items.push({
-        id: `search-${term}`,
-        kind: "search",
-        at: null,
-        title: term,
-        meta: "Recent search",
-        to: searchPath(term),
-        tone: "busy",
-        badge: "Search",
-      });
-    });
-
-    return items.slice(0, 10);
-  }, [uploads, recentTopics, recentSubjects, recentSearches]);
+  const activity = useMemo(
+    () => getContinueStudying(10),
+    [activityTick]
+  );
 
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
       try {
-        const [notesRes, meRes, activityRes] = await Promise.all([
+        const [notesRes, meRes] = await Promise.all([
           api.get("/notes", { params: { limit: 20 } }),
           api.get("/users/me"),
-          api.get("/users/activity-history").catch(() => ({ data: {} })),
         ]);
+
+        // Record today first, then read effective streak
+        const pingRes = await pingDailyActivity();
+        const activityRes = await api.get("/users/activity-history").catch(() => ({ data: {} }));
 
         if (cancelled) return;
 
@@ -197,7 +140,12 @@ export default function Dashboard() {
           }));
         }
 
-        setStreak(activityRes.data?.streak || 0);
+        const nextStreak =
+          (pingRes && !pingRes.skipped ? pingRes.streak : null) ??
+          activityRes.data?.streak ??
+          me?.streak ??
+          0;
+        setStreak(Number(nextStreak) || 0);
       } catch {
         if (!cancelled) setUploads([]);
       } finally {
@@ -213,6 +161,17 @@ export default function Dashboard() {
     };
   }, [setUser]);
 
+  useEffect(() => {
+    const refresh = () => setActivityTick((n) => n + 1);
+    refresh();
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, []);
+
   const onSearch = (e) => {
     e.preventDefault();
     const term = query.trim();
@@ -220,7 +179,7 @@ export default function Dashboard() {
       navigate("/search");
       return;
     }
-    saveRecentSearch(term);
+    trackSearchOpened(term);
     navigate(searchPath(term));
   };
 
@@ -316,7 +275,7 @@ export default function Dashboard() {
               <span>Search across the library</span>
             </div>
           </Link>
-          <Link to="/upload" className="dash-action dash-action--blue">
+          <Link to="/notes?panel=upload" className="dash-action dash-action--blue">
             <span className="dash-action-icon">
               <Upload size={20} />
             </span>
@@ -325,12 +284,12 @@ export default function Dashboard() {
               <span>Share PDFs, earn aura</span>
             </div>
           </Link>
-          <Link to="/uploads" className="dash-action dash-action--violet">
+          <Link to="/notes?scope=mine" className="dash-action dash-action--violet">
             <span className="dash-action-icon">
               <FileUp size={20} />
             </span>
             <div>
-              <strong>My uploads</strong>
+              <strong>My notes</strong>
               <span>
                 {uploadsLoading
                   ? "Loading…"
@@ -383,11 +342,9 @@ export default function Dashboard() {
               <Link to="/subjects">Subjects</Link>
             </div>
 
-            {uploadsLoading && activity.length === 0 ? (
-              <p className="dash-muted">Loading your activity…</p>
-            ) : activity.length === 0 ? (
+            {activity.length === 0 ? (
               <div className="dash-empty">
-                <p>No activity yet. Search a topic, open a subject, or upload a note to start this feed.</p>
+                <p>No study trail yet. Open a subject, unit, note, or past paper and it will show up here.</p>
                 <div className="dash-empty-actions">
                   <Link to="/search" className="dash-solid-btn">
                     Search library
@@ -436,7 +393,7 @@ export default function Dashboard() {
               <h2>
                 <FileUp size={16} /> Your uploads
               </h2>
-              <Link to="/uploads">Manage</Link>
+              <Link to="/notes?scope=mine">Manage</Link>
             </div>
 
             {uploadsLoading ? (
@@ -444,7 +401,7 @@ export default function Dashboard() {
             ) : uploads.length === 0 ? (
               <div className="dash-empty">
                 <p>Nothing uploaded yet. Private notes stay in your library; public ones can earn aura.</p>
-                <Link to="/upload" className="dash-solid-btn">
+                <Link to="/notes?panel=upload" className="dash-solid-btn">
                   Upload a PDF
                 </Link>
               </div>

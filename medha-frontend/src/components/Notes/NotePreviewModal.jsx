@@ -1,12 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { formatDate, getSubjectColor, resolveFileUrl } from "./notesConstants";
+import { formatDate, getSubjectColor } from "./notesConstants";
+import InAppPdfViewer from "../Common/InAppPdfViewer";
+import { requestNoteDownload } from "../Revision/noteDownload";
 
 export default function NotePreviewModal({ note, onClose, getOwnerName, getSubjectName }) {
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState("");
+  const [revoke, setRevoke] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
   if (!note) return null;
   const subjectName = getSubjectName(note);
   const sc = getSubjectColor(subjectName);
+  const noteKey = note._id || note.id;
+  const isPdf =
+    /pdf/i.test(note.fileType || "") ||
+    String(note.fileUrl || "").toLowerCase().includes(".pdf") ||
+    /pyq|paper/i.test(note.noteType || note.type || "");
+
+  const openViewer = async () => {
+    if (!noteKey) return;
+    setBusy(true);
+    setError("");
+    try {
+      const data = await requestNoteDownload(noteKey);
+      revoke?.();
+      setRevoke(() => data.revoke || null);
+      setPdfUrl(data.fileUrl);
+      setViewerOpen(true);
+    } catch (err) {
+      setError(err.message || "Could not open PDF");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const closeViewer = () => {
+    setViewerOpen(false);
+    revoke?.();
+    setRevoke(null);
+    setPdfUrl("");
+  };
 
   return (
     <AnimatePresence>
@@ -45,7 +82,6 @@ export default function NotePreviewModal({ note, onClose, getOwnerName, getSubje
             flexDirection: "column",
           }}
         >
-          {/* Header */}
           <div
             className="notes-modal-header"
             style={{
@@ -86,42 +122,34 @@ export default function NotePreviewModal({ note, onClose, getOwnerName, getSubje
               >
                 {note.title}
               </div>
-              <div
-                style={{
-                  fontSize: 13,
-                  color: "#9A9A9A",
-                  marginTop: 4,
-                }}
-              >
+              <div style={{ fontSize: 13, color: "#9A9A9A", marginTop: 4 }}>
                 by {getOwnerName(note)} · {formatDate(note.createdAt || note.uploadedAt)}
                 {note.semester && ` · Sem ${note.semester}`} · {subjectName}
               </div>
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              {note.fileUrl && (
-                <a
-                  href={resolveFileUrl(note.fileUrl)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+              {noteKey && isPdf && (
+                <button
+                  type="button"
+                  onClick={openViewer}
+                  disabled={busy}
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
                     gap: 4,
-                    background: "#7DC67A",
+                    background: "#111111",
                     color: "white",
                     borderRadius: 8,
                     padding: "8px 16px",
                     fontSize: 13,
                     fontWeight: 600,
-                    textDecoration: "none",
-                    transition: "background 200ms",
+                    border: "none",
+                    cursor: busy ? "wait" : "pointer",
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#4A9E47")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "#7DC67A")}
                 >
-                  ⬇ Download
-                </a>
+                  {busy ? "Opening…" : "View notes"}
+                </button>
               )}
               <button
                 onClick={onClose}
@@ -137,17 +165,13 @@ export default function NotePreviewModal({ note, onClose, getOwnerName, getSubje
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  transition: "background 150ms",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#F6F6F6")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
               >
                 ×
               </button>
             </div>
           </div>
 
-          {/* Body — PDF viewer + sidebar */}
           <div
             className="notes-modal-body-grid"
             style={{
@@ -158,97 +182,79 @@ export default function NotePreviewModal({ note, onClose, getOwnerName, getSubje
               minHeight: 400,
             }}
           >
-            {/* Download-focused view (preview disabled for quality) */}
-            <div style={{ overflow: "auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {note.fileUrl ? (
+            <div
+              style={{
+                overflow: "auto",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 20,
+                  padding: 40,
+                  textAlign: "center",
+                  height: "100%",
+                  minHeight: 400,
+                }}
+              >
                 <div
                   style={{
+                    width: 100,
+                    height: 120,
+                    background: "white",
+                    borderRadius: "4px 16px 8px 8px",
+                    boxShadow: "0 8px 32px rgba(0,0,0,0.10)",
                     display: "flex",
-                    flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    gap: 20,
-                    padding: 40,
-                    textAlign: "center",
-                    height: "100%",
-                    minHeight: 400,
+                    fontSize: 48,
+                    border: "2px solid #E5E5E5",
                   }}
                 >
-                  {/* Big document icon */}
-                  <div
-                    style={{
-                      width: 100,
-                      height: 120,
-                      background: "white",
-                      borderRadius: "4px 16px 8px 8px",
-                      boxShadow: "0 8px 32px rgba(0,0,0,0.10)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 48,
-                      border: "2px solid #E5E5E5",
-                    }}
-                  >
-                    📄
+                  📄
+                </div>
+                <div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: "#1F1F1F", marginBottom: 6 }}>
+                    {note.originalName || note.title}
                   </div>
-
-                  <div>
-                    <div style={{ fontSize: 18, fontWeight: 700, color: "#1F1F1F", marginBottom: 6 }}>
-                      {note.originalName || note.title}
-                    </div>
-                    <div style={{ fontSize: 13, color: "#9A9A9A" }}>
-                      Download to view in full quality
-                    </div>
+                  <div style={{ fontSize: 13, color: "#9A9A9A" }}>
+                    Opens securely in Medha (signed stream — no Cloudinary 401)
                   </div>
-
-                  <a
-                    href={resolveFileUrl(note.fileUrl)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    download
+                  {error ? (
+                    <div style={{ fontSize: 13, color: "#b91c1c", marginTop: 8 }}>{error}</div>
+                  ) : null}
+                </div>
+                {isPdf ? (
+                  <button
+                    type="button"
+                    onClick={openViewer}
+                    disabled={busy}
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
                       gap: 8,
-                      background: "linear-gradient(135deg, #7DC67A, #4A9E47)",
+                      background: "linear-gradient(135deg, #111111, #333333)",
                       color: "white",
                       borderRadius: 14,
                       padding: "14px 32px",
                       fontSize: 16,
                       fontWeight: 700,
-                      textDecoration: "none",
-                      boxShadow: "0 4px 16px rgba(125,198,122,0.3)",
-                      transition: "transform 200ms, box-shadow 200ms",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "translateY(-2px)";
-                      e.currentTarget.style.boxShadow = "0 6px 24px rgba(125,198,122,0.4)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "translateY(0)";
-                      e.currentTarget.style.boxShadow = "0 4px 16px rgba(125,198,122,0.3)";
+                      border: "none",
+                      cursor: busy ? "wait" : "pointer",
                     }}
                   >
-                    ⬇ Download {note.fileType === "application/pdf" ? "PDF" : "File"}
-                  </a>
-                </div>
-              ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "100%",
-                    fontSize: 15,
-                    color: "#9A9A9A",
-                  }}
-                >
-                  {note.content || "No preview available"}
-                </div>
-              )}
+                    {busy ? "Opening…" : "View notes"}
+                  </button>
+                ) : null}
+              </div>
             </div>
 
-            {/* Sidebar */}
             <div
               className="notes-modal-sidebar"
               style={{
@@ -257,7 +263,6 @@ export default function NotePreviewModal({ note, onClose, getOwnerName, getSubje
                 overflowY: "auto",
               }}
             >
-              {/* About */}
               <div
                 style={{
                   background: "#F6F6F6",
@@ -266,17 +271,27 @@ export default function NotePreviewModal({ note, onClose, getOwnerName, getSubje
                   marginBottom: 16,
                 }}
               >
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#9A9A9A", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>
+                <div
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: "#9A9A9A",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    marginBottom: 10,
+                  }}
+                >
                   About this note
                 </div>
                 <div style={{ fontSize: 13, color: "#6B6B6B", lineHeight: 2 }}>
-                  📄 {note.pages || "—"} pages<br />
-                  📁 {note.fileSize || "—"}<br />
+                  📄 {note.pages || "—"} pages
+                  <br />
+                  📁 {note.fileSize || "—"}
+                  <br />
                   👁 {note.views || 0} views
                 </div>
               </div>
 
-              {/* AI Summary placeholder (premium) */}
               <div
                 style={{
                   background: "#1F1F1F",
@@ -328,6 +343,16 @@ export default function NotePreviewModal({ note, onClose, getOwnerName, getSubje
             </div>
           </div>
         </motion.div>
+
+        <InAppPdfViewer
+          isOpen={viewerOpen && Boolean(pdfUrl)}
+          onClose={closeViewer}
+          pdfUrl={pdfUrl}
+          title={note.title}
+          revokeOnClose={revoke || undefined}
+          sharePath={noteKey ? `/note/${noteKey}` : undefined}
+          shareTitle={note.title}
+        />
       </motion.div>
     </AnimatePresence>
   );

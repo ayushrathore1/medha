@@ -1,5 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FileImage, FileUp } from "lucide-react";
+import { FileUpload } from "@/components/extend/file-upload";
 import {
   MAX_NOTE_UPLOAD_BYTES,
   SEMESTERS,
@@ -9,6 +11,22 @@ import {
   inputFocus,
   inputBlur,
 } from "./notesConstants";
+
+const NOTE_ACCEPT = [
+  ".pdf",
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".gif",
+  "application/pdf",
+  "image/png",
+  "image/jpeg",
+  "image/gif",
+].join(",");
+const NOTE_FILE_TYPES = [
+  { label: "PDF", icon: FileUp },
+  { label: "Image", icon: FileImage },
+];
 
 export default function UploadWizard({ isOpen, onClose, onUpload, uploading }) {
   const [step, setStep] = useState(1);
@@ -20,13 +38,9 @@ export default function UploadWizard({ isOpen, onClose, onUpload, uploading }) {
   const [description, setDescription] = useState("");
   const [rights, setRights] = useState(false);
   const [edu, setEdu] = useState(false);
-  const [dragOver, setDragOver] = useState(false);
   const [fileError, setFileError] = useState("");
-  const fileRef = useRef(null);
 
-  if (!isOpen) return null;
-
-  const acceptFile = (nextFile) => {
+  const acceptFile = useCallback((nextFile) => {
     if (!nextFile) return;
     if (nextFile.size > MAX_NOTE_UPLOAD_BYTES) {
       setFileError("File too large. Maximum size is 25MB.");
@@ -35,13 +49,16 @@ export default function UploadWizard({ isOpen, onClose, onUpload, uploading }) {
     }
     setFileError("");
     setFile(nextFile);
-  };
+  }, []);
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setDragOver(false);
-    acceptFile(e.dataTransfer.files[0]);
-  };
+  const handleFilesAccepted = useCallback(
+    (files) => {
+      acceptFile(files?.[0]);
+    },
+    [acceptFile]
+  );
+
+  if (!isOpen) return null;
 
   const handleSubmit = () => {
     if (!title || !file) return;
@@ -246,70 +263,21 @@ export default function UploadWizard({ isOpen, onClose, onUpload, uploading }) {
               <h3 style={{ fontSize: 22, fontWeight: 800, color: "#1F1F1F", marginBottom: 4 }}>Upload your file</h3>
               <p style={{ fontSize: 14, color: "#6B6B6B", marginBottom: 24 }}>Drag & drop or click to browse.</p>
 
-              {/* Drop zone */}
-              <div
-                onClick={() => fileRef.current?.click()}
-                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                onDragLeave={() => setDragOver(false)}
-                onDrop={handleDrop}
-                style={{
-                  border: `2px dashed ${dragOver ? "#7DC67A" : "#E5E5E5"}`,
-                  borderRadius: 16,
-                  padding: "48px 32px",
-                  textAlign: "center",
-                  background: dragOver ? "#F0FAF0" : "#F6F6F6",
-                  transition: "all 200ms",
-                  cursor: "pointer",
-                  marginBottom: 20,
-                }}
-              >
-                <div
-                  style={{
-                    width: 64,
-                    height: 64,
-                    borderRadius: "50%",
-                    background: "white",
-                    border: "2px solid #E5E5E5",
-                    margin: "0 auto 16px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 24,
-                  }}
-                >
-                  ⬆
-                </div>
-                <div style={{ fontSize: 16, fontWeight: 600, color: "#1F1F1F", marginBottom: 6 }}>
-                  {file ? file.name : "Drop your file here"}
-                </div>
-                <div style={{ fontSize: 13, color: "#9A9A9A", marginBottom: 16 }}>
-                  {file ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : "or click to browse"}
-                </div>
-                {!file && (
-                  <span
-                    style={{
-                      display: "inline-block",
-                      background: "#1F1F1F",
-                      color: "white",
-                      borderRadius: 10,
-                      padding: "10px 24px",
-                      fontSize: 14,
-                      fontWeight: 600,
-                    }}
-                  >
-                    Browse Files
-                  </span>
-                )}
-                <div style={{ fontSize: 12, color: fileError ? "#DC2626" : "#9A9A9A", marginTop: 12 }}>
-                  {fileError || "PDF, JPG, PNG · Max 25 MB"}
-                </div>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept=".pdf,.jpg,.jpeg,.png,.gif"
-                  onChange={(e) => acceptFile(e.target.files[0])}
-                  style={{ display: "none" }}
+              <div className="mb-5 rounded-xl border border-[#E5E5E5] bg-white p-3">
+                <FileUpload
+                  multiple={false}
+                  accept={NOTE_ACCEPT}
+                  acceptedFileTypes={NOTE_FILE_TYPES}
+                  title="Drop notes or browse"
+                  description="PDF, JPG, PNG · Max 25 MB"
+                  browseLabel="Browse files"
+                  showBorderBeam
+                  showFileList
+                  onFilesAccepted={handleFilesAccepted}
                 />
+                {fileError ? (
+                  <p className="mt-2 text-center text-[12px] font-medium text-[#DC2626]">{fileError}</p>
+                ) : null}
               </div>
 
               <div style={{ display: "flex", gap: 8 }}>

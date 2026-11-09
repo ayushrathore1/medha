@@ -12,6 +12,8 @@ export const PUBLIC_ROUTES = {
   exact: new Set([
     "/",
     "/search",
+    "/notes",
+    "/past-papers",
     "/terms",
     "/privacy",
     "/coming-soon",
@@ -23,15 +25,13 @@ export const PUBLIC_ROUTES = {
     "/reset-password",
     "/verify-email",
   ]),
-  prefixes: ["/subjects", "/auth/"],
+  prefixes: ["/subjects", "/auth/", "/past-papers"],
 };
 
 /** Paths that require a logged-in user. */
 export const AUTH_ROUTES = {
   exact: new Set([
     "/dashboard",
-    "/upload",
-    "/uploads",
     "/profile",
     "/join-team",
   ]),

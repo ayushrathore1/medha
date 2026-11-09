@@ -35,7 +35,8 @@ import {
 import "./ProfileDesk.css";
 
 const UNIVERSITIES = ["RTU", "GGSIPU", "DTU", "AKTU"];
-const BRANCHES = ["CSE", "IT", "ECE", "EE", "ME", "Civil", "AIDS"];
+const BRANCHES = ["CSE", "IT", "ECE", "EE", "ME", "Civil", "AIDS", "CSD", "CAI"];
+const SEMESTERS = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
 const GENDERS = ["Male", "Female", "Other"];
 
 const GenderIcon = ({ gender }) => {
@@ -248,6 +249,7 @@ const Profile = () => {
     email: "",
     university: "",
     branch: "",
+    semester: "",
     gender: "",
     selectedAvatar: 0,
     customAvatar: null // Base64 string
@@ -356,31 +358,40 @@ const Profile = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      const profileUser = responseProfile.data.user;
+      const profileUser = responseProfile.data.user || {};
+      // /profile/:id historically omitted `year`; keep semester from /me as fallback
+      const mergedUser = {
+        ...user,
+        ...profileUser,
+        year: profileUser.year || user.year || "",
+        university: profileUser.university || user.university || "",
+        branch: profileUser.branch || user.branch || "",
+      };
       const auraPoints =
-        profileUser?.auraPoints ??
+        mergedUser?.auraPoints ??
         responseProfile.data.stats?.auraPoints ??
         user.auraPoints ??
         0;
 
-      setUserData(profileUser);
+      setUserData({ ...mergedUser, auraPoints });
       setStats({
         notesShared: responseProfile.data.stats?.notesShared || 0,
         auraPoints,
       });
       setUser?.((prev) => ({
         ...(prev || {}),
-        ...profileUser,
+        ...mergedUser,
         auraPoints,
       }));
 
       setFormData({ 
-        name: user.name || "", 
-        email: user.email || "",
-        university: user.university || "",
-        branch: user.branch || "",
-        gender: user.gender || "",
-        selectedAvatar: user.avatarIndex || 0,
+        name: mergedUser.name || "", 
+        email: mergedUser.email || "",
+        university: mergedUser.university || "",
+        branch: mergedUser.branch || "",
+        semester: mergedUser.year || mergedUser.semester || "",
+        gender: mergedUser.gender || "",
+        selectedAvatar: mergedUser.avatarIndex || 0,
         customAvatar: null
       });
     } catch (error) {
@@ -453,6 +464,8 @@ const Profile = () => {
         name: formData.name,
         university: formData.university,
         branch: formData.branch,
+        year: formData.semester,
+        semester: formData.semester,
         gender: formData.gender,
         avatarIndex: formData.selectedAvatar
       };
@@ -709,6 +722,26 @@ const Profile = () => {
                  </div>
 
                  <div>
+                    <label className="block mb-2 font-bold text-sm text-[var(--text-secondary)]">Current semester</label>
+                    <div className="grid grid-cols-4 gap-2">
+                        {SEMESTERS.map((sem) => (
+                            <button
+                                key={sem}
+                                type="button"
+                                onClick={() => setFormData({ ...formData, semester: sem })}
+                                className={`px-3 py-2 rounded-xl text-sm font-bold border transition-all ${
+                                    formData.semester === sem 
+                                        ? "bg-[var(--action-primary)] text-white border-[var(--action-primary)]" 
+                                        : "bg-[var(--bg-primary)] text-[var(--text-secondary)] border-[var(--border-default)] hover:border-[var(--action-primary)]"
+                                }`}
+                            >
+                                {sem}
+                            </button>
+                        ))}
+                    </div>
+                 </div>
+
+                 <div>
                     <label className="block mb-2 font-bold text-sm text-[var(--text-secondary)]">Gender</label>
                     <div className="flex gap-4">
                         {["Male", "Female", "Other"].map(g => (
@@ -777,9 +810,9 @@ const Profile = () => {
                     </div>
                     <p className="profile-handle">@{(userData?.email || "student").split("@")[0]}</p>
                     <p className="profile-bio">
-                      {[privacy.showUniversity ? userData?.university : null, userData?.branch]
+                      {[privacy.showUniversity ? userData?.university : null, userData?.branch, userData?.year || userData?.semester]
                         .filter(Boolean)
-                        .join(" · ") || "Add university & branch in Edit profile"}
+                        .join(" · ") || "Add university, branch & semester in Edit profile"}
                     </p>
                     <div className="profile-actions">
                       <button type="button" className="desk-solid-btn" onClick={() => setIsEditing(true)}>
@@ -848,6 +881,7 @@ const Profile = () => {
                   <div className="profile-kv">
                     <div><span>University</span><strong>{userData?.university || "Not set"}</strong></div>
                     <div><span>Branch</span><strong>{userData?.branch || "Not set"}</strong></div>
+                    <div><span>Semester</span><strong>{userData?.year || userData?.semester || "Not set"}</strong></div>
                     <div><span>Member since</span><strong>{new Date(userData?.createdAt || Date.now()).toLocaleDateString()}</strong></div>
                     {privacy.showEmail ? (
                       <div><span>Email</span><strong>{userData?.email}</strong></div>
@@ -912,7 +946,7 @@ const Profile = () => {
                     <button type="button" className="desk-ghost-btn" onClick={() => setIsEditing(true)}>
                       <FaPen /> Edit profile details
                     </button>
-                    <button type="button" className="desk-ghost-btn" onClick={() => navigate("/uploads")}>
+                    <button type="button" className="desk-ghost-btn" onClick={() => navigate("/notes?scope=mine")}>
                       <FaFileLines /> Manage uploads
                     </button>
                     <button type="button" className="desk-ghost-btn" onClick={() => setLogoutOpen(true)}>
