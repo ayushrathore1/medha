@@ -35,6 +35,7 @@ function isAllowlisted(pathname) {
     "/api/team/join",
     "/api/team/check",
     "/api/messages/check-admin",
+    "/api/past-papers",
   ];
   return allowPrefixes.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)

@@ -25,7 +25,7 @@ cloudinary.config({
  * @param {string} originalName - Original filename from the user
  * @returns {Promise<{url: string, publicId: string, resourceType: string}>}
  */
-async function uploadToCloudinary(localFilePath, originalName) {
+async function uploadToCloudinary(localFilePath, originalName, options = {}) {
   const ext = path.extname(originalName).toLowerCase();
   const isPDF = ext === ".pdf";
 
@@ -37,10 +37,10 @@ async function uploadToCloudinary(localFilePath, originalName) {
     .replace(/^_|_$/g, "")
     .trim();
 
-  const safePublicId = `${Date.now()}-${baseName || "file"}`;
+  const safePublicId = options.publicId || `${Date.now()}-${baseName || "file"}`;
 
   const uploadOptions = {
-    folder: "uploads",
+    folder: options.folder || "uploads",
     resource_type: isPDF ? "raw" : "auto",
     public_id: safePublicId,
     access_mode: "public",

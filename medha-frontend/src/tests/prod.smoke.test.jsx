@@ -29,11 +29,13 @@ describe("Production smoke", () => {
       "href",
       "/register"
     );
-    expect(screen.getByRole("link", { name: "Medha Revision" })).toHaveAttribute("href", "/");
-    expect(screen.getByRole("link", { name: "CampusKart" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /medha revision home/i })).toHaveAttribute(
       "href",
-      "https://www.shopcampuskart.in"
+      "/"
     );
+    expect(
+      screen.getByRole("link", { name: "www.shopcampuskart.in" })
+    ).toHaveAttribute("href", "https://www.shopcampuskart.in");
   });
 
   it("renders the signed-in coming-soon experience", async () => {

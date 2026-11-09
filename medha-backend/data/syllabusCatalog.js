@@ -638,7 +638,7 @@ const SYLLABUS_CATALOG = {
   // ─── 3rd Semester ───────────────────────────────────────────
   "Digital Electronics": {
     semester: 3,
-    code: "3CS4-05",
+    code: "3CS3-04",
     department: "Computer Science & Engineering",
     playlistUrl: "https://youtube.com/playlist?list=PLxCzCOWd7aiGmXg4NoX6R31AsC5LeCPHe",
     channelTitle: "Code Smashers",
@@ -747,7 +747,7 @@ const SYLLABUS_CATALOG = {
 
   "Data Structures and Algorithms": {
     semester: 3,
-    code: "3CS4-04",
+    code: "3CS4-05",
     department: "Computer Science & Engineering",
     playlistUrl: "https://youtube.com/playlist?list=PLdo5W4Nhv31bbKJzrsKfMpo_grxuLl8LU",
     channelTitle: "Jenny's Lectures / Neso Academy",

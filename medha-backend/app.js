@@ -180,6 +180,7 @@ function createApp() {
   app.use("/api/practice", practiceRoutes);
   app.use("/api/search", require("./routes/searchRoutes"));
   app.use("/api/resources", require("./routes/resourceRoutes"));
+  app.use("/api/past-papers", require("./routes/pastPaperRoutes"));
   app.use("/api/chatbot", aiLimiter, chatbotRoutes);
   app.use("/api/chat", aiLimiter, chatStreamRoutes);
   app.use("/api/voice", aiLimiter, voiceRoutes);
