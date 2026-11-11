@@ -18,9 +18,17 @@ import SubjectsSection from '../sections/SubjectsSection';
 import TestimonialsSection from '../sections/TestimonialsSection';
 import CTASection from '../sections/CTASection';
 import Footer from '../sections/Footer';
+import { usePageSeo } from '../hooks/usePageSeo';
 
 const LandingPage = () => {
   const stats = useLiveStats();
+
+  usePageSeo({
+    title: 'Medha Revision | RTU Previous Year Papers, Topics & Notes',
+    description:
+      'Medha Revision organises the RTU syllabus, past papers and topic-wise revision for B.Tech students. Search any topic or open year-wise PYQs by branch and semester.',
+    path: '/',
+  });
 
   return (
     <div className="landing-page">

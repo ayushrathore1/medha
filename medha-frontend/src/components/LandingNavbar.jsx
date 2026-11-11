@@ -8,6 +8,24 @@ import LogoutConfirm from "./Revision/LogoutConfirm";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
+function warmAuthChunk(path) {
+  if (path === "/login") {
+    import("../pages/Login").catch(() => {});
+  } else if (path === "/register" || path === "/signup") {
+    import("../pages/Register").catch(() => {});
+  } else if (path === "/search") {
+    import("../pages/RevisionSearch").catch(() => {});
+  } else if (path === "/subjects") {
+    import("../pages/Subjects").catch(() => {});
+  } else if (path === "/past-papers") {
+    import("../pages/PastPapers").catch(() => {});
+  } else if (path === "/notes") {
+    import("../pages/NotesHub").catch(() => {});
+  } else if (path === "/profile") {
+    import("../pages/Profile").catch(() => {});
+  }
+}
+
 const LandingNavbar = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -21,6 +39,13 @@ const LandingNavbar = () => {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    if (!user) {
+      warmAuthChunk("/login");
+      warmAuthChunk("/register");
+    }
+  }, [user]);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
@@ -86,7 +111,13 @@ const LandingNavbar = () => {
 
           <div className="nav-links-desktop wama-nav-links">
             {desktopLinks.map((link) => (
-              <Link key={`${link.label}-${link.to}`} to={link.to}>
+              <Link
+                key={`${link.label}-${link.to}`}
+                to={link.to}
+                onMouseEnter={() => warmAuthChunk(link.to)}
+                onFocus={() => warmAuthChunk(link.to)}
+                onTouchStart={() => warmAuthChunk(link.to)}
+              >
                 {link.label}
               </Link>
             ))}
@@ -100,7 +131,12 @@ const LandingNavbar = () => {
                     Ops
                   </Link>
                 ) : null}
-                <Link to="/profile" className="wama-nav-login">
+                <Link
+                  to="/profile"
+                  className="wama-nav-login"
+                  onMouseEnter={() => warmAuthChunk("/profile")}
+                  onFocus={() => warmAuthChunk("/profile")}
+                >
                   Profile
                 </Link>
                 <button type="button" className="wama-pill wama-pill-sm" onClick={() => setLogoutOpen(true)}>
@@ -109,10 +145,22 @@ const LandingNavbar = () => {
               </>
             ) : (
               <>
-                <Link to="/login" className="wama-nav-login">
+                <Link
+                  to="/login"
+                  className="wama-nav-login"
+                  onMouseEnter={() => warmAuthChunk("/login")}
+                  onFocus={() => warmAuthChunk("/login")}
+                  onTouchStart={() => warmAuthChunk("/login")}
+                >
                   Login
                 </Link>
-                <Link to="/register" className="wama-pill wama-pill-sm">
+                <Link
+                  to="/register"
+                  className="wama-pill wama-pill-sm"
+                  onMouseEnter={() => warmAuthChunk("/register")}
+                  onFocus={() => warmAuthChunk("/register")}
+                  onTouchStart={() => warmAuthChunk("/register")}
+                >
                   Get started
                 </Link>
               </>
@@ -151,14 +199,28 @@ const LandingNavbar = () => {
       {!user ? (
         <div className={`nav-mobile-overlay ${menuOpen ? "open" : ""}`}>
           {guestMobileLinks.map((link) => (
-            <Link key={link.to} to={link.to} onClick={() => setMenuOpen(false)}>
+            <Link
+              key={link.to}
+              to={link.to}
+              onClick={() => setMenuOpen(false)}
+              onTouchStart={() => warmAuthChunk(link.to)}
+            >
               {link.label}
             </Link>
           ))}
-          <Link to="/login" onClick={() => setMenuOpen(false)}>
+          <Link
+            to="/login"
+            onClick={() => setMenuOpen(false)}
+            onTouchStart={() => warmAuthChunk("/login")}
+          >
             Login
           </Link>
-          <Link to="/register" className="mobile-cta" onClick={() => setMenuOpen(false)}>
+          <Link
+            to="/register"
+            className="mobile-cta"
+            onClick={() => setMenuOpen(false)}
+            onTouchStart={() => warmAuthChunk("/register")}
+          >
             Get started
           </Link>
         </div>

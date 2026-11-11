@@ -1,7 +1,7 @@
 {
   "rewrites": [
     { "source": "/assets/(.*)", "destination": "/assets/$1" },
-    { "source": "/((?!assets/).*)", "destination": "/index.html" }
+    { "source": "/((?!assets/|robots\\.txt|sitemap\\.xml).*)", "destination": "/index.html" }
   ],
   "headers": [
     {

@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+Allow: /subjects
+Allow: /subjects/
+Allow: /search
+Allow: /past-papers
+Allow: /notes
+Disallow: /login
+Disallow: /register
+Disallow: /signup
+Disallow: /profile
+Disallow: /admin
+Disallow: /team-dashboard
+Disallow: /dashboard
+Disallow: /upload
+Disallow: /auth/
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+Disallow: /join-team
+Disallow: /inside
+Disallow: /coming-soon
+
+Sitemap: https://medharevision.shopcampuskart.in/sitemap.xml

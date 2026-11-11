@@ -5,6 +5,7 @@ import { AuthContext } from "../AuthContext";
 import AuthShell from "../components/Auth/AuthShell";
 import { apiUrl } from "../config/api";
 import { resolvePostAuthPath } from "../config/appMode";
+import { usePageSeo } from "../hooks/usePageSeo";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,6 +20,13 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const { login } = useContext(AuthContext);
   const nextParam = searchParams.get("next");
+
+  usePageSeo({
+    title: "Login",
+    description: "Sign in to Medha Revision to open your RTU study desk, notes, and past papers.",
+    path: "/login",
+    noindex: true,
+  });
 
   const handleLogin = async (e) => {
     e.preventDefault();

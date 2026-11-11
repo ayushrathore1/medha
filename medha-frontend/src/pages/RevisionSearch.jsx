@@ -13,9 +13,12 @@ import {
   clearRecentSearches,
   getRecentSearches,
   resolveSearchQuery,
+  searchPath,
   semesterLabel,
 } from "../data/subjectCatalog";
 import { trackSearchOpened } from "../lib/studyActivity";
+import { usePageSeo } from "../hooks/usePageSeo";
+import { searchResultsJsonLd } from "../lib/seo";
 import "./DashboardHome.css";
 import "./RevisionSearch.css";
 
@@ -230,6 +233,38 @@ export default function RevisionSearch() {
       setParams(buildSearchParams({ q: liveQuery, scope: nextScope }), { replace: true });
     });
   };
+
+  const seoPath = liveQuery ? searchPath(liveQuery) : "/search";
+  const seoTitle = liveQuery
+    ? `${liveQuery} — RTU topic notes & resources`
+    : "Search RTU topics, notes & syllabus";
+  const seoDescription = liveQuery
+    ? `Study “${liveQuery}” on Medha Revision — RTU syllabus match, notes, YouTube and GeeksforGeeks resources for B.Tech exams.`
+    : "Search any RTU subject topic on Medha Revision. Short forms like OS, DSA, DBMS work too.";
+
+  const seoResults = useMemo(() => {
+    const items = [];
+    if (match?.subject) {
+      items.push({
+        name: hitHeadline(match, liveQuery),
+        path: hitPath(match),
+      });
+    }
+    for (const hit of altMatches) {
+      if (!hit?.subject) continue;
+      items.push({ name: hitHeadline(hit, liveQuery), path: hitPath(hit) });
+    }
+    return items;
+  }, [match, altMatches, liveQuery]);
+
+  usePageSeo({
+    title: seoTitle,
+    description: seoDescription,
+    path: seoPath,
+    jsonLd: liveQuery
+      ? searchResultsJsonLd({ query: liveQuery, path: seoPath, results: seoResults })
+      : null,
+  });
 
   return (
     <RevisionShell title={liveQuery || "Search"} desk>

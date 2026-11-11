@@ -11,6 +11,8 @@ import {
 } from "../data/subjectCatalog";
 import { trackSearchOpened, trackSubjectOpened } from "../lib/studyActivity";
 import { findMergedSubject, useMergedSubjects } from "../hooks/useMergedSubjects";
+import { usePageSeo } from "../hooks/usePageSeo";
+import { learningResourceJsonLd } from "../lib/seo";
 import "./SubjectTopics.css";
 
 function highlight(text, query) {
@@ -45,6 +47,26 @@ export default function SubjectTopics() {
           )
         : [],
     [subject, subjects]
+  );
+
+  usePageSeo(
+    subject
+      ? {
+          title: `${subject.name} syllabus & topics — RTU Sem ${subject.semester || ""}`.trim(),
+          description: `Browse ${subject.name} (${subject.code || "RTU"}) unit-wise topics, notes and revision resources on Medha Revision.`,
+          path: `/subjects/${subject.slug}`,
+          jsonLd: learningResourceJsonLd({
+            name: `${subject.name} — RTU syllabus`,
+            description: `Unit-wise topics for ${subject.name} on Medha Revision.`,
+            path: `/subjects/${subject.slug}`,
+            about: [subject.name, subject.code, `Semester ${subject.semester}`].filter(Boolean),
+          }),
+        }
+      : {
+          title: "Subject",
+          description: "RTU subject syllabus on Medha Revision.",
+          path: `/subjects/${subjectSlug || ""}`,
+        }
   );
 
   const units = useMemo(() => {

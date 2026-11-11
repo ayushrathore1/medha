@@ -9,6 +9,7 @@ import {
   subjectMatchesQuery,
 } from "../data/subjectCatalog";
 import { useMergedSubjects } from "../hooks/useMergedSubjects";
+import { usePageSeo } from "../hooks/usePageSeo";
 
 const ACCENTS = ["#1BA34A", "#FF8A1A", "#2563EB", "#E30613", "#7C3AED", "#0D9488", "#F59E0B", "#DB2777"];
 
@@ -110,6 +111,13 @@ function BranchSections({ list, preferredBranch, startIndex = 0 }) {
 }
 
 export default function Subjects() {
+  usePageSeo({
+    title: "RTU Subjects & Syllabus Map",
+    description:
+      "Browse every RTU B.Tech subject by semester — open units, topics, notes and past papers on Medha Revision.",
+    path: "/subjects",
+  });
+
   const { user } = useContext(AuthContext);
   const [params, setParams] = useSearchParams();
   const query = params.get("q") || "";

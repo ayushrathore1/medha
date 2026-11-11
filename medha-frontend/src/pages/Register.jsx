@@ -5,6 +5,7 @@ import { AuthContext } from "../AuthContext";
 import AuthShell from "../components/Auth/AuthShell";
 import { apiUrl } from "../config/api";
 import { getPostAuthHome } from "../config/appMode";
+import { usePageSeo } from "../hooks/usePageSeo";
 
 // ─── Password Strength ─────────────────────────────────────
 function getStrength(pw) {
@@ -25,6 +26,13 @@ const SEMESTERS = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
 
 // ─── Register Page ──────────────────────────────────────────
 const Register = () => {
+  usePageSeo({
+    title: "Create account",
+    description: "Join Medha Revision for RTU syllabus topics, notes, and previous year papers.",
+    path: "/register",
+    noindex: true,
+  });
+
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
