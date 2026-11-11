@@ -176,11 +176,11 @@ export default function Dashboard() {
     e.preventDefault();
     const term = query.trim();
     if (!term) {
-      navigate("/search");
+      navigate("/search", { flushSync: true });
       return;
     }
     trackSearchOpened(term);
-    navigate(searchPath(term));
+    navigate(searchPath(term), { flushSync: true });
   };
 
   const contextBits = [

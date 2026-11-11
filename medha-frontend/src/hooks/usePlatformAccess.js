@@ -94,8 +94,15 @@ export function usePlatformAccess(user) {
     };
   }, []);
 
-  const comingSoon =
-    serverOpen === true ? false : serverOpen === false ? true : isComingSoonMode(now);
+  // Prod: trust API open flag when present; otherwise fall back to local GA clock.
+  // Dev: never lock the desk behind coming-soon (server closed flag is for prod gating).
+  const comingSoon = import.meta.env.PROD
+    ? serverOpen === true
+      ? false
+      : serverOpen === false
+        ? true
+        : isComingSoonMode(now)
+    : false;
 
   return {
     now,

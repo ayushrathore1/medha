@@ -48,8 +48,14 @@ const TAB_IMPORTS = [
   () => import("./pages/Profile"),
 ];
 
-function preloadTabChunks() {
-  TAB_IMPORTS.forEach((load) => {
+const AUTH_IMPORTS = [
+  () => import("./pages/Login"),
+  () => import("./pages/Register"),
+  () => import("./pages/ForgotPassword"),
+];
+
+function preloadChunks(loaders) {
+  loaders.forEach((load) => {
     try {
       load();
     } catch {
@@ -58,9 +64,18 @@ function preloadTabChunks() {
   });
 }
 
+function preloadTabChunks() {
+  preloadChunks(TAB_IMPORTS);
+}
+
+function preloadAuthChunks() {
+  preloadChunks(AUTH_IMPORTS);
+}
+
+/** Soft motion only for secondary auth/legal — primary Login/Register stay instant. */
 const withAuthTransition = (node) => <PageTransition>{node}</PageTransition>;
 const auth = (node) => <RequireAuth>{node}</RequireAuth>;
-const guest = (node) => <GuestOnly>{withAuthTransition(node)}</GuestOnly>;
+const guest = (node) => <GuestOnly>{node}</GuestOnly>;
 const staff = (node) => <StaffRoute>{node}</StaffRoute>;
 
 /**
@@ -119,10 +134,11 @@ const InsideAppTree = () => {
 
   useEffect(() => {
     preloadTabChunks();
+    preloadAuthChunks();
   }, []);
 
   useEffect(() => {
-    const id = window.setTimeout(preloadTabChunks, 400);
+    const id = window.setTimeout(preloadTabChunks, 200);
     return () => window.clearTimeout(id);
   }, [location.pathname]);
 
@@ -170,6 +186,12 @@ const InsideAppTree = () => {
 const AppContent = () => {
   const { user } = useContext(AuthContext);
   const { comingSoon, canAccess } = usePlatformAccess(user);
+
+  useEffect(() => {
+    preloadAuthChunks();
+    if (!comingSoon || canAccess) preloadTabChunks();
+  }, [comingSoon, canAccess]);
+
   // Keep coming-soon until GA; after that HomeGate serves Landing vs Dashboard.
   if (comingSoon && !canAccess) {
     return <ComingSoonTree />;

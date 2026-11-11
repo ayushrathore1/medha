@@ -77,10 +77,20 @@ const CTASection = ({ totalStudents }) => {
             </h2>
             <p>Join {totalStudents} students already using Medha.</p>
             <div className="wama-cta-actions">
-              <Link to="/register" className="wama-pill">
+              <Link
+                to="/register"
+                className="wama-pill"
+                onMouseEnter={() => import("../pages/Register").catch(() => {})}
+                onFocus={() => import("../pages/Register").catch(() => {})}
+              >
                 Start learning free
               </Link>
-              <Link to="/login" className="wama-text-link">
+              <Link
+                to="/login"
+                className="wama-text-link"
+                onMouseEnter={() => import("../pages/Login").catch(() => {})}
+                onFocus={() => import("../pages/Login").catch(() => {})}
+              >
                 Login
               </Link>
             </div>

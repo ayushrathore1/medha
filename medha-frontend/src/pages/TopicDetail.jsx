@@ -6,6 +6,8 @@ import TopicChip from "../components/Revision/TopicChip";
 import { searchPath } from "../data/subjectCatalog";
 import { trackSearchOpened, trackUnitOpened } from "../lib/studyActivity";
 import { findMergedSubject, findMergedUnit, useMergedSubjects } from "../hooks/useMergedSubjects";
+import { usePageSeo } from "../hooks/usePageSeo";
+import { learningResourceJsonLd } from "../lib/seo";
 
 const TABS = [
   { id: "overview", label: "Overview" },
@@ -23,6 +25,25 @@ export default function TopicDetail() {
   useEffect(() => {
     if (subject && unit) trackUnitOpened(subject, unit);
   }, [subject, unit]);
+
+  usePageSeo(
+    subject && unit
+      ? {
+          title: `${unit.title} | ${subject.name} — RTU topics`,
+          description: `Revise ${unit.title} from ${subject.name} (${subject.code || "RTU"}) — topics, notes and resources on Medha Revision.`,
+          path: `/subjects/${subject.slug}/${unit.slug}`,
+          jsonLd: learningResourceJsonLd({
+            name: `${unit.title} — ${subject.name}`,
+            description: `Unit topics for ${unit.title} in ${subject.name}.`,
+            path: `/subjects/${subject.slug}/${unit.slug}`,
+            about: [subject.name, unit.title, ...(unit.topics || []).slice(0, 8)].filter(Boolean),
+          }),
+        }
+      : {
+          title: "Unit",
+          path: `/subjects/${subjectSlug || ""}/${unitSlug || ""}`,
+        }
+  );
 
   if (loading) {
     return (

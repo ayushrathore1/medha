@@ -10,7 +10,8 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <LazyMotion features={domAnimation}>
       <MotionConfig reducedMotion="user">
-        <BrowserRouter>
+        {/* useTransitions=false: paint route changes immediately (no RR7 startTransition lag) */}
+        <BrowserRouter useTransitions={false}>
           <App />
         </BrowserRouter>
       </MotionConfig>

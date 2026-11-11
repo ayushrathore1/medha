@@ -7,6 +7,8 @@ import InAppPdfViewer from "../components/Common/InAppPdfViewer";
 import { openPastPaperPdfBlob } from "../lib/pdfDelivery";
 import { trackPaperOpened } from "../lib/studyActivity";
 import { apiUrl } from "../config/api";
+import { usePageSeo } from "../hooks/usePageSeo";
+import { learningResourceJsonLd } from "../lib/seo";
 
 function updateParams(params, setParams, patch) {
   const next = new URLSearchParams(params);
@@ -26,6 +28,7 @@ export default function PastPapers() {
   const branch = (params.get("branch") || "CSE").toUpperCase();
   const semester = Number(params.get("sem") || 3);
   const subjectFilter = params.get("subject") || "";
+  const yearFilter = params.get("year") || "";
 
   const [meta, setMeta] = useState(null);
   const [papers, setPapers] = useState([]);
@@ -96,6 +99,54 @@ export default function PastPapers() {
     { id: "AIDS", label: "AI / AIDS" },
   ];
 
+  const seoPath = useMemo(() => {
+    const q = new URLSearchParams();
+    q.set("branch", branch);
+    q.set("sem", String(semester));
+    if (subjectFilter) q.set("subject", subjectFilter);
+    if (yearFilter) q.set("year", yearFilter);
+    return `/past-papers?${q.toString()}`;
+  }, [branch, semester, subjectFilter, yearFilter]);
+
+  const seoTitle = useMemo(() => {
+    const bits = [
+      subjectFilter || null,
+      yearFilter ? `${yearFilter}` : null,
+      `RTU ${branch}`,
+      `Sem ${semester}`,
+      "Previous Year Paper",
+    ].filter(Boolean);
+    return bits.join(" · ");
+  }, [branch, semester, subjectFilter, yearFilter]);
+
+  const seoDescription = useMemo(() => {
+    if (subjectFilter && yearFilter) {
+      return `Download and view the RTU ${branch} ${subjectFilter} previous year question paper for ${yearFilter} (Semester ${semester}) on Medha Revision.`;
+    }
+    if (subjectFilter) {
+      return `RTU ${branch} ${subjectFilter} previous year question papers for Semester ${semester} — view hosted PYQs on Medha Revision.`;
+    }
+    return `RTU ${branch} previous year question papers for Semester ${semester}. Browse subject-wise PYQs from the last five years on Medha Revision.`;
+  }, [branch, semester, subjectFilter, yearFilter]);
+
+  usePageSeo({
+    title: seoTitle,
+    description: seoDescription,
+    path: seoPath,
+    jsonLd: learningResourceJsonLd({
+      name: seoTitle,
+      description: seoDescription,
+      path: seoPath,
+      about: [subjectFilter || "RTU past papers", branch, `Semester ${semester}`, yearFilter].filter(Boolean),
+    }),
+  });
+
+  useEffect(() => {
+    if (!yearFilter) return;
+    const el = document.querySelector(`[data-paper-year="${CSS.escape(String(yearFilter))}"]`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [yearFilter, subjects, loading]);
+
   const openPaperViewer = useCallback(
     async (paper, { syncUrl = true } = {}) => {
       if (!paper?.id) return;
@@ -107,7 +158,7 @@ export default function PastPapers() {
           paper.branch || branch
         )}&sem=${paper.semester || semester}&subject=${encodeURIComponent(
           paper.subjectName || ""
-        )}&paper=${paper.id}`;
+        )}&year=${encodeURIComponent(paper.year || "")}&paper=${paper.id}`;
         trackPaperOpened(paper, sharePath);
         setActivePDF({
           pdfUrl: data.fileUrl,
@@ -120,6 +171,7 @@ export default function PastPapers() {
             branch: paper.branch || branch,
             sem: paper.semester || semester,
             subject: paper.subjectName || subjectFilter || "",
+            year: paper.year || yearFilter || "",
             paper: paper.id,
           });
         }
@@ -302,10 +354,16 @@ export default function PastPapers() {
                           `/api/past-papers/${paper.id}/file?attachment=1`
                         );
                         const isOpening = openingId === paper.id;
+                        const yearActive = String(yearFilter) === String(year);
                         return (
                           <div
                             key={year}
-                            className="flex min-h-12 items-center gap-2 rounded-xl border border-[#e8e8e8] bg-[#f7f7f4] px-3 py-2"
+                            data-paper-year={year}
+                            className={`flex min-h-12 items-center gap-2 rounded-xl border px-3 py-2 ${
+                              yearActive
+                                ? "border-[#111] bg-white shadow-[0_0_0_2px_rgba(17,17,17,0.08)]"
+                                : "border-[#e8e8e8] bg-[#f7f7f4]"
+                            }`}
                           >
                             <span className="min-w-[3rem] text-[13px] font-semibold text-[#111]">
                               {year}
@@ -334,7 +392,12 @@ export default function PastPapers() {
                       return (
                         <div
                           key={year}
-                          className="flex min-h-12 items-center justify-between gap-2 rounded-xl border border-dashed border-[#e0e0e0] px-3 py-2 text-[13px] font-semibold text-[#9a9a9a]"
+                          data-paper-year={year}
+                          className={`flex min-h-12 items-center justify-between gap-2 rounded-xl border border-dashed px-3 py-2 text-[13px] font-semibold text-[#9a9a9a] ${
+                            String(yearFilter) === String(year)
+                              ? "border-[#111] bg-white"
+                              : "border-[#e0e0e0]"
+                          }`}
                           title="Paper not seeded yet"
                         >
                           <span>{year}</span>
