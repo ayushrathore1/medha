@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { AuthContext } from "../AuthContext";
 import BrandMark, { CAMPUSKART_URL } from "../components/Common/BrandMark";
 import { isTeamUser } from "../config/appMode";
+import { isPlatformGenerallyAvailable, PLATFORM_LAUNCH_DISPLAY } from "../config/launch";
 import "../styles/ComingSoon.css";
 
 const ease = [0.22, 1, 0.36, 1];
@@ -179,6 +180,11 @@ export default function ComingSoon() {
   const reduceMotion = useReducedMotion();
   const { user } = useContext(AuthContext);
 
+  // After GA this surface must never stick — home is Landing (guest) / Dashboard (signed-in).
+  if (isPlatformGenerallyAvailable()) {
+    return <Navigate to="/" replace />;
+  }
+
   if (user) {
     return <Navigate to={isTeamUser(user) ? "/" : "/inside"} replace />;
   }
@@ -209,7 +215,7 @@ export default function ComingSoon() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease }}
         >
-          Medha got a new home
+          Opens to everyone
         </motion.p>
         <motion.h1
           id="coming-soon-title"
@@ -218,7 +224,7 @@ export default function ComingSoon() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.85, ease, delay: 0.06 }}
         >
-          Coming soon
+          {PLATFORM_LAUNCH_DISPLAY}
         </motion.h1>
         <motion.p
           className="coming-soon-lead"
@@ -226,7 +232,8 @@ export default function ComingSoon() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.75, ease, delay: 0.14 }}
         >
-          Diwali work is going on.
+          Medha Revision goes generally available on {PLATFORM_LAUNCH_DISPLAY} — no waitlist flip needed.
+          Sign up now and you will land inside when we open.
         </motion.p>
         <motion.div
           className="coming-soon-actions"

@@ -163,9 +163,19 @@ function createApp() {
   app.use("/api/auth", authLimiter, authRoutes);
   app.use("/api/auth", authLimiter, authExtraRoutes);
 
-  // NODE_ENV=production: only team/admin may use the live platform APIs
-  // (auth + /users/me + team join remain open for the coming-soon flow).
+  // Early access until PLATFORM_GA_AT (default 12 Nov 2026 18:00 IST), then auto-open.
+  // Auth + /users/me + team join remain open for the coming-soon flow.
   const platformTeamOnly = require("./middleware/platformTeamOnly");
+  app.get("/api/platform/status", (req, res) => {
+    const opensAt = platformTeamOnly.platformGaAtMs();
+    res.json({
+      open: platformTeamOnly.isPlatformGenerallyAvailable(),
+      gated: platformTeamOnly.isProductionTeamOnly(),
+      opensAt: new Date(opensAt).toISOString(),
+      opensAtLabel: "12 November 2026 · 6:00 PM IST",
+      serverNow: new Date().toISOString(),
+    });
+  });
   app.use("/api", platformTeamOnly);
 
   app.use("/api/users", userRoutes);

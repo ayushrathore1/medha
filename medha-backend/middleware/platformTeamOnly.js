@@ -4,14 +4,28 @@ const User = require("../models/User");
 /**
  * Production early-access gate: only team / admin can use the live platform APIs.
  *
- * NODE_ENV=production → enabled (unless PLATFORM_OPEN=true).
+ * Auto-opens for everyone at PLATFORM_GA_AT (default: 12 Nov 2026, 18:00 IST).
+ * NODE_ENV=production → gated until that instant (unless PLATFORM_OPEN=true).
  * Auth, health, public stats, and session/invite endpoints stay reachable so
  * regular users can still sign in and land on the coming-soon surface.
  */
 
-function isProductionTeamOnly() {
-  if (process.env.PLATFORM_OPEN === "true") return false;
-  if (process.env.PLATFORM_TEAM_ONLY === "true") return true;
+const DEFAULT_PLATFORM_GA_AT = "2026-11-12T18:00:00+05:30";
+
+function platformGaAtMs() {
+  const raw = process.env.PLATFORM_GA_AT || DEFAULT_PLATFORM_GA_AT;
+  const ms = Date.parse(raw);
+  return Number.isFinite(ms) ? ms : Date.parse(DEFAULT_PLATFORM_GA_AT);
+}
+
+function isPlatformGenerallyAvailable(now = Date.now()) {
+  if (String(process.env.PLATFORM_OPEN || "").toLowerCase() === "true") return true;
+  return now >= platformGaAtMs();
+}
+
+function isProductionTeamOnly(now = Date.now()) {
+  if (isPlatformGenerallyAvailable(now)) return false;
+  if (String(process.env.PLATFORM_TEAM_ONLY || "").toLowerCase() === "true") return true;
   return process.env.NODE_ENV === "production";
 }
 
@@ -26,6 +40,7 @@ function isAllowlisted(pathname) {
     "/health",
     "/api/test-db",
     "/api/stats",
+    "/api/platform/status",
   ]);
   if (allowExact.has(pathname)) return true;
 
@@ -102,3 +117,5 @@ async function platformTeamOnly(req, res, next) {
 
 module.exports = platformTeamOnly;
 module.exports.isProductionTeamOnly = isProductionTeamOnly;
+module.exports.isPlatformGenerallyAvailable = isPlatformGenerallyAvailable;
+module.exports.platformGaAtMs = platformGaAtMs;

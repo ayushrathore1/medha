@@ -6,12 +6,12 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider } from "./AuthProvider";
 import { AuthContext } from "./AuthContext";
 import { TourProvider } from "./context/TourContext";
-import { canAccessPlatform, IS_COMING_SOON_MODE } from "./config/appMode";
 import RequireAuth from "./components/Common/RequireAuth";
 import GuestOnly from "./components/Common/GuestOnly";
 import SessionGate from "./components/Common/SessionGate";
 import StaffRoute from "./components/Common/StaffRoute";
 import MobileTabLayout from "./layouts/MobileTabLayout";
+import { usePlatformAccess } from "./hooks/usePlatformAccess";
 
 const ComingSoon = React.lazy(() => import("./pages/ComingSoon"));
 const MemberComingSoon = React.lazy(() => import("./pages/MemberComingSoon"));
@@ -81,7 +81,10 @@ const publicAuthRoutes = (
   </>
 );
 
-/** Production early-access tree — waitlist + auth only (non-team). */
+/**
+ * Pre-GA tree (until scheduled PLATFORM_GA_AT — see config/launch.js).
+ * Guests → public coming soon · signed-in members → /inside · team → full app.
+ */
 const ComingSoonTree = () => (
   <Suspense fallback={<Loader fullScreen />}>
     <Routes>
@@ -104,11 +107,12 @@ const RouteFallback = () => (
 );
 
 /**
- * Full platform tree.
- *
- * PUBLIC:  /  (landing), /subjects/*, /search, /past-papers
- * AUTH:    desk home (via HomeGate), /dashboard, /notes?scope=mine, /profile, /note/*, /join-team
+ * Post-GA tree (auto after PLATFORM_GA_AT — see config/launch.js).
+ * PUBLIC:  / → HomeGate (Landing for guests, Dashboard for signed-in)
+ * BROWSE:  /subjects/*, /search, /past-papers
+ * AUTH:    /dashboard, /notes, /profile, /note/*
  * STAFF:   /admin, /team-dashboard
+ * Legacy:  /inside and /coming-soon redirect home (never keep people on waitlist UI)
  */
 const InsideAppTree = () => {
   const location = useLocation();
@@ -148,7 +152,7 @@ const InsideAppTree = () => {
           </Route>
 
           <Route path="/inside" element={<Navigate to="/" replace />} />
-          <Route path="/coming-soon" element={withAuthTransition(<ComingSoon />)} />
+          <Route path="/coming-soon" element={<Navigate to="/" replace />} />
           {publicAuthRoutes}
 
           {/* STAFF */}
@@ -165,7 +169,9 @@ const InsideAppTree = () => {
 
 const AppContent = () => {
   const { user } = useContext(AuthContext);
-  if (IS_COMING_SOON_MODE && !canAccessPlatform(user)) {
+  const { comingSoon, canAccess } = usePlatformAccess(user);
+  // Keep coming-soon until GA; after that HomeGate serves Landing vs Dashboard.
+  if (comingSoon && !canAccess) {
     return <ComingSoonTree />;
   }
   return <InsideAppTree />;

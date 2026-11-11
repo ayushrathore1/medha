@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { AuthContext } from "../AuthContext";
 import BrandMark, { CAMPUSKART_URL } from "../components/Common/BrandMark";
 import { isTeamUser } from "../config/appMode";
+import { isPlatformGenerallyAvailable, PLATFORM_LAUNCH_DISPLAY } from "../config/launch";
 import "../styles/ComingSoon.css";
 
 const ease = [0.22, 1, 0.36, 1];
@@ -86,6 +87,11 @@ export default function MemberComingSoon() {
   const { user, logout } = useContext(AuthContext);
   const first = String(user?.name || "friend").split(" ")[0];
 
+  // Post-GA: send members to / so HomeGate opens their dashboard (not landing).
+  if (isPlatformGenerallyAvailable()) {
+    return <Navigate to="/" replace />;
+  }
+
   if (!user) {
     return <Navigate to="/" replace />;
   }
@@ -129,7 +135,7 @@ export default function MemberComingSoon() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.85, ease, delay: 0.06 }}
         >
-          Your seat is saved
+          Opens {PLATFORM_LAUNCH_DISPLAY}
         </motion.h1>
         <motion.p
           className="coming-soon-lead"
@@ -137,7 +143,8 @@ export default function MemberComingSoon() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.75, ease, delay: 0.14 }}
         >
-          Diwali build in progress. We will open Medha here first.
+          Your seat is saved. Medha Revision unlocks for everyone on {PLATFORM_LAUNCH_DISPLAY} —
+          you will get in automatically when the clock hits.
         </motion.p>
       </section>
 
