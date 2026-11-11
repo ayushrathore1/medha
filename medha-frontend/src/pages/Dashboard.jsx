@@ -16,7 +16,7 @@ import LandingNavbar from "../components/LandingNavbar";
 import api from "../api/api";
 import { getAuraTier } from "../utils/auraUtils";
 import { formatDate, formatFileMeta } from "../components/Revision/revisionUtils";
-import { useMergedSubjects } from "../hooks/useMergedSubjects";
+import { subjectIdentityKey, useMergedSubjects } from "../hooks/useMergedSubjects";
 import {
   getAcademicContext,
   getRecentSearches,
@@ -27,6 +27,7 @@ import {
 } from "../data/subjectCatalog";
 import { getContinueStudying, trackSearchOpened } from "../lib/studyActivity";
 import { pingDailyActivity } from "../lib/dailyStreak";
+import { subjectMatchesBranch } from "../data/branchScope";
 import "../styles/LandingPage.css";
 import "./DashboardHome.css";
 
@@ -90,12 +91,23 @@ export default function Dashboard() {
   const mySubjects = useMemo(() => {
     const list = catalogSubjects.length ? catalogSubjects : [];
     if (academic.semester) {
-      const filtered = list.filter((s) => Number(s.semester) === Number(academic.semester));
+      const userBranch = asText(user?.branch) || asText(academic.branch) || "";
+      const seen = new Set();
+      const filtered = [];
+      for (const s of list) {
+        if (Number(s.semester) !== Number(academic.semester)) continue;
+        // Sem 5: CSE/AIDS/IT see shared AOA·CG·CD·OS + their electives
+        if (!subjectMatchesBranch(s, userBranch)) continue;
+        const key = subjectIdentityKey(s);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        filtered.push(s);
+      }
       if (filtered.length) return filtered.slice(0, 10);
     }
     if (recentSubjects.length) return recentSubjects;
     return list.slice(0, 8);
-  }, [academic.semester, catalogSubjects, recentSubjects]);
+  }, [academic.semester, academic.branch, catalogSubjects, recentSubjects, user?.branch]);
 
   const pendingUploads = uploads.filter(
     (n) => n.verificationStatus === "pending" || n.verificationStatus === "awaiting_team"

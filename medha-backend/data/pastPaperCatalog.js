@@ -326,8 +326,14 @@ const AIDS_SUBJECTS_BY_SEMESTER = {
 const SUPPORTED_BRANCHES = [
   { id: "CSE", label: "CSE" },
   { id: "AIDS", label: "AI / AIDS" },
+  { id: "IT", label: "IT" },
 ];
 
+/**
+ * Sem 5: CSE · AIDS · IT share CD, OS, CG, AOA.
+ * Electives differ — CSE/IT use ITC+WC; AIDS uses DMC+Blockchain.
+ * Other semesters: IT follows the CSE map until a dedicated IT scheme is seeded.
+ */
 function subjectsForSemester(semester, branch = "CSE") {
   const sem = Number(semester);
   const raw = String(branch || "CSE")

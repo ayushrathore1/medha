@@ -39,6 +39,8 @@ export default defineConfig({
       'src/tests/searchSplit.test.js',
       'src/tests/adminSplit.test.jsx',
       'src/utils/imageUtils.test.js',
+      'src/data/branchScope.test.js',
+      'src/hooks/useMergedSubjects.test.js',
     ],
     coverage: {
       provider: 'v8',
