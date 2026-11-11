@@ -19,6 +19,7 @@ import {
 import { trackSearchOpened } from "../lib/studyActivity";
 import { usePageSeo } from "../hooks/usePageSeo";
 import { searchResultsJsonLd } from "../lib/seo";
+import { subjectMatchesBranch } from "../data/branchScope";
 import "./DashboardHome.css";
 import "./RevisionSearch.css";
 
@@ -46,26 +47,6 @@ function hitPath(match) {
   if (!match?.subject) return "/subjects";
   if (match.unit) return `/subjects/${match.subject.slug}/${match.unit.slug}`;
   return `/subjects/${match.subject.slug}`;
-}
-
-function normalizeBranch(value) {
-  return String(value || "")
-    .trim()
-    .toUpperCase()
-    .replace(/\s+/g, " ");
-}
-
-function isCommonBranch(branch) {
-  const b = normalizeBranch(branch);
-  return !b || b === "COMMON" || b === "ALL" || b === "GENERAL" || b === "SHARED";
-}
-
-function subjectMatchesBranch(subject, branch) {
-  if (!branch) return true;
-  if (isCommonBranch(subject.branch)) return true;
-  const sb = normalizeBranch(subject.branch);
-  const ub = normalizeBranch(branch);
-  return sb === ub || sb.includes(ub) || ub.includes(sb);
 }
 
 function readStoredScope() {

@@ -1,8 +1,16 @@
+/**
+ * RTU Kota — B.Tech. III Year, V Semester.
+ * CSE · AIDS · IT share AOA, CG, CD, OS. The remaining two slots are branch electives:
+ * CSE/IT → ITC + Wireless Communication · AIDS → DMC + Blockchain.
+ */
+
 const RTU_SEM5_SUBJECTS = [
   {
     code: "5CS4-05",
     name: "Analysis of Algorithms",
     short: "AOA",
+    branch: "COMMON",
+    aliases: ["AOA", "Analysis of Algorithm"],
     units: [
       { unitNumber: 1, title: "Introduction", topics: ["Objective, scope and outcome of the course"] },
       {
@@ -79,6 +87,8 @@ const RTU_SEM5_SUBJECTS = [
     code: "5CS4-04",
     name: "Computer Graphics & Multimedia",
     short: "CGMM",
+    branch: "COMMON",
+    aliases: ["Computer Graphics and Multimedia", "Computer Graphics", "CG", "CGMM"],
     units: [
       { unitNumber: 1, title: "Introduction", topics: ["Objective, scope and outcome of the course"] },
       {
@@ -182,6 +192,8 @@ const RTU_SEM5_SUBJECTS = [
     code: "5CS4-03",
     name: "Operating System",
     short: "OS",
+    branch: "COMMON",
+    aliases: ["Operating Systems", "OS"],
     units: [
       { unitNumber: 1, title: "Introduction", topics: ["Objective, scope and outcome of the course"] },
       {
@@ -256,6 +268,8 @@ const RTU_SEM5_SUBJECTS = [
     code: "5CS4-02",
     name: "Compiler Design",
     short: "CD",
+    branch: "COMMON",
+    aliases: ["CD", "Compiler Designing"],
     units: [
       { unitNumber: 1, title: "Introduction", topics: ["Objective, scope and outcome of the course"] },
       {
@@ -342,6 +356,9 @@ const RTU_SEM5_SUBJECTS = [
     code: "5CS3-01",
     name: "Information Theory & Coding",
     short: "ITC",
+    branch: "CSE",
+    branches: ["CSE", "IT"],
+    aliases: ["Information Theory and Coding", "ITC"],
     units: [
       { unitNumber: 1, title: "Introduction", topics: ["Objective, scope and outcome of the course"] },
       {
@@ -409,6 +426,9 @@ const RTU_SEM5_SUBJECTS = [
     code: "5CS5-11",
     name: "Wireless Communication",
     short: "WC",
+    branch: "CSE",
+    branches: ["CSE", "IT"],
+    aliases: ["WC"],
     units: [
       { unitNumber: 1, title: "Introduction", topics: ["Objective, scope and outcome of the course"] },
       {
@@ -491,6 +511,80 @@ const RTU_SEM5_SUBJECTS = [
       },
     ],
   },
+  // AIDS Sem 5 electives (replace ITC + WC)
+  {
+    code: "5E1821",
+    name: "Data Mining Concepts and Techniques",
+    short: "DMC",
+    branch: "AIDS",
+    branches: ["AIDS", "AI", "CAI"],
+    aliases: ["Data Mining Concepts", "Data Mining", "DMC"],
+    units: [
+      { unitNumber: 1, title: "Introduction", topics: ["Objective, scope and outcome of the course"] },
+      {
+        unitNumber: 2,
+        title: "Data Mining Foundations",
+        topics: [
+          "Data mining process",
+          "Data cleaning and integration",
+          "Data warehousing overview",
+          "OLAP operations",
+        ],
+      },
+      {
+        unitNumber: 3,
+        title: "Frequent Patterns & Association",
+        topics: ["Market basket analysis", "Apriori algorithm", "FP-Growth", "Association rule evaluation"],
+      },
+      {
+        unitNumber: 4,
+        title: "Classification & Prediction",
+        topics: ["Decision trees", "Bayesian classification", "k-NN", "Model evaluation"],
+      },
+      {
+        unitNumber: 5,
+        title: "Clustering",
+        topics: ["k-Means", "Hierarchical clustering", "Density-based clustering", "Cluster evaluation"],
+      },
+    ],
+  },
+  {
+    code: "5E1826",
+    name: "Fundamentals of Blockchain",
+    short: "BC",
+    branch: "AIDS",
+    branches: ["AIDS", "AI", "CAI"],
+    aliases: ["Blockchain", "Fundamentals of Blockchain Technology", "BC"],
+    units: [
+      { unitNumber: 1, title: "Introduction", topics: ["Objective, scope and outcome of the course"] },
+      {
+        unitNumber: 2,
+        title: "Distributed Ledgers & Cryptography",
+        topics: ["Hash functions", "Digital signatures", "Merkle trees", "Consensus motivation"],
+      },
+      {
+        unitNumber: 3,
+        title: "Blockchain Architecture",
+        topics: ["Blocks and chains", "Proof of Work", "Proof of Stake", "Permissioned vs permissionless"],
+      },
+      {
+        unitNumber: 4,
+        title: "Smart Contracts & Applications",
+        topics: ["Smart contract basics", "Ethereum overview", "Use cases", "Limitations and challenges"],
+      },
+    ],
+  },
 ];
 
-module.exports = { RTU_SEM5_SUBJECTS };
+const RTU_SEM5_STATS = RTU_SEM5_SUBJECTS.reduce(
+  (acc, subject) => {
+    acc.subjects += 1;
+    acc.units += subject.units.length;
+    acc.topics += subject.units.reduce((n, unit) => n + unit.topics.length, 0);
+    return acc;
+  },
+  { subjects: 0, units: 0, topics: 0 }
+);
+
+module.exports = { RTU_SEM5_SUBJECTS, RTU_SEM5_STATS };
+

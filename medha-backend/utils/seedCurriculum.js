@@ -102,7 +102,8 @@ function collectRtuSem5() {
     code: s.code,
     short: s.short || "",
     scheme: "rtu",
-    branch: "CSE",
+    // COMMON cores (AOA/CG/CD/OS) visible to CSE · AIDS · IT via branchScope
+    branch: s.branch || "CSE",
     course: "B.Tech",
     units: buildUnits(s.units || []),
     active: true,

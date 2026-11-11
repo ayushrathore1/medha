@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchCurriculumTree } from "../api/curriculum";
 import { SUBJECTS, slugify } from "../data/subjectCatalog";
+import { isCommonBranch, isSem5SharedCore, normalizeName } from "../data/branchScope";
 
 const PALETTE = [
   { bg: "#DCEFE0", accent: "#3F8F4C", ink: "#1F4D28" },
@@ -37,6 +38,8 @@ export function mapCurriculumSubject(subject, index = 0) {
     scheme: subject.scheme || "rtu",
     course: subject.course || "B.Tech",
     branch: subject.branch || "CSE",
+    branches: subject.branches || undefined,
+    aliases: subject.aliases || undefined,
     color: PALETTE[index % PALETTE.length],
     units,
     topicCount: units.reduce((n, u) => n + u.topicCount, 0),
@@ -45,12 +48,42 @@ export function mapCurriculumSubject(subject, index = 0) {
   };
 }
 
-function subjectKey(subject) {
-  return [
-    subject.semester || "",
-    String(subject.branch || "CSE").trim().toUpperCase(),
-    String(subject.name || "").trim().toLowerCase(),
-  ].join("|");
+/**
+ * One row per syllabus subject (semester + code/name).
+ * Do NOT key by branch — Sem 5 cores were duplicated as CSE + COMMON.
+ */
+export function subjectIdentityKey(subject) {
+  const sem = subject?.semester ?? "";
+  const code = String(subject?.code || "").trim().toUpperCase();
+  if (code) return `${sem}|code:${code}`;
+  return `${sem}|name:${normalizeName(subject?.name)}`;
+}
+
+function topicScore(subject) {
+  return (subject?.units || []).reduce(
+    (n, u) => n + ((u.topics || []).length || Number(u.topicCount) || 0),
+    0
+  );
+}
+
+function mergeBranchMeta(prev = {}, next = {}) {
+  const branchList = [
+    ...new Set(
+      [...(prev.branches || []), ...(next.branches || []), prev.branch, next.branch]
+        .map((b) => String(b || "").trim().toUpperCase())
+        .filter(Boolean)
+    ),
+  ];
+  const preferCommon =
+    isCommonBranch(prev.branch) ||
+    isCommonBranch(next.branch) ||
+    isSem5SharedCore(prev) ||
+    isSem5SharedCore(next);
+  return {
+    branch: preferCommon ? "COMMON" : next.branch || prev.branch || "CSE",
+    branches: branchList.length ? branchList : undefined,
+    aliases: [...new Set([...(prev.aliases || []), ...(next.aliases || [])].filter(Boolean))],
+  };
 }
 
 function mergeSubjects(staticList, curriculumList) {
@@ -61,16 +94,16 @@ function mergeSubjects(staticList, curriculumList) {
   for (const subject of staticList || []) {
     const nameSlug = slugify(subject.name);
     const codeSlug = slugify(`${subject.name}-${subject.code || ""}`);
-    byKey.set(subjectKey(subject), {
+    byKey.set(subjectIdentityKey(subject), {
       ...subject,
       slugAliases: [...new Set([subject.slug, nameSlug, codeSlug].filter(Boolean))],
     });
   }
 
-  // Curriculum overrides matching semester + branch + name, but keep catalog short
-  // codes (OS, DSA, AOA…) when the API only has a course code.
+  // Curriculum enriches matching semester+code (or name). Preserve static branch scope
+  // so CSE/IT electives and Sem 5 commons stay visible after API merge.
   for (const subject of mapped) {
-    const key = subjectKey(subject);
+    const key = subjectIdentityKey(subject);
     const prev = byKey.get(key);
     const curriculumShort = String(subject.short || "").trim();
     const prevShort = String(prev?.short || "").trim();
@@ -79,15 +112,26 @@ function mergeSubjects(staticList, curriculumList) {
       curriculumShort === String(subject.code || "").trim() ||
       /^\d/.test(curriculumShort) ||
       (/\d/.test(curriculumShort) && curriculumShort.includes("-"));
+
+    const preferCurriculumUnits = !prev || topicScore(subject) >= topicScore(prev);
+    const branchMeta = mergeBranchMeta(prev || {}, subject);
+
     byKey.set(key, {
       ...prev,
       ...subject,
+      ...branchMeta,
       slug: prev?.slug || subject.slug,
       slugAliases: [
-        ...new Set([...(prev?.slugAliases || []), ...(subject.slugAliases || []), prev?.slug, subject.slug].filter(Boolean)),
+        ...new Set(
+          [...(prev?.slugAliases || []), ...(subject.slugAliases || []), prev?.slug, subject.slug].filter(Boolean)
+        ),
       ],
       short: shortLooksLikeCode && prevShort ? prevShort : curriculumShort || prevShort || subject.code,
       color: prev?.color || subject.color,
+      units: preferCurriculumUnits ? subject.units : prev.units,
+      topicCount: preferCurriculumUnits ? subject.topicCount : prev.topicCount,
+      unitCount: preferCurriculumUnits ? subject.unitCount : prev.unitCount,
+      fromCurriculum: Boolean(prev?.fromCurriculum || subject.fromCurriculum),
     });
   }
 

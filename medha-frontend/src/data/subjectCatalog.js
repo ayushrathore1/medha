@@ -151,6 +151,8 @@ function buildSubject(name, units, index, extra = {}) {
     scheme: extra.scheme || "rtu",
     course: extra.course || "B.Tech",
     branch: extra.branch || "CSE",
+    branches: extra.branches || undefined,
+    aliases: extra.aliases || undefined,
     color: palette,
     units: decorated,
     topicCount: decorated.reduce((sum, unit) => sum + unit.topicCount, 0),
@@ -158,13 +160,26 @@ function buildSubject(name, units, index, extra = {}) {
   };
 }
 
+const SEM5_BY_NAME = Object.fromEntries(RTU_SEM5_SUBJECTS.map((s) => [s.name, s]));
+
 const fromSyllabus = Object.entries(SYLLABUS_DATA).map(([name, units], i) =>
   buildSubject(name, units, i, { scheme: "rtu" })
 );
 
 const extraSubjects = Object.entries(EXTRA_UNITS)
   .filter(([name]) => !SYLLABUS_DATA[name])
-  .map(([name, units], i) => buildSubject(name, units, fromSyllabus.length + i, { scheme: "rtu" }));
+  .map(([name, units], i) => {
+    const sem5 = SEM5_BY_NAME[name];
+    return buildSubject(name, units, fromSyllabus.length + i, {
+      scheme: "rtu",
+      short: sem5?.short,
+      semester: sem5 ? 5 : undefined,
+      code: sem5?.code,
+      branch: sem5?.branch || "CSE",
+      branches: sem5?.branches,
+      aliases: sem5?.aliases,
+    });
+  });
 
 const aryaSubjects = ARYA_SEM3_SUBJECTS.map((subject, i) =>
   buildSubject(subject.name, subject.units, fromSyllabus.length + extraSubjects.length + i, {
@@ -288,6 +303,21 @@ function parseSemesterValue(value) {
   return yearToSemester(raw) || "";
 }
 
+/** True when profile "year" is actually a semester ordinal ("5th", "Sem 5"), not I–IV. */
+function isSemesterStoredAsYear(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return false;
+  if (/^(I|II|III|IV)(\s*Year)?$/i.test(raw)) return false;
+  if (/^(first|second|third|fourth)(\s*year)?$/i.test(raw)) return false;
+  return Boolean(parseSemesterValue(raw));
+}
+
+/** Display year for a semester number: "I" … "IV". */
+export function academicYearFromSemester(sem) {
+  const label = yearLabel(sem); // "III Year"
+  return label ? label.replace(/\s*Year$/i, "").trim() : "";
+}
+
 export function getAcademicContext(user) {
   // Guests: never invent a personal semester/branch from stale localStorage.
   // "Mine" and profile banners require a logged-in account.
@@ -316,13 +346,16 @@ export function getAcademicContext(user) {
   const option = getUniversityOption(stored);
   const university = String(user?.university || "").trim() || selected;
   const branch = String(user?.branch || "").trim() || (option ? "CSE" : "");
-  // Profile UI persists semester into User.year ("5th"); keep that as display year/sem source
-  const year = String(user?.year || user?.semester || "").trim() || option?.year || "";
+  // Profile UI historically wrote semester into User.year ("5th").
   const semester =
     parseSemesterValue(user?.semester) ||
     parseSemesterValue(user?.year) ||
     option?.semester ||
     "";
+  const rawYear = String(user?.year || "").trim();
+  const year = !rawYear || isSemesterStoredAsYear(rawYear)
+    ? academicYearFromSemester(semester) || option?.year || ""
+    : rawYear;
   return {
     university,
     storedKey: stored,

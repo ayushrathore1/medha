@@ -8,8 +8,32 @@ import {
   semesterLabel,
   subjectMatchesQuery,
 } from "../data/subjectCatalog";
-import { useMergedSubjects } from "../hooks/useMergedSubjects";
+import { subjectIdentityKey, useMergedSubjects } from "../hooks/useMergedSubjects";
 import { usePageSeo } from "../hooks/usePageSeo";
+import {
+  isCommonBranch,
+  isSem5SharedCore,
+  normalizeBranch,
+  subjectMatchesBranch,
+} from "../data/branchScope";
+
+/** Collapse any leftover semester+code duplicates (e.g. stale CSE + COMMON rows). */
+function dedupeSubjects(list) {
+  const map = new Map();
+  for (const subject of list || []) {
+    const key = subjectIdentityKey(subject);
+    const prev = map.get(key);
+    if (!prev) {
+      map.set(key, subject);
+      continue;
+    }
+    const score = (s) =>
+      Number(s.topicCount) ||
+      (s.units || []).reduce((n, u) => n + ((u.topics || []).length || 0), 0);
+    map.set(key, score(subject) >= score(prev) ? subject : prev);
+  }
+  return [...map.values()];
+}
 
 const ACCENTS = ["#1BA34A", "#FF8A1A", "#2563EB", "#E30613", "#7C3AED", "#0D9488", "#F59E0B", "#DB2777"];
 
@@ -22,31 +46,13 @@ function updateParams(params, setParams, patch) {
   setParams(next, { replace: true });
 }
 
-function normalizeBranch(value) {
-  return String(value || "")
-    .trim()
-    .toUpperCase()
-    .replace(/\s+/g, " ");
-}
-
-/** Shared / missing branch counts for every branch in that semester. */
-function isCommonBranch(branch) {
-  const b = normalizeBranch(branch);
-  return !b || b === "COMMON" || b === "ALL" || b === "GENERAL" || b === "SHARED";
-}
-
-function subjectMatchesBranch(subject, branch) {
-  if (!branch) return true;
-  if (isCommonBranch(subject.branch)) return true;
-  const sb = normalizeBranch(subject.branch);
-  const ub = normalizeBranch(branch);
-  return sb === ub || sb.includes(ub) || ub.includes(sb);
-}
-
 function groupByBranch(list, preferredBranch = "") {
   const map = new Map();
   for (const subject of list) {
-    const key = isCommonBranch(subject.branch) ? "Common" : normalizeBranch(subject.branch);
+    const key =
+      isCommonBranch(subject.branch) || isSem5SharedCore(subject)
+        ? "Common"
+        : normalizeBranch(subject.branch);
     if (!map.has(key)) map.set(key, []);
     map.get(key).push(subject);
   }
@@ -148,35 +154,38 @@ export default function Subjects() {
 
   const mine = useMemo(() => {
     if (!profileSem) return [];
-    return matched.filter(
-      (subject) =>
-        String(subject.semester) === profileSem && subjectMatchesBranch(subject, profileBranch)
+    return dedupeSubjects(
+      matched.filter(
+        (subject) =>
+          String(subject.semester) === profileSem && subjectMatchesBranch(subject, profileBranch)
+      )
     );
   }, [matched, profileSem, profileBranch]);
 
   const other = useMemo(() => {
-    if (!profileSem) return matched;
-    return matched.filter(
-      (subject) =>
-        !(
-          String(subject.semester) === profileSem &&
-          subjectMatchesBranch(subject, profileBranch)
-        )
+    if (!profileSem) return dedupeSubjects(matched);
+    return dedupeSubjects(
+      matched.filter(
+        (subject) =>
+          !(
+            String(subject.semester) === profileSem &&
+            subjectMatchesBranch(subject, profileBranch)
+          )
+      )
     );
   }, [matched, profileSem, profileBranch]);
 
   const filtered = useMemo(() => {
-    if (semester === "all") return matched;
-    return matched.filter((subject) => String(subject.semester) === semester);
+    if (semester === "all") return dedupeSubjects(matched);
+    return dedupeSubjects(matched.filter((subject) => String(subject.semester) === semester));
   }, [matched, semester]);
 
   const bannerLine = [academic.course, academic.branch].filter(Boolean).join(" · ");
-  const bannerSub =
-    academic.year && academic.semester
+  const bannerSub = academic.semester
+    ? academic.year
       ? `Year ${academic.year} · Sem ${semesterLabel(academic.semester)}`
-      : academic.semester
-        ? `Sem ${semesterLabel(academic.semester)}`
-        : "Set year & branch on your profile";
+      : `Sem ${semesterLabel(academic.semester)}`
+    : "Set year & branch on your profile";
 
   const viewingMine = semester !== "all" && profileSem && semester === profileSem;
   const showAllSplit = semester === "all";

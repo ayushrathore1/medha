@@ -10,6 +10,7 @@ import { requestNoteDownload } from "../components/Revision/noteDownload";
 import InAppPdfViewer from "../components/Common/InAppPdfViewer";
 import DeskFilterSelect from "../components/Revision/DeskFilterSelect";
 import { SUBJECTS } from "../data/subjectCatalog";
+import { findCatalogSubject, subjectMatchesBranch } from "../data/branchScope";
 import { trackNoteOpened } from "../lib/studyActivity";
 import { useMergedSubjects } from "../hooks/useMergedSubjects";
 import { API_BASE } from "../config/api";
@@ -104,7 +105,20 @@ export default function NotesHub() {
   const catalog = mergedSubjects.length ? mergedSubjects : SUBJECTS;
 
   const scope = params.get("scope") === "mine" ? "mine" : "campus";
-  const rawBranch = (params.get("branch") || "CSE").toUpperCase();
+  const profileBranch = String(user?.branch || "")
+    .trim()
+    .toUpperCase();
+  const defaultBranch =
+    profileBranch === "AIDS" ||
+    profileBranch === "AI" ||
+    profileBranch === "IT" ||
+    profileBranch === "CSE" ||
+    profileBranch === "ECE"
+      ? profileBranch === "AI"
+        ? "AIDS"
+        : profileBranch
+      : "CSE";
+  const rawBranch = (params.get("branch") || defaultBranch).toUpperCase();
   const branch = rawBranch === "ALL" ? "all" : rawBranch;
   const sem = params.get("sem") || "all";
   const subjectFilter = params.get("subject") || "all";
@@ -128,7 +142,8 @@ export default function NotesHub() {
   const subjectsForBranch = useMemo(() => {
     let list = catalog;
     if (branch !== "all") {
-      list = list.filter((s) => String(s.branch || "CSE").toUpperCase() === branch);
+      // Sem 5 cores (AOA/CG/CD/OS) stay visible for CSE · AIDS · IT
+      list = list.filter((s) => subjectMatchesBranch(s, branch));
     }
     if (sem !== "all") {
       list = list.filter((s) => String(s.semester) === String(sem));
@@ -191,8 +206,9 @@ export default function NotesHub() {
         if (subjectFilter !== "all" && noteSubject(note) !== subjectFilter) return false;
         if (branch !== "all") {
           const name = noteSubject(note);
-          const hit = catalog.find((s) => s.name === name);
-          if (hit && String(hit.branch || "CSE").toUpperCase() !== branch) return false;
+          const hit = findCatalogSubject(catalog, name);
+          // Shared Sem 5 notes (AOA/CG/CD/OS) stay visible for CSE · AIDS · IT
+          if (hit && !subjectMatchesBranch(hit, branch)) return false;
         }
       }
       if (q && scope === "mine") {
