@@ -3,14 +3,15 @@ import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../../AuthContext";
 import { useTour } from "../../context/TourContext";
 import { loginPath } from "../Revision/revisionUtils";
-import { canAccessPlatform, IS_COMING_SOON_MODE } from "../../config/appMode";
 import { hasSession } from "../../config/access";
+import { usePlatformAccess } from "../../hooks/usePlatformAccess";
 
 /** Requires a signed-in session (token + user). */
 export default function RequireAuth({ children }) {
   const { user, logout } = useContext(AuthContext);
   const { isTourActive } = useTour();
   const location = useLocation();
+  const { comingSoon, canAccess } = usePlatformAccess(user);
   const authenticated = hasSession(user);
 
   if (!authenticated && !isTourActive) {
@@ -19,7 +20,7 @@ export default function RequireAuth({ children }) {
     return <Navigate to={loginPath(next)} replace />;
   }
 
-  if (IS_COMING_SOON_MODE && user && !canAccessPlatform(user)) {
+  if (comingSoon && user && !canAccess) {
     return <Navigate to="/inside" replace />;
   }
 

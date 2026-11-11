@@ -2,11 +2,33 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import SubjectFan from "./SubjectFan";
+import { isComingSoonMode } from "../config/appMode";
+import { PLATFORM_LAUNCH_DISPLAY } from "../config/launch";
 
 const HeroSection = () => {
+  const preLaunch = isComingSoonMode();
+
   return (
     <section className="wama-hero">
       <div className="wama-hero-copy">
+        {preLaunch ? (
+          <motion.p
+            className="wama-hero-kicker"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55 }}
+            style={{
+              margin: "0 0 14px",
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: "#1BA34A",
+            }}
+          >
+            Generally available {PLATFORM_LAUNCH_DISPLAY}
+          </motion.p>
+        ) : null}
         <motion.h1
           initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
@@ -20,8 +42,9 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.12 }}
         >
-          With the syllabus in front of everything, Medha cuts the friction,
-          saves time and leaves space for you to actually study.
+          {preLaunch
+            ? `Medha Revision opens to everyone on ${PLATFORM_LAUNCH_DISPLAY}. Until then the desk is team-only — the public site unlocks automatically at launch.`
+            : "With the syllabus in front of everything, Medha cuts the friction, saves time and leaves space for you to actually study."}
         </motion.p>
         <motion.div
           className="wama-hero-actions"
