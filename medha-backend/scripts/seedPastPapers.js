@@ -98,7 +98,9 @@ function collectSubjectDir(semPath, codeDir, folderSem, branch, found) {
       console.warn("Skip (no year):", file);
       continue;
     }
-    const semester = parseSemester(folderSem, file);
+    // Prefer curated `{N}sem/` folder over filename (older papers often
+    // carry a different exam semester than the current scheme slot).
+    const semester = folderSem || parseSemester(folderSem, file);
     const meta = resolveSubjectCode(codeDir, semester, branch);
     found.push({
       university: "RTU",
