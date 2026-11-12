@@ -12,7 +12,7 @@ const PastPaperSchema = new mongoose.Schema(
     branch: {
       type: String,
       required: true,
-      enum: ["CSE", "AIDS"],
+      enum: ["CSE", "AIDS", "IT", "ECE", "EE", "ME"],
       uppercase: true,
     },
     semester: {
