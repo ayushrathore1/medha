@@ -1016,6 +1016,7 @@ const SUPPORTED_BRANCHES = [
   { id: "AIDS", label: "AI / AIDS" },
   { id: "IT", label: "IT" },
   { id: "ECE", label: "ECE" },
+  { id: "EE", label: "EE" },
 ];
 
 function normalizeCatalogBranch(branch = "CSE") {
