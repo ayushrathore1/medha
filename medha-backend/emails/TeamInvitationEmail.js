@@ -57,14 +57,14 @@ function TeamInvitationEmail({ firstName, joinLink, alreadyMember = false }) {
       h(
         "a",
         {
-          href: `mailto:${links.authMail}`,
+          href: `mailto:${links.helloMail}`,
           style: {
             color: colors.ink,
             fontWeight: "600",
             textDecoration: "none",
           },
         },
-        links.authMail
+        links.helloMail
       )
     )
   );

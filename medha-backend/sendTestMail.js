@@ -1,27 +1,34 @@
 /**
  * Send a quick test email via Hostinger Mail API (sendEmail helper).
- * Run from medha-backend: node sendTestMail.js [to@email.com]
+ * Run from medha-backend:
+ *   node sendTestMail.js [to@email.com] [auth|hello|announcement]
  */
 
 require("dotenv").config();
 
-const { sendEmail } = require("./utils/sendEmail");
+const { sendEmail, MAILBOXES } = require("./utils/sendEmail");
 
 const TO = process.argv[2] || process.env.MAIL_TEST_TO || "rathoreayush512@gmail.com";
-const FROM = process.env.MAIL_FROM_ADDRESS || "medharevision@codelearnn.com";
+const MAILBOX = (process.argv[3] || process.env.MAIL_TEST_MAILBOX || "auth").toLowerCase();
 
 async function main() {
-  console.log(`From: ${FROM}`);
-  console.log(`To:   ${TO}`);
-  console.log(`API:  ${process.env.HOSTINGER_MAIL_API_BASE || "https://api.mail.hostinger.com"}`);
+  const box = MAILBOXES[MAILBOX];
+  if (!box) {
+    throw new Error(`Unknown mailbox "${MAILBOX}". Use auth, hello, or announcement.`);
+  }
+
+  console.log(`Mailbox: ${MAILBOX}`);
+  console.log(`From:    ${box.address}`);
+  console.log(`To:      ${TO}`);
+  console.log(`API:     ${process.env.HOSTINGER_MAIL_API_BASE || "https://api.mail.hostinger.com"}`);
 
   await sendEmail({
+    mailbox: MAILBOX,
     to: TO,
-    subject: "Medha Revision — Hostinger mail test",
+    subject: `Medha Revision — ${MAILBOX} mailbox test`,
     displayName: "Medha Revision",
-    html: `<p>Hostinger Mail API is working for <strong>${FROM}</strong>.</p>
-<p>Welcome, OTP, password-reset, and credentials emails use this path.</p>`,
-    text: `Hostinger Mail API is working for ${FROM}.`,
+    html: `<p>Hostinger Mail API is working for <strong>${box.address}</strong> (${MAILBOX}).</p>`,
+    text: `Hostinger Mail API is working for ${box.address} (${MAILBOX}).`,
   });
 
   console.log("✅ Test send completed");

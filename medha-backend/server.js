@@ -106,9 +106,19 @@ function startServer() {
 }
 
 // Always open Mongo in non-test runs (Hostinger require() path included).
-connectMongo().catch(() => {
-  // Error already logged; keep HTTP up so health checks still respond.
-});
+connectMongo()
+  .then(() => {
+    if (isTest) return;
+    try {
+      const { startGoLiveEmailScheduler } = require("./utils/goLiveEmailScheduler");
+      startGoLiveEmailScheduler();
+    } catch (err) {
+      console.warn("Go-live email scheduler not started:", err.message);
+    }
+  })
+  .catch(() => {
+    // Error already logged; keep HTTP up so health checks still respond.
+  });
 
 if (require.main === module) {
   startServer();

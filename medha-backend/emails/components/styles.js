@@ -28,7 +28,9 @@ const links = {
   unsubscribe: "https://medharevision.shopcampuskart.in/unsubscribe",
   forgotPassword: "https://medharevision.shopcampuskart.in/forgot-password",
   shop: "https://www.shopcampuskart.in",
-  authMail: "medharevision@codelearnn.com",
+  authMail: "auth@medharevision.shopcampuskart.in",
+  helloMail: "hello@medharevision.shopcampuskart.in",
+  announcementMail: "announcement@medharevision.shopcampuskart.in",
   supportMail: "support@shopcampuskart.in",
 };
 

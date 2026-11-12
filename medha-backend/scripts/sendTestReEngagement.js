@@ -52,6 +52,7 @@ async function main() {
 
   // Send it
   const info = await sendEmail({
+    mailbox: "announcement",
     to: user.email,
     subject: SUBJECT,
     html,

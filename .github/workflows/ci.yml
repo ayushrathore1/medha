@@ -29,7 +29,14 @@ env:
   GEMINI_API_KEY: ci-placeholder
   SERP_API_KEY: ci-placeholder
   HOSTINGER_MAIL_API_TOKEN: ci-placeholder
-  MAIL_FROM_ADDRESS: medharevision@codelearnn.com
+  MAIL_DEFAULT_MAILBOX: auth
+  MAIL_FROM_ADDRESS: auth@medharevision.shopcampuskart.in
+  MAIL_AUTH_ADDRESS: auth@medharevision.shopcampuskart.in
+  HOSTINGER_MAILBOX_AUTH_ID: ci-auth-mailbox
+  MAIL_HELLO_ADDRESS: hello@medharevision.shopcampuskart.in
+  HOSTINGER_MAILBOX_HELLO_ID: ci-hello-mailbox
+  MAIL_ANNOUNCEMENT_ADDRESS: announcement@medharevision.shopcampuskart.in
+  HOSTINGER_MAILBOX_ANNOUNCEMENT_ID: ci-announcement-mailbox
   MAIL_FROM_NAME: Medha Revision
   APP_BASE_URL: https://medharevision.shopcampuskart.in
 

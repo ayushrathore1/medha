@@ -33,6 +33,7 @@ async function sendWelcomeEmail(user) {
     React.createElement(WelcomeEmail, { name: user.name })
   );
   await sendEmail({
+    mailbox: "hello",
     to: user.email,
     subject: "Welcome to Medha Revision",
     html,
@@ -53,6 +54,7 @@ async function sendCredentialsEmail(user, password, { generated = false } = {}) 
     })
   );
   await sendEmail({
+    mailbox: "auth",
     to: user.email,
     subject: "Your Medha Revision login details",
     html,
@@ -107,7 +109,12 @@ router.post("/forgot-password", async (req, res) => {
       })
     );
 
-    await sendEmail({ to: user.email, subject: "Reset your Medha Revision password", html });
+    await sendEmail({
+      mailbox: "auth",
+      to: user.email,
+      subject: "Reset your Medha Revision password",
+      html,
+    });
 
     res
       .status(200)
@@ -211,10 +218,11 @@ router.post("/admin/trigger-reset", auth, adminAuth, async (req, res) => {
       })
     );
 
-    await sendEmail({ 
-      to: user.email, 
-      subject: "Reset your Medha Revision password", 
-      html 
+    await sendEmail({
+      mailbox: "auth",
+      to: user.email,
+      subject: "Reset your Medha Revision password",
+      html,
     });
 
     res.status(200).json({ 

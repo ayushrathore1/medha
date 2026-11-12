@@ -123,6 +123,7 @@ exports.sendAdminEmail = async (req, res) => {
             .replace(/{{name}}/g, user.name || "Student");
 
           await sendEmail({
+            mailbox: "announcement",
             to: user.email,
             subject: subject,
             html: personalizedBody,
@@ -311,6 +312,7 @@ exports.sendReEngagementEmail = async (req, res) => {
         );
 
         await sendEmail({
+          mailbox: "announcement",
           to: user.email,
           subject: SUBJECT,
           html,
@@ -509,6 +511,7 @@ async function sendTeamWelcomeEmail({ email, firstName, alreadyMember }) {
     })
   );
   await sendEmail({
+    mailbox: "hello",
     to: email,
     displayName: "Ayush Rathore | MEDHA",
     subject: "You're on the Medha Revision team — early access",

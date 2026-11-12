@@ -21,6 +21,7 @@ async function sendNotePipelineEmail({ to, name, title, variant, reason }) {
           : `Update on your Medha Revision upload`;
 
     await sendEmail({
+      mailbox: "hello",
       to,
       subject,
       html,
