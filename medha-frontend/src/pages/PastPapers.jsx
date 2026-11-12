@@ -97,6 +97,7 @@ export default function PastPapers() {
   const branches = meta?.branches || [
     { id: "CSE", label: "CSE" },
     { id: "AIDS", label: "AI / AIDS" },
+    { id: "IT", label: "IT" },
   ];
 
   const seoPath = useMemo(() => {
@@ -220,7 +221,7 @@ export default function PastPapers() {
           <p className="desk-eyebrow">RTU archive</p>
           <h1 className="desk-title">Past papers</h1>
           <p className="desk-sub">
-            CSE and AI / AIDS · semesters 1–8 · last five years. View hosted
+            CSE, AI / AIDS, and IT · semesters 1–8 · last five years. View hosted
             PDFs in Medha; empty slots show Soon until we seed them.
           </p>
         </header>

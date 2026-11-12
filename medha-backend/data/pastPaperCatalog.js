@@ -265,6 +265,26 @@ const SUBJECT_BY_CODE = {
     subjectName: "Internet of Things",
     subjectCode: "7CS4-01",
     slug: "iot",
+    semesters: [7, 8],
+  },
+
+  // IT-specific codes
+  POC: {
+    subjectName: "Principles of Communication",
+    subjectCode: "4IT4-04",
+    slug: "poc",
+    semesters: [4],
+  },
+  STPM: {
+    subjectName: "Software Testing and Project Management",
+    subjectCode: "5IT5-12",
+    slug: "stpm",
+    semesters: [5],
+  },
+  BDA: {
+    subjectName: "Big Data Analytics",
+    subjectCode: "7IT4-01",
+    slug: "bda",
     semesters: [7],
   },
 };
@@ -323,29 +343,73 @@ const AIDS_SUBJECTS_BY_SEMESTER = {
   ),
 };
 
+/** IT scheme from `medha pyq/IT/{N}sem/` folders. */
+const IT_SUBJECTS_BY_SEMESTER = {
+  1: CSE_SUBJECTS_BY_SEMESTER[1],
+  2: CSE_SUBJECTS_BY_SEMESTER[2],
+  3: mapSemesterSubjects(
+    ["AEM", "TC", "MEFA", "DE", "DSA", "OOPS", "SE"],
+    3
+  ),
+  4: mapSemesterSubjects(
+    ["DMS", "TC", "MEFA", "POC", "DBMS", "TOC", "DCCN"],
+    4
+  ),
+  5: mapSemesterSubjects(
+    ["CD", "OS", "CG", "AOA", "MP", "STPM", "WC"],
+    5
+  ),
+  6: mapSemesterSubjects(
+    ["DIP", "ML", "ISS", "CAO", "AI", "CC", "DS", "EERP", "ITC"],
+    6
+  ),
+  7: mapSemesterSubjects(["BDA"], 7),
+  8: mapSemesterSubjects(["IOT"], 8),
+};
+
+const BRANCH_SUBJECT_MAPS = {
+  CSE: CSE_SUBJECTS_BY_SEMESTER,
+  AIDS: AIDS_SUBJECTS_BY_SEMESTER,
+  IT: IT_SUBJECTS_BY_SEMESTER,
+};
+
+/** Local folder name under `medha pyq/` for each branch. */
+const BRANCH_PYQ_DIRS = {
+  CSE: "CS",
+  AIDS: "CS",
+  IT: "IT",
+  ECE: "ECE",
+  EE: "EE",
+  ME: "ME",
+};
+
 const SUPPORTED_BRANCHES = [
   { id: "CSE", label: "CSE" },
   { id: "AIDS", label: "AI / AIDS" },
   { id: "IT", label: "IT" },
 ];
 
-/**
- * Sem 5: CSE · AIDS · IT share CD, OS, CG, AOA.
- * Electives differ — CSE/IT use ITC+WC; AIDS uses DMC+Blockchain.
- * Other semesters: IT follows the CSE map until a dedicated IT scheme is seeded.
- */
-function subjectsForSemester(semester, branch = "CSE") {
-  const sem = Number(semester);
+function normalizeCatalogBranch(branch = "CSE") {
   const raw = String(branch || "CSE")
     .trim()
     .toUpperCase();
-  const isAids =
-    raw === "AIDS" || raw === "AI" || raw.includes("ARTIFICIAL");
-  const map = isAids ? AIDS_SUBJECTS_BY_SEMESTER : CSE_SUBJECTS_BY_SEMESTER;
+  if (raw === "AI" || raw === "AIDS" || raw.includes("ARTIFICIAL")) return "AIDS";
+  if (raw === "CSE" || raw === "CS" || raw.includes("COMPUTER")) return "CSE";
+  if (raw === "IT" || raw.includes("INFORMATION")) return "IT";
+  if (raw === "ECE" || raw.includes("ELECTRONIC")) return "ECE";
+  if (raw === "EE" || raw === "EX" || raw.includes("ELECTRICAL")) return "EE";
+  if (raw === "ME" || raw.includes("MECHANICAL")) return "ME";
+  return raw;
+}
+
+function subjectsForSemester(semester, branch = "CSE") {
+  const sem = Number(semester);
+  const key = normalizeCatalogBranch(branch);
+  const map = BRANCH_SUBJECT_MAPS[key] || CSE_SUBJECTS_BY_SEMESTER;
   return map[sem] || [];
 }
 
-function resolveSubjectCode(code, semester) {
+function resolveSubjectCode(code, semester, branch = "CSE") {
   const key = String(code || "")
     .trim()
     .toUpperCase();
@@ -364,7 +428,11 @@ module.exports = {
   SUBJECT_BY_CODE,
   CSE_SUBJECTS_BY_SEMESTER,
   AIDS_SUBJECTS_BY_SEMESTER,
+  IT_SUBJECTS_BY_SEMESTER,
+  BRANCH_SUBJECT_MAPS,
+  BRANCH_PYQ_DIRS,
   SUPPORTED_BRANCHES,
+  normalizeCatalogBranch,
   subjectsForSemester,
   resolveSubjectCode,
 };

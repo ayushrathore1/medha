@@ -1,19 +1,22 @@
 /**
  * Seed RTU past papers from the local `medha pyq` tree (already cleaned).
  *
- * Layout:
- *   ../medha pyq/3sem/DSA/btech-...-jan-2025.pdf
- *   ../medha pyq/1sem/EM/...
+ * Layout (preferred):
+ *   ../medha pyq/CS/3sem/DSA/….pdf
+ *   ../medha pyq/IT/5sem/STPM/….pdf
+ * Legacy (CSE first-year still at root):
+ *   ../medha pyq/1sem/EM/….pdf
  *
  * Usage:
- *   node scripts/seedPastPapers.js                         # dry-run
- *   node scripts/seedPastPapers.js --upload --mirror-aids  # Cloudinary + Mongo
- *   node scripts/seedPastPapers.js --upload --semesters=1,3,5
- *   node scripts/seedPastPapers.js --manifest
+ *   node scripts/seedPastPapers.js --branch=IT
+ *   node scripts/seedPastPapers.js --branch=IT --upload
+ *   node scripts/seedPastPapers.js --branch=CSE --upload --mirror-aids
+ *   node scripts/seedPastPapers.js --manifest --branch=IT
  *
  * Optional:
  *   --root "/path/to/medha pyq"
- *   --clean   (re-run Node cover/link clean — off by default; PDFs are ready)
+ *   --semesters=3,4,5
+ *   --clean
  */
 require("dotenv").config();
 const fs = require("fs");
@@ -23,15 +26,16 @@ const { cleanPyqPdf } = require("../utils/cleanPyqPdf");
 const { uploadToCloudinary } = require("../utils/cloudinaryUpload");
 const PastPaper = require("../models/PastPaper");
 const {
-  CSE_SUBJECTS_BY_SEMESTER,
+  BRANCH_PYQ_DIRS,
+  BRANCH_SUBJECT_MAPS,
   subjectsForSemester,
   resolveSubjectCode,
+  normalizeCatalogBranch,
   targetYears,
 } = require("../data/pastPaperCatalog");
 
-// Sibling of the medha repo: .../projects/medha pyq
 const DEFAULT_ROOT = path.resolve(__dirname, "../../../medha pyq");
-const CLEAN_ROOT = path.resolve(__dirname, "../../content/pyq/_cleaned/rtu/cse");
+const CLEAN_ROOT = path.resolve(__dirname, "../../content/pyq/_cleaned/rtu");
 
 function hasFlag(flag) {
   return process.argv.includes(flag);
@@ -54,7 +58,6 @@ function parseSemestersFlag() {
     .filter((n) => n >= 1 && n <= 8);
 }
 
-/** Extract exam year from RTU / pyqonline-style filenames. */
 function parseYearFromFilename(file) {
   const name = String(file).toLowerCase();
   const monthYear = name.match(
@@ -67,106 +70,95 @@ function parseYearFromFilename(file) {
   return any ? Number(any[1]) : null;
 }
 
-/** Prefer folder semester; override from `3-sem` / `3sem` in filename when present. */
 function parseSemester(folderSem, file) {
   const m = String(file).toLowerCase().match(/(?:^|[^0-9])([1-8])[-_]?sem/);
   if (m) return Number(m[1]);
   return folderSem;
 }
 
-function discoverFromMedhaPyq(root, semesterFilter) {
+function collectSubjectDir(semPath, codeDir, folderSem, branch, found) {
+  const subjectPath = path.join(semPath, codeDir);
+  if (!fs.statSync(subjectPath).isDirectory()) return;
+  if (codeDir.startsWith(".")) return;
+  if (/^syllabus$/i.test(codeDir)) return;
+
+  if (!resolveSubjectCode(codeDir, folderSem, branch)) {
+    console.warn(`Unknown subject folder ${branch}/${folderSem}sem/${codeDir} — skipping`);
+    return;
+  }
+
+  for (const file of fs.readdirSync(subjectPath)) {
+    if (!/\.pdf$/i.test(file)) continue;
+    if (/\(\d+\)\.pdf$/i.test(file)) {
+      console.warn("Skip duplicate copy:", file);
+      continue;
+    }
+    const year = parseYearFromFilename(file);
+    if (!year) {
+      console.warn("Skip (no year):", file);
+      continue;
+    }
+    const semester = parseSemester(folderSem, file);
+    const meta = resolveSubjectCode(codeDir, semester, branch);
+    found.push({
+      university: "RTU",
+      branch,
+      semester,
+      subjectName: meta.subjectName,
+      subjectCode: meta.subjectCode || "",
+      slug: meta.slug,
+      folderCode: meta.code,
+      year,
+      examType: /back/i.test(file) ? "back" : "main",
+      inputPath: path.join(subjectPath, file),
+      originalName: file,
+    });
+  }
+}
+
+function discoverBranchTree(root, branch, semesterFilter) {
   const found = [];
-  if (!fs.existsSync(root)) {
-    console.error("PYQ root not found:", root);
+  const dirName = BRANCH_PYQ_DIRS[branch] || branch;
+  const branchRoot = path.join(root, dirName);
+  if (!fs.existsSync(branchRoot)) {
+    console.error(`Branch PYQ folder not found: ${branchRoot}`);
     return found;
   }
 
-  for (const entry of fs.readdirSync(root)) {
+  for (const entry of fs.readdirSync(branchRoot)) {
     const semMatch = /^([1-8])sem$/i.exec(entry);
     if (!semMatch) continue;
     const folderSem = Number(semMatch[1]);
     if (semesterFilter && !semesterFilter.includes(folderSem)) continue;
 
-    const semPath = path.join(root, entry);
+    const semPath = path.join(branchRoot, entry);
     if (!fs.statSync(semPath).isDirectory()) continue;
 
-    const children = fs.readdirSync(semPath);
-
-    // Loose PDFs directly under Nsem/ (e.g. 7sem IoT)
-    const loosePdfs = children.filter((f) => /\.pdf$/i.test(f));
-    for (const file of loosePdfs) {
-      const year = parseYearFromFilename(file);
-      if (!year) {
-        console.warn("Skip (no year):", file);
-        continue;
-      }
-      const semester = parseSemester(folderSem, file);
-      const meta =
-        resolveSubjectCode("IOT") || {
-          code: "IOT",
-          subjectName: "Internet of Things",
-          subjectCode: "",
-          slug: "iot",
-        };
-      found.push({
-        university: "RTU",
-        branch: "CSE",
-        semester,
-        subjectName: meta.subjectName,
-        subjectCode: meta.subjectCode || "",
-        slug: meta.slug,
-        folderCode: meta.code || "IOT",
-        year,
-        examType: /back/i.test(file) ? "back" : "main",
-        inputPath: path.join(semPath, file),
-        originalName: file,
-      });
+    for (const codeDir of fs.readdirSync(semPath)) {
+      collectSubjectDir(semPath, codeDir, folderSem, branch, found);
     }
+  }
 
-    for (const codeDir of children) {
-      const subjectPath = path.join(semPath, codeDir);
-      if (!fs.statSync(subjectPath).isDirectory()) continue;
-      if (codeDir.startsWith(".")) continue;
-
-      if (!resolveSubjectCode(codeDir)) {
-        console.warn(`Unknown subject folder ${entry}/${codeDir} — skipping`);
-        continue;
-      }
-
-      for (const file of fs.readdirSync(subjectPath)) {
-        if (!/\.pdf$/i.test(file)) continue;
-        if (/\(\d+\)\.pdf$/i.test(file)) {
-          console.warn("Skip duplicate copy:", file);
-          continue;
-        }
-        const year = parseYearFromFilename(file);
-        if (!year) {
-          console.warn("Skip (no year):", file);
-          continue;
-        }
-        const semester = parseSemester(folderSem, file);
-        const meta = resolveSubjectCode(codeDir, semester);
-        found.push({
-          university: "RTU",
-          branch: "CSE",
-          semester,
-          subjectName: meta.subjectName,
-          subjectCode: meta.subjectCode || "",
-          slug: meta.slug,
-          folderCode: meta.code,
-          year,
-          examType: /back/i.test(file) ? "back" : "main",
-          inputPath: path.join(subjectPath, file),
-          originalName: file,
-        });
+  // First-year common papers still live at repo root for CSE/AIDS
+  if (branch === "CSE" || branch === "AIDS") {
+    for (const entry of ["1sem", "2sem"]) {
+      const folderSem = Number(entry[0]);
+      if (semesterFilter && !semesterFilter.includes(folderSem)) continue;
+      const semPath = path.join(root, entry);
+      if (!fs.existsSync(semPath) || !fs.statSync(semPath).isDirectory()) continue;
+      for (const codeDir of fs.readdirSync(semPath)) {
+        collectSubjectDir(semPath, codeDir, folderSem, branch, found);
       }
     }
   }
 
-  // Dedupe same subject+year+examType — keep newest mtime
+  return dedupePapers(found);
+}
+
+function dedupePapers(found) {
   const best = new Map();
   for (const p of found) {
-    const key = `${p.semester}|${p.subjectName}|${p.year}|${p.examType}`;
+    const key = `${p.branch}|${p.semester}|${p.subjectName}|${p.year}|${p.examType}`;
     const prev = best.get(key);
     if (!prev) {
       best.set(key, p);
@@ -184,24 +176,27 @@ function discoverFromMedhaPyq(root, semesterFilter) {
   );
 }
 
-function printManifest() {
+function printManifest(branch) {
   const years = targetYears(5);
-  console.log("Catalog subjects (folder codes) and example seed paths:\n");
-  for (const semester of [1, 3, 5, 7]) {
+  const dirName = BRANCH_PYQ_DIRS[branch] || branch;
+  console.log(`Catalog subjects for ${branch} (folder: medha pyq/${dirName}/):\n`);
+  const map = BRANCH_SUBJECT_MAPS[branch] || {};
+  for (const semester of Object.keys(map)
+    .map(Number)
+    .sort((a, b) => a - b)) {
     console.log(`## Semester ${semester}`);
-    for (const subject of subjectsForSemester(semester)) {
+    for (const subject of subjectsForSemester(semester, branch)) {
       console.log(
         `  [${subject.code}] ${subject.subjectName} (${subject.subjectCode || "—"})`
       );
       for (const year of years) {
         console.log(
-          `    medha pyq/${semester}sem/${subject.code}/…${year}….pdf`
+          `    medha pyq/${dirName}/${semester}sem/${subject.code}/…${year}….pdf`
         );
       }
     }
     console.log("");
   }
-  console.log("All semester keys:", Object.keys(CSE_SUBJECTS_BY_SEMESTER).join(", "));
 }
 
 async function upsertPaper(doc, { mirrorAids }) {
@@ -239,8 +234,9 @@ async function upsertPaper(doc, { mirrorAids }) {
 }
 
 async function main() {
+  const branch = normalizeCatalogBranch(argValue("--branch") || "CSE");
   if (hasFlag("--manifest")) {
-    printManifest();
+    printManifest(branch);
     return;
   }
 
@@ -249,9 +245,10 @@ async function main() {
   const mirrorAids = hasFlag("--mirror-aids");
   const doClean = hasFlag("--clean");
   const semesterFilter = parseSemestersFlag();
-  const papers = discoverFromMedhaPyq(root, semesterFilter);
+  const papers = discoverBranchTree(root, branch, semesterFilter);
 
   console.log(`Root: ${root}`);
+  console.log(`Branch: ${branch}`);
   console.log(`Found ${papers.length} PDF(s) ready to seed`);
   if (!papers.length) {
     console.log("Nothing to seed.");
@@ -269,7 +266,7 @@ async function main() {
 
   if (!doUpload) {
     console.log(
-      "\nDry-run only. Re-run with --upload --mirror-aids to push to Cloudinary + Mongo."
+      `\nDry-run only. Re-run with --branch=${branch} --upload to push to Cloudinary + Mongo.`
     );
     return;
   }
@@ -280,6 +277,7 @@ async function main() {
 
   let ok = 0;
   let fail = 0;
+  const branchSlug = String(branch).toLowerCase();
 
   for (const p of papers) {
     try {
@@ -287,6 +285,7 @@ async function main() {
       if (doClean) {
         const cleanedPath = path.join(
           CLEAN_ROOT,
+          branchSlug,
           `sem-${String(p.semester).padStart(2, "0")}`,
           p.slug,
           `${p.year}.pdf`
@@ -302,7 +301,7 @@ async function main() {
         uploadPath = cleanedPath;
       }
 
-      const folder = `pyq/rtu/cse/sem-${String(p.semester).padStart(2, "0")}/${p.slug}`;
+      const folder = `pyq/rtu/${branchSlug}/sem-${String(p.semester).padStart(2, "0")}/${p.slug}`;
       const uploaded = await uploadToCloudinary(
         uploadPath,
         `${p.slug}-${p.year}.pdf`,

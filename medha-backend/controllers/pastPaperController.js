@@ -1,22 +1,18 @@
 const PastPaper = require("../models/PastPaper");
 const axios = require("axios");
 const {
+  BRANCH_SUBJECT_MAPS,
   CSE_SUBJECTS_BY_SEMESTER,
-  AIDS_SUBJECTS_BY_SEMESTER,
   SUPPORTED_BRANCHES,
+  normalizeCatalogBranch,
   targetYears,
   subjectsForSemester,
 } = require("../data/pastPaperCatalog");
 const { signedPastPaperUrl } = require("../utils/pastPaperDelivery");
 
 function normalizeBranch(value) {
-  const raw = String(value || "")
-    .trim()
-    .toUpperCase();
-  if (!raw) return "";
-  if (raw === "AI" || raw === "AIDS" || raw.includes("ARTIFICIAL")) return "AIDS";
-  if (raw === "CSE" || raw.includes("COMPUTER")) return "CSE";
-  return raw;
+  if (!value) return "";
+  return normalizeCatalogBranch(value);
 }
 
 function publicPaper(doc) {
@@ -69,8 +65,7 @@ async function getMeta(req, res) {
       };
     }
 
-    const semesterMap =
-      branch === "AIDS" ? AIDS_SUBJECTS_BY_SEMESTER : CSE_SUBJECTS_BY_SEMESTER;
+    const semesterMap = BRANCH_SUBJECT_MAPS[branch] || CSE_SUBJECTS_BY_SEMESTER;
     const semesters = Object.keys(semesterMap)
       .map(Number)
       .sort((a, b) => a - b)
