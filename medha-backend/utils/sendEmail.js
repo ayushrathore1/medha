@@ -152,7 +152,15 @@ async function sendViaHostinger({
   }
 
   const body = await readJson(response);
-  const detail = body.error || body.code || `Hostinger send failed (${response.status})`;
+  const detail =
+    body.error ||
+    body.code ||
+    body.message ||
+    `Hostinger send failed (${response.status})`;
+  console.error(
+    `❌ Hostinger send ${response.status} for ${mailboxKey}/${mailboxId}:`,
+    JSON.stringify(body)
+  );
   throw new Error(detail);
 }
 

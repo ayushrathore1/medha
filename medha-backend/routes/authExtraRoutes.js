@@ -97,7 +97,7 @@ router.post("/forgot-password", async (req, res) => {
       { expiresIn: `${process.env.RESET_TOKEN_TTL_MIN || 30}m` }
     );
 
-    const resetUrl = `${process.env.APP_BASE_URL}/reset-password?token=${encodeURIComponent(jwtWrapper)}`;
+    const resetUrl = `${APP_BASE}/reset-password?token=${encodeURIComponent(jwtWrapper)}`;
 
     // Render React Email component to HTML
     const ttlMinutes = Number(process.env.RESET_TOKEN_TTL_MIN || 30);
@@ -109,12 +109,19 @@ router.post("/forgot-password", async (req, res) => {
       })
     );
 
-    await sendEmail({
-      mailbox: "auth",
-      to: user.email,
-      subject: "Reset your Medha Revision password",
-      html,
-    });
+    try {
+      await sendEmail({
+        mailbox: "auth",
+        to: user.email,
+        subject: "Reset your Medha Revision password",
+        html,
+      });
+    } catch (mailErr) {
+      console.error("❌ Forgot password mail failed:", mailErr.message || mailErr);
+      return res.status(503).json({
+        message: "Could not send the reset email right now. Please try again in a minute.",
+      });
+    }
 
     res
       .status(200)
@@ -206,7 +213,7 @@ router.post("/admin/trigger-reset", auth, adminAuth, async (req, res) => {
       { expiresIn: `${process.env.RESET_TOKEN_TTL_MIN || 30}m` }
     );
 
-    const resetUrl = `${process.env.APP_BASE_URL}/reset-password?token=${encodeURIComponent(jwtWrapper)}`;
+    const resetUrl = `${APP_BASE}/reset-password?token=${encodeURIComponent(jwtWrapper)}`;
 
     // Render React Email component to HTML (reuses same PasswordResetEmail component)
     const adminTtlMinutes = Number(process.env.RESET_TOKEN_TTL_MIN || 30);
@@ -218,12 +225,19 @@ router.post("/admin/trigger-reset", auth, adminAuth, async (req, res) => {
       })
     );
 
-    await sendEmail({
-      mailbox: "auth",
-      to: user.email,
-      subject: "Reset your Medha Revision password",
-      html,
-    });
+    try {
+      await sendEmail({
+        mailbox: "auth",
+        to: user.email,
+        subject: "Reset your Medha Revision password",
+        html,
+      });
+    } catch (mailErr) {
+      console.error("❌ Admin trigger reset mail failed:", mailErr.message || mailErr);
+      return res.status(503).json({
+        message: "Could not send the reset email right now. Please try again in a minute.",
+      });
+    }
 
     res.status(200).json({ 
       success: true,

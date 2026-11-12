@@ -138,16 +138,22 @@ router.post("/send-otp", async (req, res) => {
       React.createElement(OtpEmail, { code, type, expiryMinutes: OTP_EXPIRY_MINUTES })
     );
 
-    // Send email
-    await sendEmail({
-      mailbox: "auth",
-      to: normalizedEmail,
-      subject: type === "login"
-        ? "Your Medha Revision login code"
-        : "Verify your email — Medha Revision",
-      html,
-      displayName: "Medha Revision",
-    });
+    try {
+      await sendEmail({
+        mailbox: "auth",
+        to: normalizedEmail,
+        subject: type === "login"
+          ? "Your Medha Revision login code"
+          : "Verify your email — Medha Revision",
+        html,
+        displayName: "Medha Revision",
+      });
+    } catch (mailErr) {
+      console.error("❌ Send OTP mail failed:", mailErr.message || mailErr);
+      return res.status(503).json({
+        message: "Could not send the verification code right now. Please try again in a minute.",
+      });
+    }
 
     console.log(`✅ OTP sent to ${normalizedEmail} (type: ${type})`);
     res.json({ message: "Verification code sent to your email", expiresIn: OTP_EXPIRY_MINUTES * 60 });
