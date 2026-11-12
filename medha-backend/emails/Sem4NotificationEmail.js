@@ -628,7 +628,7 @@ function Sem4NotificationEmail({ name }) {
                           color: '#B0B0B0',
                           margin: '0 0 10px 0',
                         },
-                      }, 'medharevision@codelearnn.com'),
+                      }, 'announcement@medharevision.shopcampuskart.in'),
                       h(Text, {
                         style: {
                           fontSize: '11px',

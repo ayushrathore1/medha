@@ -68,7 +68,7 @@ export default function ForgotPassword() {
     <AuthShell
       kicker="Account recovery"
       titleLines={["Forgot it.", "Reset it."]}
-      subtitle="We'll email a reset link from medharevision@codelearnn.com. It expires in 30 minutes."
+      subtitle="We'll email a reset link from auth@medharevision.shopcampuskart.in. It expires in 30 minutes."
     >
       <motion.div
         className="auth-form-card"
@@ -128,7 +128,7 @@ export default function ForgotPassword() {
             }}
           >
             If that email is on Medha, the reset link is on its way from{" "}
-            <strong>medharevision@codelearnn.com</strong>. Check inbox and spam.
+            <strong>auth@medharevision.shopcampuskart.in</strong>. Check inbox and spam.
           </div>
         ) : (
           <form onSubmit={handleSubmit}>

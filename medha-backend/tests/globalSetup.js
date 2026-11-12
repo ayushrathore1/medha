@@ -29,7 +29,15 @@ module.exports = async () => {
   process.env.GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'ci-placeholder';
   process.env.SMTP_USER = process.env.SMTP_USER || 'ci@example.com';
   process.env.SMTP_PASS = process.env.SMTP_PASS || 'ci-placeholder';
-  process.env.MAIL_FROM_ADDRESS = process.env.MAIL_FROM_ADDRESS || 'medharevision@codelearnn.com';
+  process.env.MAIL_FROM_ADDRESS = process.env.MAIL_FROM_ADDRESS || 'auth@medharevision.shopcampuskart.in';
+  process.env.MAIL_AUTH_ADDRESS = process.env.MAIL_AUTH_ADDRESS || 'auth@medharevision.shopcampuskart.in';
+  process.env.MAIL_HELLO_ADDRESS = process.env.MAIL_HELLO_ADDRESS || 'hello@medharevision.shopcampuskart.in';
+  process.env.MAIL_ANNOUNCEMENT_ADDRESS =
+    process.env.MAIL_ANNOUNCEMENT_ADDRESS || 'announcement@medharevision.shopcampuskart.in';
+  process.env.HOSTINGER_MAILBOX_AUTH_ID = process.env.HOSTINGER_MAILBOX_AUTH_ID || 'ci-auth-mailbox';
+  process.env.HOSTINGER_MAILBOX_HELLO_ID = process.env.HOSTINGER_MAILBOX_HELLO_ID || 'ci-hello-mailbox';
+  process.env.HOSTINGER_MAILBOX_ANNOUNCEMENT_ID =
+    process.env.HOSTINGER_MAILBOX_ANNOUNCEMENT_ID || 'ci-announcement-mailbox';
   process.env.HOSTINGER_MAIL_API_TOKEN = process.env.HOSTINGER_MAIL_API_TOKEN || 'ci-placeholder';
   
   console.log(`✅ Test MongoDB running at: ${uri}\n`);

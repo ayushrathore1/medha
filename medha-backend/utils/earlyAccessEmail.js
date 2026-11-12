@@ -19,6 +19,7 @@ const sendEarlyAccessEmail = async (email, userName) => {
     );
 
     const mailOptions = {
+      mailbox: "announcement",
       to: email,
       subject,
       html,

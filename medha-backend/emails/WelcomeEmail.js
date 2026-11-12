@@ -97,7 +97,7 @@ function WelcomeEmail({ name }) {
 
     h(Text, { style: styles.note },
       "Need help? Write to ",
-      h("a", { href: `mailto:${links.authMail}`, style: { color: colors.ink, fontWeight: "600", textDecoration: "none" } }, links.authMail),
+      h("a", { href: `mailto:${links.helloMail}`, style: { color: colors.ink, fontWeight: "600", textDecoration: "none" } }, links.helloMail),
       "."
     )
   );

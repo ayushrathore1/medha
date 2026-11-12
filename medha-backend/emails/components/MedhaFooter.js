@@ -30,7 +30,7 @@ function MedhaFooter() {
         color: colors.faint,
       },
     },
-      h(Link, { href: `mailto:${links.authMail}`, style: { color: colors.ink, textDecoration: "none", fontWeight: "600" } }, links.authMail),
+      h(Link, { href: `mailto:${links.helloMail}`, style: { color: colors.ink, textDecoration: "none", fontWeight: "600" } }, links.helloMail),
       "  ·  ",
       h(Link, { href: links.shop, style: { color: colors.ink, textDecoration: "none", fontWeight: "600" } }, "www.shopcampuskart.in")
     ),

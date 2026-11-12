@@ -140,6 +140,7 @@ router.post("/send-otp", async (req, res) => {
 
     // Send email
     await sendEmail({
+      mailbox: "auth",
       to: normalizedEmail,
       subject: type === "login"
         ? "Your Medha Revision login code"

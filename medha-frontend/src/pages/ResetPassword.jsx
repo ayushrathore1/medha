@@ -80,7 +80,7 @@ export default function ResetPassword() {
     <AuthShell
       kicker="Account recovery"
       titleLines={["Set a new", "password."]}
-      subtitle="This link came from medharevision@codelearnn.com and only works once."
+      subtitle="This link came from auth@medharevision.shopcampuskart.in and only works once."
     >
       <motion.div
         className="auth-form-card"

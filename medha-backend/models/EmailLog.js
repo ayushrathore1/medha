@@ -10,16 +10,28 @@ const emailLogSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    campaignId: {
+      type: String,
+    },
+    status: {
+      type: String,
+      enum: ["pending", "running", "completed", "interrupted"],
+      default: "pending",
+    },
+    lockUntil: {
+      type: Date,
+      default: null,
+    },
     sentCount: {
       type: Number,
-      default: 0, // Number of times 'send action' was triggered for this content
+      default: 0,
     },
     totalRecipients: {
       type: Number,
-      default: 0, // Total number of individual users reached across all sends
+      default: 0,
     },
     recipients: {
-      type: [String], // Array of email addresses who received this email
+      type: [String],
       default: [],
     },
     lastSentAt: {
@@ -32,7 +44,7 @@ const emailLogSchema = new mongoose.Schema(
   }
 );
 
-// Index to quickly find duplicates by content
 emailLogSchema.index({ subject: 1, htmlBody: 1 });
+emailLogSchema.index({ campaignId: 1 }, { unique: true, sparse: true });
 
 module.exports = mongoose.model("EmailLog", emailLogSchema);

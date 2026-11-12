@@ -162,6 +162,7 @@ async function main() {
 
         // Send
         await sendEmail({
+          mailbox: "announcement",
           to: user.email,
           subject: SUBJECT,
           html: html,
