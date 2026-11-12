@@ -1017,6 +1017,7 @@ const SUPPORTED_BRANCHES = [
   { id: "IT", label: "IT" },
   { id: "ECE", label: "ECE" },
   { id: "EE", label: "EE" },
+  { id: "ME", label: "ME" },
 ];
 
 function normalizeCatalogBranch(branch = "CSE") {
