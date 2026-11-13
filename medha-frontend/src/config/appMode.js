@@ -1,4 +1,5 @@
 import { isPlatformGenerallyAvailable } from "./launch";
+import { needsAcademicProfile } from "../lib/academicProfile";
 
 /**
  * Production early-access mode.
@@ -34,6 +35,7 @@ export function canAccessPlatform(user, now = Date.now()) {
  * Team/admin or after GA → desk home.
  */
 export function getPostAuthHome(user, now = Date.now()) {
+  if (needsAcademicProfile(user)) return "/complete-profile";
   if (!isComingSoonMode(now)) return "/";
   if (isTeamUser(user)) return "/";
   return "/inside";
@@ -42,6 +44,12 @@ export function getPostAuthHome(user, now = Date.now()) {
 /** Resolve ?next= after auth; keep users on routes they’re allowed to open. */
 export function resolvePostAuthPath(user, nextParam, now = Date.now()) {
   const next = String(nextParam || "").trim();
+  if (needsAcademicProfile(user)) {
+    if (next.startsWith("/") && !next.startsWith("//") && next !== "/complete-profile") {
+      return `/complete-profile?next=${encodeURIComponent(next)}`;
+    }
+    return "/complete-profile";
+  }
   if (!next.startsWith("/") || next.startsWith("//")) {
     return getPostAuthHome(user, now);
   }

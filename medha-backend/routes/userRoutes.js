@@ -270,7 +270,11 @@ router.patch("/me", auth, async (req, res, next) => {
     const { name, college, university, year, semester, branch, gender, avatar, avatarIndex } = req.body;
     const updates = {};
     if (name !== undefined) updates.name = name;
-    if (college !== undefined) updates.college = college;
+    if (college !== undefined) {
+      updates.college = college;
+      // Keep university in sync when clients only send college (registration-style)
+      if (university === undefined) updates.university = college;
+    }
     if (university !== undefined) updates.university = university;
     // Profile UI stores semester in `year` ("5th"); accept either key
     const yearValue = year !== undefined ? year : semester;
