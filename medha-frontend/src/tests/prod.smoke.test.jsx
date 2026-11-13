@@ -12,6 +12,15 @@ vi.mock("framer-motion", async () => {
   };
 });
 
+// After PLATFORM_GA_AT, ComingSoon pages Navigate away. Keep smoke on pre-GA UI.
+vi.mock("../config/launch", async () => {
+  const actual = await vi.importActual("../config/launch");
+  return {
+    ...actual,
+    isPlatformGenerallyAvailable: () => false,
+  };
+});
+
 describe("Production smoke", () => {
   it(
     "renders the public coming-soon home",
