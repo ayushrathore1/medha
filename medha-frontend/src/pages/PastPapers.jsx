@@ -1,11 +1,15 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Download, Eye } from "lucide-react";
+import { AuthContext } from "../AuthContext";
 import RevisionShell from "../components/Revision/RevisionShell";
 import DeskFilterSelect from "../components/Revision/DeskFilterSelect";
 import InAppPdfViewer from "../components/Common/InAppPdfViewer";
-import { openPastPaperPdfBlob } from "../lib/pdfDelivery";
+import { pastPaperFileStreamUrl } from "../lib/pdfDelivery";
 import { trackPaperOpened } from "../lib/studyActivity";
+import { getAcademicContext } from "../data/subjectCatalog";
+import { loginPath } from "../components/Revision/revisionUtils";
+import { loadSharedPdfEngine } from "../lib/pdf-thumbnail-utils";
 import { apiUrl } from "../config/api";
 import { usePageSeo } from "../hooks/usePageSeo";
 import { learningResourceJsonLd } from "../lib/seo";
@@ -24,9 +28,28 @@ function paperKey(subjectName, year, examType = "main") {
 }
 
 export default function PastPapers() {
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
-  const branch = (params.get("branch") || "CSE").toUpperCase();
-  const semester = Number(params.get("sem") || 3);
+  const academic = useMemo(() => getAcademicContext(user), [user]);
+  const profileBranch = String(academic.branch || "")
+    .trim()
+    .toUpperCase();
+  const defaultBranch =
+    profileBranch === "AIDS" ||
+    profileBranch === "AI" ||
+    profileBranch === "IT" ||
+    profileBranch === "CSE" ||
+    profileBranch === "ECE" ||
+    profileBranch === "EE" ||
+    profileBranch === "ME"
+      ? profileBranch === "AI"
+        ? "AIDS"
+        : profileBranch
+      : "CSE";
+  const profileSem = Number(String(academic.semester || "").replace(/[^0-9]/g, "")) || 3;
+  const branch = (params.get("branch") || defaultBranch).toUpperCase();
+  const semester = Number(params.get("sem") || profileSem || 3);
   const subjectFilter = params.get("subject") || "";
   const yearFilter = params.get("year") || "";
 
@@ -38,6 +61,20 @@ export default function PastPapers() {
   const [openingId, setOpeningId] = useState(null);
   const [viewError, setViewError] = useState("");
   const deepLinkedPaperRef = useRef(null);
+
+  useEffect(() => {
+    loadSharedPdfEngine().catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (params.has("branch") || params.has("sem")) return;
+    if (!academic.hasContext) return;
+    const next = new URLSearchParams(params);
+    next.set("branch", defaultBranch);
+    next.set("sem", String(profileSem));
+    setParams(next, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- seed once from profile
+  }, [academic.hasContext, defaultBranch, profileSem]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -152,12 +189,13 @@ export default function PastPapers() {
   }, [yearFilter, subjects, loading]);
 
   const openPaperViewer = useCallback(
-    async (paper, { syncUrl = true } = {}) => {
+    (paper, { syncUrl = true } = {}) => {
       if (!paper?.id) return;
       setOpeningId(paper.id);
       setViewError("");
       try {
-        const data = await openPastPaperPdfBlob(paper.id);
+        // Stream URL — viewer opens immediately; EmbedPDF fetches in parallel.
+        const pdfUrl = pastPaperFileStreamUrl(paper.id);
         const sharePath = `/past-papers?branch=${encodeURIComponent(
           paper.branch || branch
         )}&sem=${paper.semester || semester}&subject=${encodeURIComponent(
@@ -165,9 +203,9 @@ export default function PastPapers() {
         )}&year=${encodeURIComponent(paper.year || "")}&paper=${paper.id}`;
         trackPaperOpened(paper, sharePath);
         setActivePDF({
-          pdfUrl: data.fileUrl,
+          pdfUrl,
           title: `${paper.subjectName} · ${paper.year}`,
-          revoke: data.revoke,
+          revoke: null,
           sharePath,
         });
         if (syncUrl) {
@@ -185,7 +223,30 @@ export default function PastPapers() {
         setOpeningId(null);
       }
     },
-    [branch, semester, subjectFilter, params, setParams]
+    [branch, semester, subjectFilter, yearFilter, params, setParams]
+  );
+
+  const requestDownload = useCallback(
+    (paper) => {
+      if (!paper?.id) return;
+      if (!user) {
+        navigate(
+          loginPath(
+            `/past-papers?branch=${encodeURIComponent(branch)}&sem=${semester}&paper=${paper.id}`
+          )
+        );
+        return;
+      }
+      const href = pastPaperFileStreamUrl(paper.id, { attachment: true });
+      const a = document.createElement("a");
+      a.href = href;
+      a.rel = "noopener";
+      a.download = `${String(paper.subjectName || "paper").replace(/[^\w.\- ]+/g, "_")}-${paper.year || ""}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    },
+    [user, navigate, branch, semester]
   );
 
   // Deep-link: /past-papers?paper=<id> opens that PDF in the viewer
@@ -200,21 +261,15 @@ export default function PastPapers() {
       return;
     }
     // Paper may be outside current semester filter — still open by id
-    (async () => {
-      try {
-        const data = await openPastPaperPdfBlob(paperId);
-        const sharePath = `/past-papers?paper=${paperId}`;
-        trackPaperOpened({ id: paperId, subjectName: "Past paper" }, sharePath);
-        setActivePDF({
-          pdfUrl: data.fileUrl,
-          title: "Past paper",
-          revoke: data.revoke,
-          sharePath,
-        });
-      } catch {
-        deepLinkedPaperRef.current = null;
-      }
-    })();
+    const pdfUrl = pastPaperFileStreamUrl(paperId);
+    const sharePath = `/past-papers?paper=${paperId}`;
+    trackPaperOpened({ id: paperId, subjectName: "Past paper" }, sharePath);
+    setActivePDF({
+      pdfUrl,
+      title: "Past paper",
+      revoke: null,
+      sharePath,
+    });
   }, [params, papers, loading, openPaperViewer]);
 
   return (
@@ -355,9 +410,6 @@ export default function PastPapers() {
                         paperKey(subject.subjectName, year, "main")
                       );
                       if (paper?.fileUrl || paper?.id) {
-                        const downloadHref = apiUrl(
-                          `/api/past-papers/${paper.id}/file?attachment=1`
-                        );
                         const isOpening = openingId === paper.id;
                         const yearActive = String(yearFilter) === String(year);
                         return (
@@ -383,13 +435,15 @@ export default function PastPapers() {
                                 <Eye size={14} aria-hidden="true" />
                                 {isOpening ? "Opening…" : "View paper"}
                               </button>
-                              <a
-                                className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[#111] bg-white px-3 text-[12px] font-semibold text-[#111] no-underline"
-                                href={downloadHref}
+                              <button
+                                type="button"
+                                className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-[#111] bg-white px-3 text-[12px] font-semibold text-[#111]"
+                                onClick={() => requestDownload(paper)}
+                                title={user ? "Download PDF" : "Sign in to download"}
                               >
                                 <Download size={14} aria-hidden="true" />
-                                Download
-                              </a>
+                                {user ? "Download" : "Sign in"}
+                              </button>
                             </div>
                           </div>
                         );
@@ -437,6 +491,7 @@ export default function PastPapers() {
         revokeOnClose={activePDF?.revoke}
         sharePath={activePDF?.sharePath}
         shareTitle={activePDF?.title}
+        showDownload={Boolean(user)}
       />
     </RevisionShell>
   );

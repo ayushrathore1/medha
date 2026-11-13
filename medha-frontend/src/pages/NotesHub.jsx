@@ -9,11 +9,12 @@ import { formatDate, loginPath } from "../components/Revision/revisionUtils";
 import { requestNoteDownload } from "../components/Revision/noteDownload";
 import InAppPdfViewer from "../components/Common/InAppPdfViewer";
 import DeskFilterSelect from "../components/Revision/DeskFilterSelect";
-import { SUBJECTS } from "../data/subjectCatalog";
+import { SUBJECTS, getAcademicContext } from "../data/subjectCatalog";
 import { findCatalogSubject, subjectMatchesBranch } from "../data/branchScope";
 import { trackNoteOpened } from "../lib/studyActivity";
 import { useMergedSubjects } from "../hooks/useMergedSubjects";
 import { API_BASE } from "../config/api";
+import { loadSharedPdfEngine } from "../lib/pdf-thumbnail-utils";
 import api from "../api/api";
 import "./DashboardHome.css";
 
@@ -105,7 +106,8 @@ export default function NotesHub() {
   const catalog = mergedSubjects.length ? mergedSubjects : SUBJECTS;
 
   const scope = params.get("scope") === "mine" ? "mine" : "campus";
-  const profileBranch = String(user?.branch || "")
+  const academic = useMemo(() => getAcademicContext(user), [user]);
+  const profileBranch = String(academic.branch || user?.branch || "")
     .trim()
     .toUpperCase();
   const defaultBranch =
@@ -118,9 +120,11 @@ export default function NotesHub() {
         ? "AIDS"
         : profileBranch
       : "CSE";
+  const profileSem = String(academic.semester || "").replace(/[^0-9]/g, "");
+  const defaultSem = profileSem || "all";
   const rawBranch = (params.get("branch") || defaultBranch).toUpperCase();
   const branch = rawBranch === "ALL" ? "all" : rawBranch;
-  const sem = params.get("sem") || "all";
+  const sem = params.get("sem") || defaultSem;
   const subjectFilter = params.get("subject") || "all";
   const type = params.get("type") || "all";
   const q = params.get("q") || "";
@@ -138,6 +142,22 @@ export default function NotesHub() {
   useEffect(() => {
     setSearchDraft(q);
   }, [q]);
+
+  // Warm PDFium so the first Open feels instant
+  useEffect(() => {
+    loadSharedPdfEngine().catch(() => {});
+  }, []);
+
+  // Seed profile branch/sem into the URL once when params are empty
+  useEffect(() => {
+    if (params.has("branch") || params.has("sem")) return;
+    if (!academic.hasContext) return;
+    const next = new URLSearchParams(params);
+    next.set("branch", defaultBranch);
+    if (defaultSem !== "all") next.set("sem", defaultSem);
+    setParams(next, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- seed once from profile
+  }, [academic.hasContext, defaultBranch, defaultSem]);
 
   const subjectsForBranch = useMemo(() => {
     let list = catalog;
@@ -230,14 +250,11 @@ export default function NotesHub() {
   const closeUpload = () => updateParams(params, setParams, { panel: "" });
 
   const openPdf = async (note) => {
-    if (!user) {
-      navigate(loginPath(`/note/${noteId(note)}`));
-      return;
-    }
     const id = noteId(note);
     trackNoteOpened(note);
     setOpeningId(id);
     try {
+      // Stream URL opens the viewer immediately (no full-blob wait).
       const data = await requestNoteDownload(id);
       if (data.fileUrl) {
         setActivePDF({
@@ -258,7 +275,7 @@ export default function NotesHub() {
 
   const downloadPdf = async (note) => {
     if (!user) {
-      navigate(loginPath(`/note/${noteId(note)}`));
+      navigate(loginPath(`/notes?scope=${scope}`));
       return;
     }
     const id = noteId(note);
@@ -544,6 +561,7 @@ export default function NotesHub() {
         revokeOnClose={activePDF?.revoke}
         sharePath={activePDF?.sharePath}
         shareTitle={activePDF?.title}
+        showDownload={Boolean(user)}
       />
     </RevisionShell>
   );

@@ -373,19 +373,7 @@ function PDFViewerFallbackShell({
           }
           zoomLevel={toZoomLevel(defaultZoom)}
           numPages={0}
-          searchControl={
-            <ToolbarTooltip label="Search text">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                aria-label="Search text"
-                disabled
-              >
-                <Search className="size-4" />
-              </Button>
-            </ToolbarTooltip>
-          }
+          searchControl={null}
           sidebarOpen={sidebarOpen}
           showDownload={showDownload}
           showRotateControls={showRotateControls}
@@ -997,8 +985,12 @@ function PDFViewerToolbar({
               </Button>
             </ToolbarTooltip>
           </div>
-          <Separator orientation="vertical" className="mx-1 h-4 self-center" />
-          {searchControl}
+          {searchControl ? (
+            <>
+              <Separator orientation="vertical" className="mx-1 h-4 self-center" />
+              {searchControl}
+            </>
+          ) : null}
           {toolbarActions ? (
             <>
               <Separator
@@ -2184,13 +2176,7 @@ function PDFViewerInner({
           downloadDisabled={downloadDisabled}
           isPreparingDownload={isPreparingDownload}
           numPages={numPages}
-          searchControl={
-            <PDFViewerSearchControl
-              key={documentId}
-              documentId={documentId}
-              controlsDisabled={controlsDisabled}
-            />
-          }
+          searchControl={null}
           sidebarOpen={sidebarOpen}
           showDownload={showDownload}
           showRotateControls={showRotateControls}

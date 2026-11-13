@@ -197,7 +197,24 @@ const LandingNavbar = () => {
       </nav>
 
       {!user ? (
-        <div className={`nav-mobile-overlay ${menuOpen ? "open" : ""}`}>
+        <div
+          className={`nav-mobile-overlay ${menuOpen ? "open" : ""}`}
+          role="dialog"
+          aria-modal={menuOpen}
+          aria-label="Navigation menu"
+        >
+          <div className="nav-mobile-overlay-top">
+            <span className="nav-mobile-overlay-label">Menu</span>
+            <button
+              type="button"
+              className="nav-mobile-close"
+              onClick={() => setMenuOpen(false)}
+              aria-label="Close menu"
+            >
+              <span aria-hidden="true" />
+              <span aria-hidden="true" />
+            </button>
+          </div>
           {guestMobileLinks.map((link) => (
             <Link
               key={link.to}

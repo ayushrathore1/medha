@@ -161,7 +161,7 @@ const InsideAppTree = () => {
             {/* AUTH desk */}
             <Route path="/dashboard" element={auth(<Dashboard />)} />
             <Route path="/notes" element={<NotesHub />} />
-            <Route path="/note/:noteId" element={auth(<NotePreview />)} />
+            <Route path="/note/:noteId" element={<NotePreview />} />
             <Route path="/upload" element={<Navigate to="/notes?panel=upload" replace />} />
             <Route path="/uploads" element={<Navigate to="/notes?scope=mine" replace />} />
             <Route path="/profile" element={auth(<Profile />)} />

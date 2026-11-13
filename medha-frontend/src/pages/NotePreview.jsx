@@ -6,6 +6,7 @@ import { formatDate, formatFileMeta, loginPath } from "../components/Revision/re
 import { requestNoteDownload } from "../components/Revision/noteDownload";
 import InAppPdfViewer from "../components/Common/InAppPdfViewer";
 import { trackNoteOpened } from "../lib/studyActivity";
+import { loadSharedPdfEngine } from "../lib/pdf-thumbnail-utils";
 import api from "../api/api";
 import "./NotePreview.css";
 
@@ -52,11 +53,11 @@ export default function NotePreview() {
     if (note) trackNoteOpened(note);
   }, [note]);
 
+  useEffect(() => {
+    loadSharedPdfEngine().catch(() => {});
+  }, []);
+
   const openInViewer = async () => {
-    if (!user) {
-      navigate(loginPath(`/note/${noteId}`));
-      return;
-    }
     setBusy(true);
     try {
       const data = await requestNoteDownload(noteId);
@@ -67,6 +68,28 @@ export default function NotePreview() {
         setViewerOpen(true);
         setNote((prev) => (prev ? { ...prev, downloadCount: data.downloadCount } : prev));
       }
+    } catch (err) {
+      console.warn(err);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const downloadNote = async () => {
+    if (!user) {
+      navigate(loginPath(`/note/${noteId}`));
+      return;
+    }
+    setBusy(true);
+    try {
+      const data = await requestNoteDownload(noteId, { attachment: true });
+      const a = document.createElement("a");
+      a.href = data.fileUrl;
+      a.download = `${String(note?.title || "notes").replace(/[^\w.\- ]+/g, "_")}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.setTimeout(() => data.revoke?.(), 60_000);
     } catch (err) {
       console.warn(err);
     } finally {
@@ -146,28 +169,23 @@ export default function NotePreview() {
 
             <div className="note-desk-actions">
               <button type="button" className="desk-solid-btn" onClick={openInViewer} disabled={busy}>
-                {busy ? "Opening…" : user ? (isPdf ? "View notes" : "Open file") : "Sign in to view"}
+                {busy ? "Opening…" : isPdf ? "View notes" : "Open file"}
               </button>
-              {previewUrl ? (
-                <a href={previewUrl} download className="desk-ghost-btn">
-                  Download
-                </a>
-              ) : null}
+              <button type="button" className="desk-ghost-btn" onClick={downloadNote} disabled={busy}>
+                {user ? "Download" : "Sign in to download"}
+              </button>
             </div>
 
             <section className="note-desk-preview" aria-label="Note preview">
               <div className="note-desk-empty">
                 <div className="note-desk-empty-mark">{fileKind}</div>
-                <p className="note-desk-empty-title">
-                  {user ? "Read in Medha" : "Sign in to open this paper"}
-                </p>
+                <p className="note-desk-empty-title">Read in Medha</p>
                 <p className="note-desk-empty-copy">
-                  {user
-                    ? "Opens in the built-in viewer — zoom, pages, and download without leaving the desk."
-                    : "Sign in to view. Aura goes to the student who uploaded it."}
+                  Opens in the built-in viewer — zoom, pages, and share without leaving the desk.
+                  {user ? "" : " Sign in to download a copy."}
                 </p>
                 <button type="button" className="desk-solid-btn" onClick={openInViewer} disabled={busy}>
-                  {busy ? "Opening…" : user ? (isPdf ? "View notes" : "Open file") : "Sign in to view"}
+                  {busy ? "Opening…" : isPdf ? "View notes" : "Open file"}
                 </button>
               </div>
             </section>
@@ -184,6 +202,7 @@ export default function NotePreview() {
               title={note.title}
               revokeOnClose={revokeUrl || undefined}
               sharePath={`/note/${noteId}`}
+              showDownload={Boolean(user)}
               shareTitle={note.title}
             />
           </>

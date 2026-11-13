@@ -1,26 +1,34 @@
 import api from "../../api/api";
 import { resolveFileUrl } from "./revisionUtils";
+import { noteFileStreamUrl } from "../../lib/pdfDelivery";
 
 /**
- * Fetch a note PDF for viewing/download.
- * Prefer same-origin blob via GET /notes/:id/file so viewers never hit
- * Cloudinary public CDN URLs that return 401 ACL.
+ * Open a note for viewing — prefer stream URL (near-instant) over full blob.
+ * Aura / download counts stay on explicit download (attachment) or POST /download.
  */
 export async function requestNoteDownload(noteId, { attachment = false } = {}) {
+  if (!attachment) {
+    return {
+      fileUrl: noteFileStreamUrl(noteId),
+      blobUrl: null,
+      revoke: () => {},
+    };
+  }
+
   let meta = {};
   try {
     const res = await api.post(`/notes/${noteId}/download`, null, {
-      params: attachment ? { attachment: 1 } : undefined,
+      params: { attachment: 1 },
     });
     meta = res.data || {};
   } catch {
-    /* stream endpoint also awards; continue */
+    /* stream endpoint may still work */
   }
 
   try {
     const fileRes = await api.get(`/notes/${noteId}/file`, {
       responseType: "blob",
-      params: attachment ? { attachment: 1 } : undefined,
+      params: { attachment: 1 },
     });
     const blob = fileRes.data;
     const type = blob?.type && blob.type !== "application/json" ? blob.type : "application/pdf";

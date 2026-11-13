@@ -26,6 +26,20 @@ async function loadNoteForViewer(noteId, userId) {
     err.status = 404;
     throw err;
   }
+
+  const isApprovedPublic =
+    note.isPublic === true && note.verificationStatus === "approved";
+
+  // Guests may only open approved public notes (view/share). Downloads stay auth-gated.
+  if (!userId) {
+    if (!isApprovedPublic) {
+      const err = new Error("Sign in to open this note.");
+      err.status = 401;
+      throw err;
+    }
+    return { note, isOwner: false };
+  }
+
   const isOwner = String(note.owner) === String(userId);
   if (!isOwner) {
     const viewer = await User.findById(userId).select("role isAdmin").lean();
@@ -33,8 +47,6 @@ async function loadNoteForViewer(noteId, userId) {
       viewer?.isAdmin === true ||
       viewer?.role === "admin" ||
       viewer?.role === "team";
-    const isApprovedPublic =
-      note.isPublic === true && note.verificationStatus === "approved";
     // Staff may open public notes awaiting review; private notes stay owner-only
     const staffCanReview =
       isStaff &&
@@ -724,12 +736,30 @@ exports.recordDownload = async (req, res) => {
 exports.streamNoteFile = async (req, res) => {
   try {
     const { noteId } = req.params;
-    const userId = req.user._id;
+    const attachment =
+      req.query.attachment === "1" || req.query.attachment === "true";
+
+    // Downloads require sign-in; inline viewing of approved public notes does not.
+    if (attachment && !req.userId && !req.user?._id) {
+      return res.status(401).json({ error: "Sign in to download notes." });
+    }
+
+    // Allow ?token= for in-app PDF viewers that cannot send Authorization headers.
+    if (!req.userId && req.query.token) {
+      try {
+        const jwt = require("jsonwebtoken");
+        const decoded = jwt.verify(String(req.query.token), process.env.JWT_SECRET);
+        req.userId = decoded.userId;
+        req.user = { _id: decoded.userId, id: decoded.userId, userId: decoded.userId };
+      } catch {
+        /* treat as guest */
+      }
+    }
+
+    const userId = req.userId || req.user?._id || null;
     const { note } = await loadNoteForViewer(noteId, userId);
     // Viewing via stream must not award aura — that stays on POST /download
 
-    const attachment =
-      req.query.attachment === "1" || req.query.attachment === "true";
     const fileUrl = signedNoteUrl(note, { attachment });
     if (!fileUrl) {
       return res.status(404).json({ error: "Note file missing or unavailable." });

@@ -152,7 +152,30 @@ async function downloadPaper(req, res) {
     }
 
     const attachment = req.query.attachment === "1" || req.query.attachment === "true";
-    const fileUrl = signedPastPaperUrl(paper, { attachment });
+    // Force download endpoint to require auth
+    const authHeader = req.header("Authorization") || "";
+    const queryToken = req.query.token || req.query.access_token;
+    let authed = false;
+    if (authHeader.startsWith("Bearer ") || queryToken) {
+      try {
+        const jwt = require("jsonwebtoken");
+        const raw = authHeader.startsWith("Bearer ")
+          ? authHeader.slice(7)
+          : String(queryToken);
+        jwt.verify(raw, process.env.JWT_SECRET);
+        authed = true;
+      } catch {
+        authed = false;
+      }
+    }
+    if (!authed) {
+      return res.status(401).json({
+        success: false,
+        message: "Sign in to download past papers.",
+      });
+    }
+
+    const fileUrl = signedPastPaperUrl(paper, { attachment: true });
     if (!fileUrl) {
       return res.status(404).json({ success: false, message: "Paper file missing" });
     }
@@ -188,6 +211,32 @@ async function streamPaperFile(req, res) {
     }
 
     const attachment = req.query.attachment === "1" || req.query.attachment === "true";
+
+    // Downloads require a signed-in session; inline view stays public.
+    if (attachment) {
+      const authHeader = req.header("Authorization") || "";
+      const queryToken = req.query.token || req.query.access_token;
+      let authed = false;
+      if (authHeader.startsWith("Bearer ") || queryToken) {
+        try {
+          const jwt = require("jsonwebtoken");
+          const raw = authHeader.startsWith("Bearer ")
+            ? authHeader.slice(7)
+            : String(queryToken);
+          jwt.verify(raw, process.env.JWT_SECRET);
+          authed = true;
+        } catch {
+          authed = false;
+        }
+      }
+      if (!authed) {
+        return res.status(401).json({
+          success: false,
+          message: "Sign in to download past papers.",
+        });
+      }
+    }
+
     const fileUrl = signedPastPaperUrl(paper, { attachment });
     if (!fileUrl) {
       return res.status(404).json({ success: false, message: "Paper file missing" });
