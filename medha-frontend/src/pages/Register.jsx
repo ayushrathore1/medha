@@ -6,6 +6,9 @@ import AuthShell from "../components/Auth/AuthShell";
 import { apiUrl } from "../config/api";
 import { getPostAuthHome } from "../config/appMode";
 import { usePageSeo } from "../hooks/usePageSeo";
+import GoogleContinueButton, {
+  AuthDivider,
+} from "../components/Auth/GoogleContinueButton";
 
 // ─── Password Strength ─────────────────────────────────────
 function getStrength(pw) {
@@ -475,6 +478,13 @@ const Register = () => {
                 <span style={{ color: "#1BA34A", fontWeight: 600 }}>Free</span>{" "}
                 forever. No credit card needed.
               </p>
+
+              {step === 1 && !verificationStep && (
+                <>
+                  <GoogleContinueButton label="Continue with Google" />
+                  <AuthDivider text="or sign up with email" />
+                </>
+              )}
 
               {/* Progress bar */}
               <div

@@ -6,6 +6,9 @@ import AuthShell from "../components/Auth/AuthShell";
 import { apiUrl } from "../config/api";
 import { resolvePostAuthPath } from "../config/appMode";
 import { usePageSeo } from "../hooks/usePageSeo";
+import GoogleContinueButton, {
+  AuthDivider,
+} from "../components/Auth/GoogleContinueButton";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -184,11 +187,14 @@ const Login = () => {
             fontSize: 15,
             color: "#5A5A5A",
             marginTop: 8,
-            marginBottom: 28,
+            marginBottom: 24,
           }}
         >
           Your exam prep is waiting.
         </p>
+
+        <GoogleContinueButton label="Continue with Google" />
+        <AuthDivider text="or continue with email" />
 
         <div
           style={{

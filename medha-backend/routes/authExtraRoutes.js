@@ -164,7 +164,18 @@ router.post("/reset-password", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
-    await User.updateOne({ _id: uid }, { $set: { password: hash } });
+    const userDoc = await User.findById(uid).select("+password googleId authProvider");
+    if (!userDoc) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+    userDoc.password = hash;
+    // Google-linked accounts become dual-method after setting a password
+    if (userDoc.googleId) {
+      userDoc.authProvider = "both";
+    } else if (!userDoc.authProvider || userDoc.authProvider === "google") {
+      userDoc.authProvider = "local";
+    }
+    await userDoc.save();
     await PasswordResetToken.updateOne(
       { _id: record._id },
       { $set: { used: true } }

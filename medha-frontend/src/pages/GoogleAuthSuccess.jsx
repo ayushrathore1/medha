@@ -2,7 +2,8 @@ import React, { useEffect, useContext, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import Loader from "../components/Common/Loader";
-import { getPostAuthHome } from "../config/appMode";
+import { resolvePostAuthPath } from "../config/appMode";
+import { needsAcademicProfile } from "../lib/academicProfile";
 
 const BACKEND_URL = String(import.meta.env.VITE_BACKEND_URL || "https://medharevisionapi.shopcampuskart.in").replace(/\/$/, "");
 
@@ -58,10 +59,15 @@ const GoogleAuthSuccess = () => {
           return;
         }
 
+        const user = {
+          ...data.user,
+          needsProfile:
+            data.user.needsProfile === true || needsAcademicProfile(data.user),
+        };
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        login(data.user);
-        navigate(getPostAuthHome(data.user), { replace: true });
+        localStorage.setItem("user", JSON.stringify(user));
+        login(user);
+        navigate(resolvePostAuthPath(user), { replace: true });
       } catch {
         fail("Something went wrong. Redirecting...");
       }

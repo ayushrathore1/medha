@@ -41,9 +41,13 @@ function publicAuthUser(user) {
     id: user._id,
     name: user.name,
     email: user.email,
-    university: user.university,
-    branch: user.branch,
-    gender: user.gender,
+    college: user.college || "",
+    university: user.university || "",
+    branch: user.branch || "",
+    year: user.year || "",
+    semester: user.year || "",
+    gender: user.gender || "",
+    authProvider: user.authProvider || "local",
     role,
     isAdmin: isStaff,
     streak: user.streak,
@@ -344,12 +348,17 @@ router.post("/register", async (req, res, next) => {
 
     let user = await User.findOne({ email }).select("+password");
     if (user) {
-      // If user exists via Google but has no password, let them add one
+      // Same email as Google account → one identity; add password + academic fields
       if (user.googleId && !user.password) {
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(password, salt);
         user.authProvider = "both";
         if (name) user.name = name;
+        user.college = collegeValue;
+        user.university = collegeValue;
+        user.branch = branchValue;
+        user.year = yearValue;
+        if (!user.emailVerified) user.emailVerified = emailVerified === true;
         await user.save();
 
         const payload = { userId: user._id, email: user.email };
@@ -358,12 +367,7 @@ router.post("/register", async (req, res, next) => {
         return res.status(200).json({
           message: "Password added to your Google account. You can now use both methods.",
           token,
-          user: {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            emailVerified: user.emailVerified || false,
-          },
+          user: publicAuthUser(user),
         });
       }
       return res.status(409).json({ message: "User already exists" });
@@ -438,9 +442,11 @@ router.post("/login", async (req, res, next) => {
     }
 
     if (!user.password) {
-      return res
-        .status(401)
-        .json({ message: "This account uses Google sign-in. Please click 'Continue with Google' to log in." });
+      return res.status(401).json({
+        code: "GOOGLE_OR_OTP",
+        message:
+          "This account was created with Google. Use Continue with Google, Login via OTP, or set a password with Forgot password.",
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -508,6 +514,7 @@ router.post("/change-password", auth, async (req, res, next) => {
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(newPassword, salt);
+    if (user.googleId) user.authProvider = "both";
     await user.save();
 
     res.json({ message: "Password changed successfully!" });
@@ -650,21 +657,26 @@ router.get("/google/callback", async (req, res) => {
       $or: [{ googleId }, { email: normalizedEmail }],
     }).select("+password");
 
+    let isNewGoogleUser = false;
     if (user) {
-      // ── Existing user ──
+      // Same email as an existing account → one Medha identity (link Google).
       if (!user.googleId) {
-        // User registered via email/password — link their Google account
         user.googleId = googleId;
         user.authProvider = user.password ? "both" : "google";
         user.emailVerified = true;
-        // Use Google avatar if user doesn't have one
         if (!user.avatar && profile.picture) {
           user.avatar = profile.picture;
         }
+      } else if (user.password && user.authProvider !== "both") {
+        user.authProvider = "both";
       }
-      // If user already has googleId, just log them in (no changes needed)
+      if (!user.emailVerified) user.emailVerified = true;
+      if (profile.name && (!user.name || user.name === normalizedEmail.split("@")[0])) {
+        user.name = profile.name;
+      }
     } else {
-      // ── Brand new user via Google ──
+      // Brand new Google signup — personalization collected on /complete-profile
+      isNewGoogleUser = true;
       user = new User({
         name: profile.name || normalizedEmail.split("@")[0],
         email: normalizedEmail,
@@ -674,7 +686,6 @@ router.get("/google/callback", async (req, res) => {
         avatar: profile.picture || "",
       });
 
-      // Send welcome email (fire-and-forget)
       sendWelcomeEmail(user).catch((err) => {
         console.error("Welcome email failed for Google user:", err.message);
       });
@@ -694,7 +705,16 @@ router.get("/google/callback", async (req, res) => {
     // 5. Generate JWT and a one-time code. Never put the JWT in the redirect URL.
     const payload = { userId: user._id, email: user.email };
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
-    const userPayload = { ...publicAuthUser(user), emailVerified: true };
+    const needsProfile =
+      isNewGoogleUser ||
+      !String(user.college || user.university || "").trim() ||
+      !String(user.branch || "").trim() ||
+      !String(user.year || "").trim();
+    const userPayload = {
+      ...publicAuthUser(user),
+      emailVerified: true,
+      needsProfile,
+    };
     const loginCode = await issueLoginCode({ token, user: userPayload });
 
     return redirectOAuth(res, "/auth/google/success", { code: loginCode });

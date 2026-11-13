@@ -5,6 +5,7 @@ import { useTour } from "../../context/TourContext";
 import { loginPath } from "../Revision/revisionUtils";
 import { hasSession } from "../../config/access";
 import { usePlatformAccess } from "../../hooks/usePlatformAccess";
+import { needsAcademicProfile } from "../../lib/academicProfile";
 
 /** Requires a signed-in session (token + user). */
 export default function RequireAuth({ children }) {
@@ -20,7 +21,25 @@ export default function RequireAuth({ children }) {
     return <Navigate to={loginPath(next)} replace />;
   }
 
-  if (comingSoon && user && !canAccess) {
+  if (
+    authenticated &&
+    needsAcademicProfile(user) &&
+    location.pathname !== "/complete-profile"
+  ) {
+    const next = `${location.pathname}${location.search || ""}`;
+    const q =
+      next && next !== "/complete-profile"
+        ? `?next=${encodeURIComponent(next)}`
+        : "";
+    return <Navigate to={`/complete-profile${q}`} replace />;
+  }
+
+  if (
+    comingSoon &&
+    user &&
+    !canAccess &&
+    location.pathname !== "/complete-profile"
+  ) {
     return <Navigate to="/inside" replace />;
   }
 

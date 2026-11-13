@@ -20,6 +20,7 @@ const Register = React.lazy(() => import("./pages/Register"));
 const ForgotPassword = React.lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = React.lazy(() => import("./pages/ResetPassword"));
 const GoogleAuthSuccess = React.lazy(() => import("./pages/GoogleAuthSuccess"));
+const CompleteProfile = React.lazy(() => import("./pages/CompleteProfile"));
 const Terms = React.lazy(() => import("./pages/Terms"));
 const Privacy = React.lazy(() => import("./pages/Privacy"));
 const EmailVerification = React.lazy(() => import("./pages/EmailVerification"));
@@ -90,6 +91,10 @@ const publicAuthRoutes = (
     <Route path="/forgot-password" element={guest(<ForgotPassword />)} />
     <Route path="/reset-password" element={withAuthTransition(<ResetPassword />)} />
     <Route path="/auth/google/success" element={withAuthTransition(<GoogleAuthSuccess />)} />
+    <Route
+      path="/complete-profile"
+      element={auth(withAuthTransition(<CompleteProfile />))}
+    />
     <Route path="/verify-email" element={withAuthTransition(<EmailVerification />)} />
     <Route path="/terms" element={withAuthTransition(<Terms />)} />
     <Route path="/privacy" element={withAuthTransition(<Privacy />)} />
