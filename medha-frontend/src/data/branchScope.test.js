@@ -54,6 +54,20 @@ describe("Sem 5 shared cores", () => {
     expect(subjectMatchesBranch(dmc, "IT")).toBe(false);
   });
 
+  it("shows ECE Sem 5 subjects to ECE only", () => {
+    const dsp = {
+      name: "Digital Signal Processing",
+      short: "DSP",
+      code: "5EC4-04",
+      semester: 5,
+      branch: "ECE",
+      branches: ["ECE"],
+    };
+    expect(subjectMatchesBranch(dsp, "ECE")).toBe(true);
+    expect(subjectMatchesBranch(dsp, "CSE")).toBe(false);
+    expect(subjectMatchesBranch(aoa, "ECE")).toBe(false);
+  });
+
   it("matches note subject aliases", () => {
     const catalog = [
       { ...aoa, aliases: ["AOA"] },

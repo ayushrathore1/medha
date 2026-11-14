@@ -1,0 +1,503 @@
+{
+  "branch": "Electronics and Communication Engineering",
+  "semester": 5,
+  "university": "Rajasthan Technical University (RTU), Kota",
+  "subjects": [
+    {
+      "subject_code": "5EC3-01",
+      "subject_name": "Computer Architecture",
+      "units": [
+        {
+          "unit": 1,
+          "topics": [
+            "Introduction: Objective, scope and outcome of the course."
+          ]
+        },
+        {
+          "unit": 2,
+          "topics": [
+            "Basic Structure of Computers",
+            "Functional units",
+            "software",
+            "performance issues software",
+            "machineinstructions and programs",
+            "Types of instructions",
+            "Instruction sets: Instruction formats",
+            "Assembly language",
+            "Stacks",
+            "Ques",
+            "Subroutines"
+          ]
+        },
+        {
+          "unit": 3,
+          "topics": [
+            "Processor organization",
+            "Information representation",
+            "number formats",
+            "Multiplication & division",
+            "ALU design",
+            "Floating Point arithmetic",
+            "IEEE 754 floating pointformats"
+          ]
+        },
+        {
+          "unit": 4,
+          "topics": [
+            "Control Design",
+            "Instruction sequencing",
+            "Interpretation",
+            "Hard wired controlDesignmethods",
+            "CPU control unit",
+            "Microprogrammed Control - Basic concepts",
+            "minimizing microinstruction size",
+            "multiplier control unit",
+            "Microprogrammed computers - CPU control unit"
+          ]
+        },
+        {
+          "unit": 5,
+          "topics": [
+            "Memory organizations",
+            "device characteristics",
+            "RAM",
+            "ROM",
+            "Memory management",
+            "Concept ofCache & associative memories",
+            "Virtual memory"
+          ]
+        },
+        {
+          "unit": 6,
+          "topics": [
+            "System organization",
+            "Input - Output systems",
+            "Interrupt",
+            "DMA",
+            "Standard I/O interfaces",
+            "Concept of parallel processing",
+            "Pipelining",
+            "Forms of parallel processing",
+            "interconnect network"
+          ]
+        }
+      ]
+    },
+    {
+      "subject_code": "5EC4-02",
+      "subject_name": "Electromagnetics Waves",
+      "units": [
+        {
+          "unit": 1,
+          "topics": [
+            "Introduction: Objective, scope and outcome of the course."
+          ]
+        },
+        {
+          "unit": 2,
+          "topics": [
+            "Transmission Lines",
+            "Equations of Voltage and Current on TXline",
+            "Propagation constant and characteristic impedance",
+            "reflection coefficient and VSWR",
+            "Impedance Transformation on Loss-less and Low loss Transmission line",
+            "Power transfer on TXline",
+            "Smith Chart",
+            "Admittance Smith Chart",
+            "Applications of transmission lines: Impedance Matching",
+            "use transmission line sections ascircuit elements"
+          ]
+        },
+        {
+          "unit": 3,
+          "topics": [
+            "Maxwell’s Equations",
+            "Basics of Vectors",
+            "Vector calculus",
+            "Basic laws of Electromagnetics",
+            "Maxwell's Equations",
+            "Boundary conditions at Media Interface"
+          ]
+        },
+        {
+          "unit": 4,
+          "topics": [
+            "Uniform Plane Wave",
+            "Uniform plane wave",
+            "Propagation of wave",
+            "Wave polarization",
+            "Poincare’s Sphere",
+            "Wave propagation in conducting medium",
+            "phase and group velocity",
+            "Power flow and Poynting vector",
+            "Surface current and power loss in a conductor"
+          ]
+        },
+        {
+          "unit": 5,
+          "topics": [
+            "Plane Waves at a Media Interface",
+            "Plane wave in arbitrary direction",
+            "Reflection and refraction at dielectric interface",
+            "Total internal reflection",
+            "wave polarization at media interface",
+            "Reflection from a conducting boundary"
+          ]
+        },
+        {
+          "unit": 6,
+          "topics": [
+            "Waveguides",
+            "Wave propagation in parallel plate waveguide",
+            "Analysis of waveguide general approach",
+            "Rectangular waveguide",
+            "Modal propagation in rectangular waveguide",
+            "Surface currents on the waveguide walls",
+            "Field visualization",
+            "Attenuation in waveguide"
+          ]
+        },
+        {
+          "unit": 7,
+          "topics": [
+            "Radiation",
+            "Solution for potential function",
+            "Radiation from the Hertz dipole",
+            "Power radiated by hertz dipole",
+            "Radiation Parameters of antenna",
+            "receiving antenna",
+            "Monopole and Dipole antenna"
+          ]
+        }
+      ]
+    },
+    {
+      "subject_code": "5EC4-03",
+      "subject_name": "Control system",
+      "units": [
+        {
+          "unit": 1,
+          "topics": [
+            "Introduction: Objective, scope and outcome of the course."
+          ]
+        },
+        {
+          "unit": 2,
+          "topics": [
+            "Introduction to control problem",
+            "Industrial Control examples",
+            "Transfer function",
+            "System with dead-time",
+            "System response",
+            "Control hardware and their models: potentiometers, synchros, LVDT, dc and ac servomotors, tacho-generators, electro hydraulic valves, hydraulicservomotors, electro pneumatic valves, pneumatic actuators",
+            "Closed-loop systems",
+            "Block diagram and signal flow graph analysis"
+          ]
+        },
+        {
+          "unit": 3,
+          "topics": [
+            "Feedback control systems",
+            "Stability",
+            "steady-state accuracy",
+            "transient accuracy",
+            "disturbance rejection",
+            "insensitivity and robustness",
+            "proportional, integral and derivative systems",
+            "Feedforward and multi-loop control configurations",
+            "stability concept",
+            "relative stability",
+            "Routhstability criterion"
+          ]
+        },
+        {
+          "unit": 4,
+          "topics": [
+            "Time response of second-order systems",
+            "steady-state errors and error constants",
+            "Performance specifications in time-domain",
+            "Root locus method of design",
+            "Lead and lag compensation"
+          ]
+        },
+        {
+          "unit": 5,
+          "topics": [
+            "Frequency-response analysis",
+            "Polar plots",
+            "Bode plot",
+            "stability in frequency domain",
+            "Nyquistplots",
+            "Nyquist stability criterion",
+            "Performance specifications in frequency-domain",
+            "Frequency domain methods of design",
+            "Compensation & their realization in time & frequency domain",
+            "Lead and Lag compensation",
+            "Op-amp based and digital implementation of compensators",
+            "Tuning of process controllers",
+            "State variable formulation andsolution"
+          ]
+        },
+        {
+          "unit": 6,
+          "topics": [
+            "State variable Analysis",
+            "Concepts of state",
+            "state variable",
+            "state model",
+            "state modelsfor linearcontinuous time functions",
+            "diagonalization of transfer function",
+            "solution of state equations",
+            "concept of controllability & observability"
+          ]
+        },
+        {
+          "unit": 7,
+          "topics": [
+            "Introduction to Optimal control & Nonlinear control",
+            "Optimal Control problem",
+            "Regulator problem",
+            "Output regulator",
+            "treking problem",
+            "Nonlinear system – Basic concept &analysis"
+          ]
+        }
+      ]
+    },
+    {
+      "subject_code": "5EC4-04",
+      "subject_name": "Digital Signal Processing",
+      "units": [
+        {
+          "unit": 1,
+          "topics": [
+            "Introduction: Objective, scope and outcome of the course."
+          ]
+        },
+        {
+          "unit": 2,
+          "topics": [
+            "Discrete time signals",
+            "Sequences",
+            "representation of signals on orthogonal basis",
+            "Sampling and reconstruction of signals",
+            "Discrete systems attributes",
+            "Z-Transform",
+            "Analysis of LSI systems",
+            "frequency Analysis",
+            "Inverse Systems"
+          ]
+        },
+        {
+          "unit": 3,
+          "topics": [
+            "Discrete Fourier Transform (DFT)",
+            "Fast Fourier Transform Algorithm",
+            "Implementation of Discrete Time Systems"
+          ]
+        },
+        {
+          "unit": 4,
+          "topics": [
+            "Design of FIR Digital filters: Window method, Park-McClellan's method",
+            "Design of IIR DigitalFilters: Butterworth, Chebyshev and Elliptic Approximations",
+            "Lowpass, Bandpass, Bandstop and High pass filters"
+          ]
+        },
+        {
+          "unit": 5,
+          "topics": [
+            "Effect of finite register length in FIR filter design",
+            "Parametric and non-parametric spectral estimation",
+            "Introduction to mult-irate signal processing",
+            "Application of DSP"
+          ]
+        }
+      ]
+    },
+    {
+      "subject_code": "5EC4-05",
+      "subject_name": "Microwave Theory & Techniques",
+      "units": [
+        {
+          "unit": 1,
+          "topics": [
+            "Introduction: Objective, scope and outcome of the course."
+          ]
+        },
+        {
+          "unit": 2,
+          "topics": [
+            "Introduction to Microwaves",
+            "History of Microwaves",
+            "Microwave Frequency bands",
+            "Applications of Microwaves: Civil and Military, Medical, EMI/ EMC"
+          ]
+        },
+        {
+          "unit": 3,
+          "topics": [
+            "Mathematical Model of Microwave Transmission",
+            "Concept of Mode",
+            "Features of TEM, TE and TM Modes",
+            "Losses associated withmicrowave transmission",
+            "Concept of Impedance in Microwave transmission"
+          ]
+        },
+        {
+          "unit": 4,
+          "topics": [
+            "Analysis of RF and Microwave Transmission Lines",
+            "Coaxial line",
+            "Rectangularwaveguide",
+            "Circular waveguide",
+            "Strip line",
+            "Micro strip line"
+          ]
+        },
+        {
+          "unit": 5,
+          "topics": [
+            "Microwave Network Analysis",
+            "Equivalent voltages and currents for non-TEMlines",
+            "Networkparameters for microwave circuits",
+            "Scattering Parameters"
+          ]
+        },
+        {
+          "unit": 6,
+          "topics": [
+            "Passive and Active Microwave Devices",
+            "Microwave passive components: Directional Coupler, Power Divider, Magic Tee, Attenuator, Resonator",
+            "Microwave active components: Diodes, Transistors, Oscillators, Mixers",
+            "Microwave Semiconductor Devices: Gunn Diodes, IMPATT diodes, Schottky Barrier diodes, PIN diodes",
+            "MicrowaveTubes: Klystron, TWT, Magnetron"
+          ]
+        },
+        {
+          "unit": 7,
+          "topics": [
+            "Microwave Design Principles",
+            "Impedance transformation",
+            "Impedance Matching",
+            "Microwave Filter Design",
+            "RF and Microwave Amplifier Design",
+            "Microwave Power Amplifier Design",
+            "Low Noise Amplifier Design",
+            "Microwave Mixer Design",
+            "Microwave Oscillator Design",
+            "Microwave Antennas- Antenna parameters, Antenna for ground based systems, Antennas for airborne and satellite borne systems, Planar Antennas"
+          ]
+        },
+        {
+          "unit": 8,
+          "topics": [
+            "Microwave Measurements",
+            "Power, Frequency and impedance measurement at microwave frequency",
+            "Network Analyzer and measurement of scattering parameters",
+            "Spectrum Analyzerand measurement of spectrum of a microwave signal",
+            "Noise at microwave frequency and measurement of noise figure",
+            "Measurement of Microwave antenna parameters"
+          ]
+        },
+        {
+          "unit": 9,
+          "topics": [
+            "Microwave Systems",
+            "Radar",
+            "Terrestrial and Satellite Communication",
+            "Radio Aidsto Navigation",
+            "RFID",
+            "GPS",
+            "Modern Trends in Microwaves Engineering",
+            "Effect of Microwaves on human body",
+            "Medical and Civil applications of microwaves",
+            "Electromagnetic interference and Electromagnetic Compatibility (EMI & EMC)",
+            "Monolithic Microwave ICs",
+            "RFMEMS for microwave components",
+            "Microwave Imaging"
+          ]
+        }
+      ]
+    },
+    {
+      "subject_code": "5EC5-14",
+      "subject_name": "Satellite Communication",
+      "elective": true,
+      "units": [
+        {
+          "unit": 1,
+          "topics": [
+            "Introduction: Objective, scope and outcome of the course."
+          ]
+        },
+        {
+          "unit": 2,
+          "topics": [
+            "Introduction to Satellite Communication",
+            "Principles and architecture of satellite Communication",
+            "Brief history of Satellite systems",
+            "advantages",
+            "disadvantages",
+            "applications",
+            "frequency bands used for satellite communication"
+          ]
+        },
+        {
+          "unit": 3,
+          "topics": [
+            "Orbital Mechanics",
+            "Orbital equations",
+            "Kepler's laws",
+            "Apogee and Perigee for an elliptical orbit",
+            "evaluation of velocity",
+            "orbital period",
+            "angular velocity etc. of a satellite",
+            "concepts of Solar day and Sidereal day"
+          ]
+        },
+        {
+          "unit": 4,
+          "topics": [
+            "Satellite sub-systems",
+            "Study of Architecture and Roles of various sub-systems of a satellite system such as Telemetry, tracking, command and monitoring (TTC & M)",
+            "Attitude and orbit control system (AOCS)",
+            "Communication sub-system",
+            "power sub-systems etc."
+          ]
+        },
+        {
+          "unit": 5,
+          "topics": [
+            "Typical Phenomena in Satellite Communication",
+            "Solar Eclipse on satellite",
+            "its effects",
+            "remedies for Eclipse",
+            "Sun Transit Outage phenomena",
+            "its effects and remedies",
+            "Doppler frequency shift phenomena and expression for Doppler shift",
+            "Satellite link budget"
+          ]
+        },
+        {
+          "unit": 6,
+          "topics": [
+            "Flux density and received signal power equations",
+            "Calculation of System noise temperature for satellite receiver",
+            "noise power calculation",
+            "Drafting of satellite link budget and C/N ratio calculations in clear air and rainy conditions"
+          ]
+        },
+        {
+          "unit": 7,
+          "topics": [
+            "Modulation and Multiple Access Schemes",
+            "Various modulation schemes used in satellite communication",
+            "Meaning of Multiple Access",
+            "multiple access schemes based on time, frequency, and code sharing namely TDMA, FDMA and CDMA"
+          ]
+        }
+      ]
+    }
+  ]
+}
